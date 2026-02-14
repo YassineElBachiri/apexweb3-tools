@@ -9,7 +9,7 @@ import { TokenomicsView } from "@/components/tokenomics/tokenomics-view";
 import { Card, CardContent } from "@/components/ui/card";
 import type { ApiResponse, TokenomicsAnalysis } from "@/types";
 
-export function AnalyzerContent() {
+function AnalyzerContent() {
     const searchParams = useSearchParams();
     const [query, setQuery] = useState("");
     const [searchResults, setSearchResults] = useState<TokenSearchResult[]>([]);
@@ -93,7 +93,7 @@ export function AnalyzerContent() {
                     </h1>
                 </div>
                 <p className="text-muted-foreground text-lg mb-8">
-                    Deep dive into any token's economy. Analyze inflation, supply distribution, and safety scores instantly.
+                    Deep dive into any token&apos;s economy. Analyze inflation, supply distribution, and safety scores instantly.
                 </p>
 
                 <Card className="bg-background/50 backdrop-blur border-primary/20 shadow-lg glow-card">
@@ -132,6 +132,7 @@ export function AnalyzerContent() {
                                                 onClick={() => handleSelectToken(token)}
                                                 className="w-full flex items-center gap-3 p-3 hover:bg-white/5 transition-colors text-left"
                                             >
+                                                {/* eslint-disable-next-line @next/next/no-img-element */}
                                                 <img
                                                     src={token.thumb}
                                                     alt={token.name}

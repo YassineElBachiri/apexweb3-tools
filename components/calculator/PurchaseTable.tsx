@@ -58,7 +58,7 @@ export function PurchaseTable({ purchases, setPurchases }: PurchaseTableProps) {
             <div className="space-y-2">
                 {purchases.length === 0 ? (
                     <div className="text-center py-10 bg-[#13082a] border border-[#2a1b4e] rounded-lg text-gray-500">
-                        No purchases added. Click "Add Purchase" to start.
+                        No purchases added. Click &quot;Add Purchase&quot; to start.
                     </div>
                 ) : (
                     purchases.map((purchase, index) => (

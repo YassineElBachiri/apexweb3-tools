@@ -27,7 +27,7 @@ export default function DashboardPage() {
                             <CardTitle>Portfolio Tracker</CardTitle>
                         </div>
                         <CardDescription>
-                            Track any wallet's token holdings and total value without connecting.
+                            Track any wallet&apos;s token holdings and total value without connecting.
                             Get real-time balance updates and 24h price changes.
                         </CardDescription>
                     </CardHeader>
@@ -157,7 +157,7 @@ export default function DashboardPage() {
                         </li>
                         <li className="flex gap-3">
                             <span className="font-bold text-primary">3.</span>
-                            <span>Click "Analyze" to get instant insights</span>
+                            <span>Click &quot;Analyze&quot; to get instant insights</span>
                         </li>
                         <li className="flex gap-3">
                             <span className="font-bold text-primary">4.</span>

@@ -25,7 +25,7 @@ export function ToolsGrid() {
                         Everything You Need in <span className="gradient-text">One Platform</span>
                     </h2>
                     <p className="text-gray-400 text-lg">
-                        We've built a comprehensive suite of professional-grade Web3 tools used by over 50,000 traders worldwide.
+                        We&apos;ve built a comprehensive suite of professional-grade Web3 tools used by over 50,000 traders worldwide.
                     </p>
                 </div>
 
@@ -56,7 +56,7 @@ export function ToolsGrid() {
                 {/* Footer Link */}
                 <div className="text-center mt-16">
                     <Link href="/tools" className="inline-flex items-center text-gray-400 hover:text-white transition-colors group">
-                        Can't find what you need? View detailed directory <ArrowRight className="ml-2 w-4 h-4 group-hover:translate-x-1 transition-transform" />
+                        Can&apos;t find what you need? View detailed directory <ArrowRight className="ml-2 w-4 h-4 group-hover:translate-x-1 transition-transform" />
                     </Link>
                 </div>
 

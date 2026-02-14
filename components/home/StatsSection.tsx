@@ -35,9 +35,9 @@ export function StatsSection() {
                     <h3 className="text-3xl font-bold mb-12">Trusted by Crypto Traders Worldwide</h3>
 
                     <div className="bg-brand-card border border-white/10 p-8 rounded-2xl relative">
-                        <div className="text-4xl text-brand-purple absolute top-4 left-6 opacity-30">"</div>
+                        <div className="text-4xl text-brand-purple absolute top-4 left-6 opacity-30">&quot;</div>
                         <p className="text-xl text-gray-300 italic mb-6 relative z-10">
-                            Finally, a portfolio tracker that doesn't require connecting my wallet.
+                            Finally, a portfolio tracker that doesn&apos;t require connecting my wallet.
                             Privacy-first tools like this are rare in Web3. The token analyzer saved me from a potential honeypot last week.
                         </p>
                         <div className="flex items-center justify-center gap-4">

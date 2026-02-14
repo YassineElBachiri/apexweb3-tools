@@ -26,7 +26,7 @@ export function SeoContent() {
                         Blockchain technology is one of the fastest-growing sectors globally. Working in Web3 offers not just competitive salaries but also the chance to build permissionless systems, own your digital identity, and participate in permissionless governance. From <strong>Smart Contract Engineering</strong> (Solidity, Rust) to <strong>Community Management</strong> and <strong>Tokenomics Design</strong>, the variety of roles is expanding every day.
                     </p>
                     <p>
-                        Browse our curated list of opportunities today. Filter by "Remote Only" to find work-from-anywhere positions, or search for specific tags like "React", "Rust", or "Marketing" to tailor your job hunt to your skills.
+                        Browse our curated list of opportunities today. Filter by &quot;Remote Only&quot; to find work-from-anywhere positions, or search for specific tags like &quot;React&quot;, &quot;Rust&quot;, or &quot;Marketing&quot; to tailor your job hunt to your skills.
                     </p>
                 </div>
             </article>
@@ -45,7 +45,7 @@ export function SeoContent() {
                     <AccordionItem value="item-2">
                         <AccordionTrigger>Can I work remotely in Web3?</AccordionTrigger>
                         <AccordionContent>
-                            Yes! The vast majority of Web3 and crypto companies are "remote-first" or fully distributed organizations (DAOs). This makes the industry perfect for digital nomads and those seeking work-life flexibility. Use our "Remote Only" filter to find these roles easily.
+                            Yes! The vast majority of Web3 and crypto companies are &quot;remote-first&quot; or fully distributed organizations (DAOs). This makes the industry perfect for digital nomads and those seeking work-life flexibility. Use our &quot;Remote Only&quot; filter to find these roles easily.
                         </AccordionContent>
                     </AccordionItem>
 
@@ -66,7 +66,7 @@ export function SeoContent() {
                     <AccordionItem value="item-5">
                         <AccordionTrigger>Is it safe to apply for jobs on this board?</AccordionTrigger>
                         <AccordionContent>
-                            We prioritize safety. All "Apply" buttons on ApexWeb3 are <strong>direct links</strong> using <code>rel="follow"</code> to the official company hiring page or application form. We do not aggregate your data or act as a middleman.
+                            We prioritize safety. All &quot;Apply&quot; buttons on ApexWeb3 are <strong>direct links</strong> using <code>rel=&quot;follow&quot;</code> to the official company hiring page or application form. We do not aggregate your data or act as a middleman.
                         </AccordionContent>
                     </AccordionItem>
 
@@ -87,7 +87,7 @@ export function SeoContent() {
                     <AccordionItem value="item-8">
                         <AccordionTrigger>How can I stand out when applying?</AccordionTrigger>
                         <AccordionContent>
-                            Having a portfolio (GitHub for dev, writing samples for marketers) is key. Additionally, participating in the project's community (Discord, Governance Forums) <em>before</em> applying can verify your genuine interest and understanding of the protocol.
+                            Having a portfolio (GitHub for dev, writing samples for marketers) is key. Additionally, participating in the project&apos;s community (Discord, Governance Forums) <em>before</em> applying can verify your genuine interest and understanding of the protocol.
                         </AccordionContent>
                     </AccordionItem>
                 </Accordion>

@@ -35,7 +35,7 @@ export function HowItWorks() {
                         Simple, Powerful, <span className="gradient-text">Instant</span>
                     </h2>
                     <p className="text-gray-400 text-lg max-w-2xl mx-auto">
-                        We've removed all friction. No registration, no wallet connection, no complexity.
+                        We&apos;ve removed all friction. No registration, no wallet connection, no complexity.
                         Just pure utility.
                     </p>
                 </div>

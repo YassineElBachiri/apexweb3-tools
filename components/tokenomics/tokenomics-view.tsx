@@ -24,6 +24,7 @@ export function TokenomicsView({ data, address, hideAddress = false }: Tokenomic
                 <div className="flex-1">
                     <div className="flex items-center gap-3 mb-3">
                         {data.token.logo && (
+                            /* eslint-disable-next-line @next/next/no-img-element */
                             <img src={data.token.logo} alt={data.token.name} className="w-12 h-12 rounded-full" />
                         )}
                         <div>

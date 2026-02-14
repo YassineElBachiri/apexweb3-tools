@@ -66,6 +66,7 @@ export default function AssetDetail({ asset, score }: AssetDetailProps) {
                     {/* Header */}
                     <div className="flex items-center justify-between mb-6 flex-wrap gap-4">
                         <div className="flex items-center gap-4">
+                            {/* eslint-disable-next-line @next/next/no-img-element */}
                             <img
                                 src={asset.token.image || asset.token.logo || "https://placehold.co/64"}
                                 alt={asset.token.name}
@@ -113,8 +114,8 @@ export default function AssetDetail({ asset, score }: AssetDetailProps) {
                         <div className="bg-background rounded-lg p-4">
                             <div className="text-sm text-gray-400 mb-1">Risk Verdict</div>
                             <div className={`text-lg font-semibold ${displayScore.verdict === 'Strong Hold' ? 'text-green-400' :
-                                    displayScore.verdict === 'Speculative' ? 'text-yellow-400' :
-                                        'text-red-400'
+                                displayScore.verdict === 'Speculative' ? 'text-yellow-400' :
+                                    'text-red-400'
                                 }`}>
                                 {displayScore.verdict}
                             </div>
@@ -152,8 +153,8 @@ export default function AssetDetail({ asset, score }: AssetDetailProps) {
                                     <div className="text-sm text-gray-400 mb-1">Profit/Loss</div>
                                     <div
                                         className={`text-xl font-semibold ${profitLoss && profitLoss >= 0
-                                                ? "text-green-400"
-                                                : "text-red-400"
+                                            ? "text-green-400"
+                                            : "text-red-400"
                                             }`}
                                     >
                                         {profitLoss && (profitLoss >= 0 ? "+" : "")}
@@ -172,8 +173,8 @@ export default function AssetDetail({ asset, score }: AssetDetailProps) {
                                 <button
                                     onClick={() => setDays(7)}
                                     className={`px-3 py-1 rounded-lg text-sm transition-colors ${days === 7
-                                            ? "bg-primary text-white"
-                                            : "bg-background text-gray-400 hover:text-white"
+                                        ? "bg-primary text-white"
+                                        : "bg-background text-gray-400 hover:text-white"
                                         }`}
                                 >
                                     7D
@@ -181,8 +182,8 @@ export default function AssetDetail({ asset, score }: AssetDetailProps) {
                                 <button
                                     onClick={() => setDays(30)}
                                     className={`px-3 py-1 rounded-lg text-sm transition-colors ${days === 30
-                                            ? "bg-primary text-white"
-                                            : "bg-background text-gray-400 hover:text-white"
+                                        ? "bg-primary text-white"
+                                        : "bg-background text-gray-400 hover:text-white"
                                         }`}
                                 >
                                     30D
@@ -190,8 +191,8 @@ export default function AssetDetail({ asset, score }: AssetDetailProps) {
                                 <button
                                     onClick={() => setDays(90)}
                                     className={`px-3 py-1 rounded-lg text-sm transition-colors ${days === 90
-                                            ? "bg-primary text-white"
-                                            : "bg-background text-gray-400 hover:text-white"
+                                        ? "bg-primary text-white"
+                                        : "bg-background text-gray-400 hover:text-white"
                                         }`}
                                 >
                                     90D
@@ -255,11 +256,11 @@ export default function AssetDetail({ asset, score }: AssetDetailProps) {
                                         </span>
                                     </div>
                                 )}
-                                {asset.token.max_supply > 0 && (
+                                {(asset.token.max_supply || 0) > 0 && (
                                     <div className="flex justify-between">
                                         <span className="text-gray-400">Max Supply:</span>
                                         <span className="font-medium">
-                                            {asset.token.max_supply.toLocaleString()}
+                                            {(asset.token.max_supply || 0).toLocaleString()}
                                         </span>
                                     </div>
                                 )}

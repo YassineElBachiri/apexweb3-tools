@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { CurrencyInput } from './CurrencyInput';
 import { ExchangeRateDisplay } from './ExchangeRateDisplay';
 import { POPULAR_COINS } from '@/lib/constants';
@@ -18,7 +18,7 @@ export function ConverterCard() {
     const [loading, setLoading] = useState(false);
     const [lastUpdated, setLastUpdated] = useState<string | null>(null);
 
-    const handleConvert = async () => {
+    const handleConvert = useCallback(async () => {
         setLoading(true);
         try {
             const result = await convertCrypto(fromCurrency, toCurrency, amount);
@@ -30,13 +30,13 @@ export function ConverterCard() {
         } finally {
             setLoading(false);
         }
-    };
+    }, [fromCurrency, toCurrency, amount]);
 
     useEffect(() => {
         handleConvert();
         const interval = setInterval(handleConvert, 60000); // Auto-refresh every minute
         return () => clearInterval(interval);
-    }, [fromCurrency, toCurrency, amount]);
+    }, [handleConvert]);
 
     const handleSwap = () => {
         setFromCurrency(toCurrency);

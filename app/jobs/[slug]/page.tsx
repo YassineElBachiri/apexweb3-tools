@@ -220,7 +220,8 @@ export default async function JobDetailPage({ params }: PageProps) {
                             {/* Company Logo */}
                             {job.logo ? (
                                 <div className="w-20 h-20 rounded-xl bg-white p-2 shrink-0 shadow-md border border-border/50">
-                                    <img src={job.logo} alt={`${job.company} logo`} className="w-full h-full object-contain" />
+                                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                                    <img src={job.logo} alt={job.company} className="w-full h-full object-contain" />
                                 </div>
                             ) : (
                                 <div className="w-20 h-20 rounded-xl bg-muted/50 shrink-0 flex items-center justify-center border border-border/50">

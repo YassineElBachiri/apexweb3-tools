@@ -39,6 +39,7 @@ export function JobCard({ job }: JobCardProps) {
                     </div>
                     {job.logo ? (
                         <div className="w-12 h-12 rounded-xl bg-white p-1.5 shrink-0 shadow-sm border border-border/50 overflow-hidden group-hover:scale-105 transition-transform duration-300">
+                            {/* eslint-disable-next-line @next/next/no-img-element */}
                             <img src={job.logo} alt={`${job.company} logo`} className="w-full h-full object-contain" />
                         </div>
                     ) : (

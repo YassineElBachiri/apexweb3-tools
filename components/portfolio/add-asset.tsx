@@ -111,6 +111,7 @@ export default function AddAsset({ onAddAsset, existingAssets = [] }: AddAssetPr
                                         onClick={() => handleSelectToken(token)}
                                         className="w-full flex items-center gap-3 p-2 hover:bg-white/5 transition-colors text-left"
                                     >
+                                        {/* eslint-disable-next-line @next/next/no-img-element */}
                                         <img
                                             src={token.thumb}
                                             alt={token.name}

@@ -2,6 +2,7 @@ import { fetchWeb3Jobs } from "@/lib/web3Career";
 import { JobsDashboard } from "@/components/jobs/JobsDashboard";
 import { SeoContent } from "@/components/jobs/SeoContent";
 import { Metadata } from "next";
+import { Suspense } from "react";
 import { notFound } from "next/navigation";
 
 interface PageProps {
@@ -95,7 +96,9 @@ export default async function TagJobsPage({ params }: PageProps) {
                 type="application/ld+json"
                 dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
             />
-            <JobsDashboard initialJobs={jobs} error={error} initialFilters={initialFilters} />
+            <Suspense fallback={<div className="container py-12 text-center text-muted-foreground">Loading jobs...</div>}>
+                <JobsDashboard initialJobs={jobs} error={error} initialFilters={initialFilters} />
+            </Suspense>
             <SeoContent />
         </main>
     );

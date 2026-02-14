@@ -2,6 +2,7 @@ import { fetchWeb3Jobs } from "@/lib/web3Career";
 import { JobsDashboard } from "@/components/jobs/JobsDashboard";
 import { SeoContent } from "@/components/jobs/SeoContent";
 import { Metadata } from "next";
+import { Suspense } from "react";
 
 export const metadata: Metadata = {
     title: "Web3 Jobs – Remote Crypto & Blockchain Careers",
@@ -57,7 +58,9 @@ export default async function JobsPage() {
                 type="application/ld+json"
                 dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
             />
-            <JobsDashboard initialJobs={jobs} error={error} />
+            <Suspense fallback={<div className="container py-12 text-center text-muted-foreground">Loading jobs...</div>}>
+                <JobsDashboard initialJobs={jobs} error={error} />
+            </Suspense>
             <SeoContent />
         </main>
     );

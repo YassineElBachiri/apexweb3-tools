@@ -104,6 +104,7 @@ export function PortfolioTable({
                                     >
                                         <td className="py-4 px-4">
                                             <div className="flex items-center gap-3">
+                                                {/* eslint-disable-next-line @next/next/no-img-element */}
                                                 <img
                                                     src={tokenImage || "https://placehold.co/32"}
                                                     alt={tokenName || "Token"}
@@ -197,7 +198,8 @@ export function PortfolioTable({
                             >
                                 <div className="flex justify-between items-start mb-3">
                                     <div className="flex items-center gap-3">
-                                        <img src={tokenImage || "https://placehold.co/32"} className="w-10 h-10 rounded-full" />
+                                        {/* eslint-disable-next-line @next/next/no-img-element */}
+                                        <img src={tokenImage || "https://placehold.co/32"} alt={tokenName || "Token"} className="w-10 h-10 rounded-full" />
                                         <div>
                                             <div className="font-semibold">{tokenName || "Unknown"}</div>
                                             <div className="text-xs text-muted-foreground">{(tokenSymbol || id).toUpperCase()}</div>

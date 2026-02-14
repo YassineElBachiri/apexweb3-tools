@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { TransactionCard } from "@/components/whales/transaction-card";
@@ -19,7 +19,7 @@ export default function WhalesPage() {
     const [selectedFilter, setSelectedFilter] = useState(100000);
     const [refreshing, setRefreshing] = useState(false);
 
-    const fetchData = async () => {
+    const fetchData = useCallback(async () => {
         try {
             setRefreshing(true);
             const response = await fetch(`/api/whales?minValue=${selectedFilter}`);
@@ -34,13 +34,13 @@ export default function WhalesPage() {
             setLoading(false);
             setRefreshing(false);
         }
-    };
+    }, [selectedFilter]);
 
     useEffect(() => {
         fetchData();
         const interval = setInterval(fetchData, 30000);
         return () => clearInterval(interval);
-    }, [selectedFilter]);
+    }, [fetchData]);
 
     return (
         <div className="container mx-auto px-4 py-8">
