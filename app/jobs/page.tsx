@@ -53,7 +53,7 @@ export default async function JobsPage() {
     }));
 
     return (
-        <main className="min-h-screen bg-background bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-primary/10 via-background to-background">
+        <div className="min-h-screen bg-background bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-primary/10 via-background to-background">
             <script
                 type="application/ld+json"
                 dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
@@ -62,6 +62,6 @@ export default async function JobsPage() {
                 <JobsDashboard initialJobs={jobs} error={error} />
             </Suspense>
             <SeoContent />
-        </main>
+        </div>
     );
 }

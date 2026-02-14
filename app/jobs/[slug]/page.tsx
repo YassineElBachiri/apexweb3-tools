@@ -190,7 +190,7 @@ export default async function JobDetailPage({ params }: PageProps) {
     };
 
     return (
-        <main className="min-h-screen bg-background">
+        <div className="min-h-screen bg-background">
             {/* JSON-LD Structured Data */}
             <script
                 type="application/ld+json"
@@ -455,7 +455,7 @@ export default async function JobDetailPage({ params }: PageProps) {
                     company={job.company}
                 />
             </div>
-        </main>
+        </div>
     );
 }
 
