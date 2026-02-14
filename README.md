@@ -183,6 +183,7 @@ NEXT_PUBLIC_COINGECKO_API_KEY=your_coingecko_api_key
 NEXT_PUBLIC_MORALIS_API_KEY=your_moralis_api_key
 NEXT_PUBLIC_GOPLUS_API_KEY=your_goplus_api_key
 NEXT_PUBLIC_ALCHEMY_API_KEY=your_alchemy_api_key
+WEB3_CAREER_TOKEN=your_web3_career_token
 
 # ─── Optional ─────────────────────────────────────────
 NEXT_PUBLIC_USE_MOCK_DATA=false          # Set to 'true' during development
