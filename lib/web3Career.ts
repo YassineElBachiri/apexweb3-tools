@@ -2,7 +2,54 @@ import { Web3Job } from "@/types/job";
 import { generateJobSlug } from "@/lib/slugify";
 
 const WEB3_CAREER_API_URL = "https://web3.career/api/v1";
-const TOKEN = process.env.WEB3_CAREER_TOKEN;
+
+const MOCK_JOBS: Web3Job[] = [
+    {
+        id: "mock-1",
+        slug: "senior-solidity-developer-uniswap",
+        title: "Senior Solidity Developer",
+        company: "Uniswap Labs",
+        location: "New York / Remote",
+        remote: true,
+        tags: ["Solidity", "Smart Contracts", "DeFi"],
+        url: "https://web3.career",
+        apply_url: "https://web3.career",
+        created_at: new Object().toString(),
+        salary: "$180k - $250k",
+        logo: "https://cryptologos.cc/logos/uniswap-uni-logo.png",
+        employmentType: "TELECOMMUTE"
+    },
+    {
+        id: "mock-2",
+        slug: "rust-engineer-solana-foundation",
+        title: "Rust Core Engineer",
+        company: "Solana Foundation",
+        location: "Remote",
+        remote: true,
+        tags: ["Rust", "Blockchain", "L1"],
+        url: "https://web3.career",
+        apply_url: "https://web3.career",
+        created_at: new Object().toString(),
+        salary: "$160k - $220k",
+        logo: "https://cryptologos.cc/logos/solana-sol-logo.png",
+        employmentType: "TELECOMMUTE"
+    },
+    {
+        id: "mock-3",
+        slug: "frontend-developer-metamask",
+        title: "Senior Frontend Developer",
+        company: "MetaMask",
+        location: "London / Remote",
+        remote: true,
+        tags: ["React", "TypeScript", "Web3.js"],
+        url: "https://web3.career",
+        apply_url: "https://web3.career",
+        created_at: new Object().toString(),
+        salary: "$140k - $190k",
+        logo: "https://cryptologos.cc/logos/metamask-eth-logo.png",
+        employmentType: "TELECOMMUTE"
+    }
+];
 
 // Interface for the raw API response to help with normalization
 interface Web3CareerResponseItem {
@@ -27,8 +74,19 @@ export type FetchJobsResult = {
 };
 
 export async function fetchWeb3Jobs(): Promise<FetchJobsResult> {
+    const TOKEN = process.env.WEB3_CAREER_TOKEN;
+    const USE_MOCK = process.env.NEXT_PUBLIC_USE_MOCK_DATA === "true";
+
+    if (USE_MOCK) {
+        console.log("Using mock Web3 jobs data (NEXT_PUBLIC_USE_MOCK_DATA is true)");
+        return { jobs: MOCK_JOBS };
+    }
+
     if (!TOKEN) {
-        console.warn("WEB3_CAREER_TOKEN is missing in environment variables. Using empty list.");
+        console.warn("WEB3_CAREER_TOKEN is missing in environment variables. Falling back to mock data in development.");
+        if (process.env.NODE_ENV === "development") {
+            return { jobs: MOCK_JOBS, error: "MISSING_TOKEN_DEV" };
+        }
         return { jobs: [], error: "MISSING_TOKEN" };
     }
 

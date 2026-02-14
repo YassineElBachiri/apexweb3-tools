@@ -47,17 +47,48 @@ export function JobsDashboard({ initialJobs, error, initialFilters = {} }: JobsD
         setFilters((prev) => ({ ...prev, ...newFilters }));
     };
 
-    if (error === "MISSING_TOKEN") {
+    if (error === "MISSING_TOKEN" || error === "MISSING_TOKEN_DEV") {
         return (
             <div className="container py-20 max-w-4xl mx-auto px-4 text-center">
-                <div className="bg-destructive/10 border border-destructive/20 rounded-xl p-8">
-                    <h2 className="text-2xl font-bold text-destructive mb-2">Configuration Required</h2>
-                    <p className="text-muted-foreground mb-4">
-                        The <code>WEB3_CAREER_TOKEN</code> is missing from your environment variables.
-                    </p>
-                    <div className="bg-background/50 p-4 rounded-md inline-block text-left text-sm font-mono overflow-x-auto max-w-full">
-                        WEB3_CAREER_TOKEN=your_token_here
+                <div className="bg-card/40 backdrop-blur-xl border border-white/10 rounded-2xl p-8 shadow-xl">
+                    <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-6">
+                        <span className="text-3xl text-primary">⚙️</span>
                     </div>
+                    <h2 className="text-2xl font-bold mb-4">API Configuration Required</h2>
+                    <p className="text-muted-foreground mb-6 max-w-lg mx-auto">
+                        The <code className="bg-primary/10 px-1.5 py-0.5 rounded text-primary">WEB3_CAREER_TOKEN</code> is missing from your environment.
+                        {error === "MISSING_TOKEN_DEV" ? " Showing mock data for now." : ""}
+                    </p>
+
+                    <div className="space-y-4 text-left max-w-md mx-auto">
+                        <div className="bg-background/50 p-4 rounded-xl border border-white/5 space-y-3">
+                            <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Option 1: Add API Token</p>
+                            <p className="text-sm">Get a token from <a href="https://web3.career/api" target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">web3.career/api</a> and add it to your <code className="text-primary">.env.local</code>:</p>
+                            <div className="bg-black/40 p-3 rounded-lg font-mono text-xs overflow-x-auto">
+                                WEB3_CAREER_TOKEN=your_token_here
+                            </div>
+                        </div>
+
+                        <div className="bg-background/50 p-4 rounded-xl border border-white/5 space-y-3">
+                            <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Option 2: Enable Mock Data</p>
+                            <p className="text-sm">Use sample listings for development by updating <code className="text-primary">.env.local</code>:</p>
+                            <div className="bg-black/40 p-3 rounded-lg font-mono text-xs overflow-x-auto">
+                                NEXT_PUBLIC_USE_MOCK_DATA=true
+                            </div>
+                        </div>
+                    </div>
+
+                    {error === "MISSING_TOKEN_DEV" && (
+                        <div className="mt-8 pt-6 border-t border-white/5">
+                            <p className="text-sm text-muted-foreground mb-4 italic">Continuing to dashboard with sample listings...</p>
+                            <button
+                                onClick={() => window.location.reload()}
+                                className="px-6 py-2 bg-primary text-primary-foreground rounded-full hover:bg-primary/90 transition-colors font-medium"
+                            >
+                                Continue to Mock Dashboard
+                            </button>
+                        </div>
+                    )}
                 </div>
             </div>
         );
