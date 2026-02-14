@@ -26,6 +26,7 @@ interface JobFiltersProps {
 
 const COMMON_TAGS = ["React", "Solidity", "Rust", "DeFi", "Smart Contract", "Frontend", "Backend", "Design", "Marketing"];
 
+
 export function JobFilters({ onFilterChange, initialFilters }: JobFiltersProps) {
     const router = useRouter();
     const searchParams = useSearchParams();
