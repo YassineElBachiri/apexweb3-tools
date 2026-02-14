@@ -150,17 +150,28 @@ export async function fetchWeb3Jobs(): Promise<FetchJobsResult> {
             const jobUrl = item.url || item.link || item.apply_url || "#";
 
             // Improved Salary Construction
+            const formatSal = (val: any) => {
+                if (!val) return "";
+                const num = parseFloat(val);
+                if (isNaN(num)) return val;
+                // If the number is large (>= 1000), divide by 1000 and append k
+                if (num >= 1000) return `${Math.floor(num / 1000)}k`;
+                // If it's small (like 80 or 120), it's likely already in k-units
+                return `${num}k`;
+            };
+
             let salary = item.salary;
             if (!salary && (item.salary_min_value || item.salary_max_value)) {
-                const min = item.salary_min_value ? `${item.salary_currency || "$"}${item.salary_min_value}${item.salary_unit === "per-year" ? "k" : ""}` : "";
-                const max = item.salary_max_value ? `${item.salary_currency || "$"}${item.salary_max_value}${item.salary_unit === "per-year" ? "k" : ""}` : "";
+                const currency = item.salary_currency || "$";
+                const min = item.salary_min_value ? `${currency}${formatSal(item.salary_min_value)}` : "";
+                const max = item.salary_max_value ? `${currency}${formatSal(item.salary_max_value)}` : "";
                 if (min && max) salary = `${min} - ${max}`;
                 else salary = min || max;
             } else if (!salary && (item.estimated_min_salary || item.estimated_max_salary)) {
-                const min = item.estimated_min_salary ? `$${item.estimated_min_salary}k` : "";
-                const max = item.estimated_max_salary ? `$${item.estimated_max_salary}k` : "";
-                if (min && max) salary = `${min} - ${max} (Est.)`;
-                else salary = `${min || max} (Est.)`;
+                const min = formatSal(item.estimated_min_salary);
+                const max = formatSal(item.estimated_max_salary);
+                if (min && max) salary = `$${min} - $${max} (Est.)`;
+                else if (min || max) salary = `$${min || max} (Est.)`;
             }
 
             const job: Web3Job = {

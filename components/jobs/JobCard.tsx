@@ -111,7 +111,7 @@ export function JobCard({ job }: JobCardProps) {
                         View Details
                     </Link>
                 </Button>
-                {job.apply_url && (
+                {/* {job.apply_url && (
                     <Button asChild className="flex-1 font-semibold shadow-md shadow-primary/10 hover:shadow-primary/20 transition-all duration-300" size="default">
                         <a
                             href={job.apply_url}
@@ -119,10 +119,11 @@ export function JobCard({ job }: JobCardProps) {
                             rel="noopener noreferrer"
                             className="flex items-center justify-center gap-2"
                         >
-                            Apply Hub
+                            Apply Hub d
                         </a>
                     </Button>
-                )}
+                )} */}
+
             </CardFooter>
         </Card>
     );
