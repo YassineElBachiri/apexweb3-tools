@@ -63,6 +63,12 @@ export function JobCard({ job }: JobCardProps) {
                     )}
                 </div>
 
+                {job.description && (
+                    <p className="text-sm text-muted-foreground line-clamp-2 leading-relaxed">
+                        {job.description.replace(/<[^>]+>/g, '')}
+                    </p>
+                )}
+
                 <div className="flex flex-wrap gap-2">
                     {job.tags.slice(0, 3).map((tag) => (
                         <Badge
@@ -97,15 +103,26 @@ export function JobCard({ job }: JobCardProps) {
                 </div>
             </CardContent>
 
-            <CardFooter className="pt-0 pb-5 z-20 relative">
-                <Button asChild className="w-full font-semibold shadow-md shadow-primary/10 hover:shadow-primary/20 transition-all duration-300" size="default">
+            <CardFooter className="pt-0 pb-5 z-20 relative flex gap-3">
+                <Button asChild variant="outline" className="flex-1 font-semibold border-white/10 hover:bg-white/5 transition-all duration-300" size="default">
                     <Link
                         href={`/jobs/${job.slug}`}
-                        className="flex items-center gap-2"
                     >
-                        View Job
+                        View Details
                     </Link>
                 </Button>
+                {job.apply_url && (
+                    <Button asChild className="flex-1 font-semibold shadow-md shadow-primary/10 hover:shadow-primary/20 transition-all duration-300" size="default">
+                        <a
+                            href={job.apply_url}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="flex items-center justify-center gap-2"
+                        >
+                            Apply Hub
+                        </a>
+                    </Button>
+                )}
             </CardFooter>
         </Card>
     );

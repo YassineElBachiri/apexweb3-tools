@@ -41,7 +41,7 @@ export default async function TagJobsPage({ params }: PageProps) {
     const { slug } = await params;
     const { jobs, error } = await fetchWeb3Jobs();
 
-    if (error || !jobs.length) {
+    if (error === "FETCH_ERROR") {
         notFound();
     }
 

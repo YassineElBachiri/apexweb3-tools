@@ -8,13 +8,14 @@ const MOCK_JOBS: Web3Job[] = [
         id: "mock-1",
         slug: "senior-solidity-developer-uniswap",
         title: "Senior Solidity Developer",
+        description: "Join Uniswap Labs to build the future of decentralized finance. We are looking for a Senior Solidity Developer to lead our smart contract engineering efforts and help scale the protocol to millions of users. You will work on core protocol features and help design the next generation of DeFi primitives.",
         company: "Uniswap Labs",
         location: "New York / Remote",
         remote: true,
         tags: ["Solidity", "Smart Contracts", "DeFi"],
-        url: "https://web3.career",
-        apply_url: "https://web3.career",
-        created_at: new Object().toString(),
+        url: "https://web3.career/senior-solidity-developer-uniswap",
+        apply_url: "https://web3.career/senior-solidity-developer-uniswap/apply",
+        created_at: new Date().toISOString(),
         salary: "$180k - $250k",
         logo: "https://cryptologos.cc/logos/uniswap-uni-logo.png",
         employmentType: "TELECOMMUTE"
@@ -23,13 +24,14 @@ const MOCK_JOBS: Web3Job[] = [
         id: "mock-2",
         slug: "rust-engineer-solana-foundation",
         title: "Rust Core Engineer",
+        description: "The Solana Foundation is seeking a Rust Core Engineer to work on the high-performance Solana blockchain. Help us build the fastest, most scalable L1 in the world. You will be responsible for optimizing the validator client, improving peer-to-peer networking, and enhancing the runtime performance of the network.",
         company: "Solana Foundation",
         location: "Remote",
         remote: true,
         tags: ["Rust", "Blockchain", "L1"],
-        url: "https://web3.career",
-        apply_url: "https://web3.career",
-        created_at: new Object().toString(),
+        url: "https://web3.career/rust-engineer-solana-foundation",
+        apply_url: "https://web3.career/rust-engineer-solana-foundation/apply",
+        created_at: new Date().toISOString(),
         salary: "$160k - $220k",
         logo: "https://cryptologos.cc/logos/solana-sol-logo.png",
         employmentType: "TELECOMMUTE"
@@ -38,13 +40,14 @@ const MOCK_JOBS: Web3Job[] = [
         id: "mock-3",
         slug: "frontend-developer-metamask",
         title: "Senior Frontend Developer",
+        description: "MetaMask is looking for a Senior Frontend Developer to create beautiful, secure, and intuitive interfaces for the world's leading self-custodial wallet. Help us bridge the gap between Web2 and Web3. You will work with React, TypeScript, and various blockchain libraries to deliver a seamless user experience.",
         company: "MetaMask",
         location: "London / Remote",
         remote: true,
         tags: ["React", "TypeScript", "Web3.js"],
-        url: "https://web3.career",
-        apply_url: "https://web3.career",
-        created_at: new Object().toString(),
+        url: "https://web3.career/frontend-developer-metamask",
+        apply_url: "https://web3.career/frontend-developer-metamask/apply",
+        created_at: new Date().toISOString(),
         salary: "$140k - $190k",
         logo: "https://cryptologos.cc/logos/metamask-eth-logo.png",
         employmentType: "TELECOMMUTE"
@@ -91,6 +94,7 @@ export async function fetchWeb3Jobs(): Promise<FetchJobsResult> {
     }
 
     try {
+        console.log(`Fetching jobs from Web3.career (Token prefix: ${TOKEN.substring(0, 4)}...)`);
         const res = await fetch(`${WEB3_CAREER_API_URL}?token=${TOKEN}`, {
             next: { revalidate: 3600 }, // ISR: Revalidate every hour
         });
@@ -101,6 +105,11 @@ export async function fetchWeb3Jobs(): Promise<FetchJobsResult> {
         }
 
         const data = await res.json();
+        console.log("Web3.career API raw data structure:", typeof data, Array.isArray(data) ? `Array[${data.length}]` : "Object");
+
+        if (Array.isArray(data) && data.length > 0) {
+            console.log("Web3.career API preview:", JSON.stringify(data[0]).substring(0, 100));
+        }
 
         let jobsArray: Web3CareerResponseItem[] = [];
 
@@ -135,19 +144,38 @@ export async function fetchWeb3Jobs(): Promise<FetchJobsResult> {
 
             seenIds.add(id);
 
+            // Robust normalization for description and URLs
+            const description = item.description || item.job_description || item.content || "";
+            const applyUrl = item.apply_url || item.url || item.link || "#";
+            const jobUrl = item.url || item.link || item.apply_url || "#";
+
+            // Improved Salary Construction
+            let salary = item.salary;
+            if (!salary && (item.salary_min_value || item.salary_max_value)) {
+                const min = item.salary_min_value ? `${item.salary_currency || "$"}${item.salary_min_value}${item.salary_unit === "per-year" ? "k" : ""}` : "";
+                const max = item.salary_max_value ? `${item.salary_currency || "$"}${item.salary_max_value}${item.salary_unit === "per-year" ? "k" : ""}` : "";
+                if (min && max) salary = `${min} - ${max}`;
+                else salary = min || max;
+            } else if (!salary && (item.estimated_min_salary || item.estimated_max_salary)) {
+                const min = item.estimated_min_salary ? `$${item.estimated_min_salary}k` : "";
+                const max = item.estimated_max_salary ? `$${item.estimated_max_salary}k` : "";
+                if (min && max) salary = `${min} - ${max} (Est.)`;
+                else salary = `${min || max} (Est.)`;
+            }
+
             const job: Web3Job = {
                 id: id,
                 slug: "", // Will be generated after
                 title: item.title,
-                description: item.description,
+                description: description,
                 company: item.company || "Unknown Company", // Fallback
                 location: item.location || (item.is_remote ? "Remote" : "Unknown"),
                 remote: Boolean(item.is_remote), // Normalize 1/0/true/false
                 tags: Array.isArray(item.tags) ? item.tags : [],
-                url: item.url || item.apply_url || "#",
-                apply_url: item.apply_url || item.url || "#", // Fallback to url if apply_url missing
-                created_at: item.created_at,
-                salary: item.salary,
+                url: jobUrl,
+                apply_url: applyUrl,
+                created_at: item.created_at || item.date || new Date().toISOString(),
+                salary: salary,
                 logo: item.logo,
                 employmentType: item.remote ? "TELECOMMUTE" : "FULL_TIME"
             };

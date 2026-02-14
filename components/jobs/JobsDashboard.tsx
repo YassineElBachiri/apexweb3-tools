@@ -47,7 +47,7 @@ export function JobsDashboard({ initialJobs, error, initialFilters = {} }: JobsD
         setFilters((prev) => ({ ...prev, ...newFilters }));
     };
 
-    if (error === "MISSING_TOKEN" || error === "MISSING_TOKEN_DEV") {
+    if (error === "MISSING_TOKEN") {
         return (
             <div className="container py-20 max-w-4xl mx-auto px-4 text-center">
                 <div className="bg-card/40 backdrop-blur-xl border border-white/10 rounded-2xl p-8 shadow-xl">
@@ -57,7 +57,6 @@ export function JobsDashboard({ initialJobs, error, initialFilters = {} }: JobsD
                     <h2 className="text-2xl font-bold mb-4">API Configuration Required</h2>
                     <p className="text-muted-foreground mb-6 max-w-lg mx-auto">
                         The <code className="bg-primary/10 px-1.5 py-0.5 rounded text-primary">WEB3_CAREER_TOKEN</code> is missing from your environment.
-                        {error === "MISSING_TOKEN_DEV" ? " Showing mock data for now." : ""}
                     </p>
 
                     <div className="space-y-4 text-left max-w-md mx-auto">
@@ -77,18 +76,6 @@ export function JobsDashboard({ initialJobs, error, initialFilters = {} }: JobsD
                             </div>
                         </div>
                     </div>
-
-                    {error === "MISSING_TOKEN_DEV" && (
-                        <div className="mt-8 pt-6 border-t border-white/5">
-                            <p className="text-sm text-muted-foreground mb-4 italic">Continuing to dashboard with sample listings...</p>
-                            <button
-                                onClick={() => window.location.reload()}
-                                className="px-6 py-2 bg-primary text-primary-foreground rounded-full hover:bg-primary/90 transition-colors font-medium"
-                            >
-                                Continue to Mock Dashboard
-                            </button>
-                        </div>
-                    )}
                 </div>
             </div>
         );
@@ -105,6 +92,27 @@ export function JobsDashboard({ initialJobs, error, initialFilters = {} }: JobsD
             </div>
 
             <div className="container py-12 max-w-7xl mx-auto px-4 sm:px-6 relative z-10">
+                {error === "MISSING_TOKEN_DEV" && (
+                    <motion.div
+                        initial={{ opacity: 0, y: -20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        className="mb-8 p-4 bg-yellow-500/10 border border-yellow-500/20 rounded-xl flex items-center justify-between gap-4"
+                    >
+                        <div className="flex items-center gap-3">
+                            <span className="text-xl">⚠️</span>
+                            <div className="text-sm">
+                                <span className="font-bold text-yellow-500">Development Mode:</span>
+                                <span className="text-muted-foreground"> WEB3_CAREER_TOKEN is not detected in .env.local. Showing sample listings.</span>
+                            </div>
+                        </div>
+                        <button
+                            onClick={() => window.location.reload()}
+                            className="text-xs font-bold uppercase tracking-widest text-yellow-500 hover:text-yellow-400 transition-colors"
+                        >
+                            Refresh env
+                        </button>
+                    </motion.div>
+                )}
                 {/* Hero Section */}
                 <div className="mb-12 text-center space-y-4">
                     <motion.div
