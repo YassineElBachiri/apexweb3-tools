@@ -5,6 +5,7 @@ import { ResponsiveContainer, PieChart, Pie, Cell, Tooltip } from "recharts";
 import { formatCurrency } from "@/lib/scoring";
 import { useState } from "react";
 import { cn } from "@/lib/utils";
+import { Send } from "lucide-react";
 
 interface PortfolioChartProps {
     assets: PortfolioAsset[];
@@ -103,53 +104,84 @@ export function PortfolioChart({ assets }: PortfolioChartProps) {
             </div>
 
             {/* Legend / Details Area */}
-            <div className="w-full md:w-1/2 space-y-4 max-h-[300px] overflow-y-auto custom-scrollbar pr-2">
-                {data.map((entry, index) => (
-                    <div
-                        key={entry.name}
-                        className={cn(
-                            "flex items-center justify-between p-3 rounded-lg border transition-all cursor-pointer",
-                            activeIndex === index
-                                ? "bg-white/10 border-white/20 scale-[1.02]"
-                                : "bg-black/20 border-white/5 hover:bg-white/5"
-                        )}
-                        onMouseEnter={() => setActiveIndex(index)}
-                        onMouseLeave={() => setActiveIndex(null)}
-                    >
-                        <div className="flex items-center gap-3">
-                            <div
-                                className="w-3 h-10 rounded-full"
-                                style={{ backgroundColor: COLORS[index % COLORS.length] }}
-                            />
-                            <div>
-                                <div className="font-bold text-base flex items-center gap-2">
-                                    {entry.name}
-                                    <span className="text-xs font-normal text-muted-foreground hidden sm:inline-block">
-                                        ({entry.fullName})
-                                    </span>
-                                </div>
-                                <div className="text-xs text-muted-foreground mt-0.5">
-                                    {entry.allocation.toFixed(1)}% Allocation
-                                </div>
-                            </div>
-                        </div>
-                        <div className="text-right">
-                            <div className="font-mono font-medium text-lg">
-                                {formatCurrency(entry.value)}
-                            </div>
-                            {/* Visual Progress Bar */}
-                            <div className="w-24 h-1.5 bg-black/40 rounded-full mt-1.5 ml-auto overflow-hidden">
+            <div className="w-full md:w-1/2 h-[350px] flex flex-col">
+                <div className="flex-1 overflow-y-auto custom-scrollbar pr-2 space-y-4">
+                    {data.map((entry, index) => (
+                        <div
+                            key={entry.name}
+                            className={cn(
+                                "flex items-center justify-between p-3 rounded-lg border transition-all cursor-pointer",
+                                activeIndex === index
+                                    ? "bg-white/10 border-white/20 scale-[1.02]"
+                                    : "bg-black/20 border-white/5 hover:bg-white/5"
+                            )}
+                            onMouseEnter={() => setActiveIndex(index)}
+                            onMouseLeave={() => setActiveIndex(null)}
+                        >
+                            <div className="flex items-center gap-3">
                                 <div
-                                    className="h-full rounded-full transition-all duration-500"
-                                    style={{
-                                        width: `${entry.allocation}%`,
-                                        backgroundColor: COLORS[index % COLORS.length]
-                                    }}
+                                    className="w-3 h-10 rounded-full"
+                                    style={{ backgroundColor: COLORS[index % COLORS.length] }}
                                 />
+                                <div>
+                                    <div className="font-bold text-base flex items-center gap-2">
+                                        {entry.name}
+                                        <span className="text-xs font-normal text-muted-foreground hidden sm:inline-block">
+                                            ({entry.fullName})
+                                        </span>
+                                    </div>
+                                    <div className="text-xs text-muted-foreground mt-0.5">
+                                        {entry.allocation.toFixed(1)}% Allocation
+                                    </div>
+                                </div>
+                            </div>
+                            <div className="text-right">
+                                <div className="font-mono font-medium text-lg">
+                                    {formatCurrency(entry.value)}
+                                </div>
+                                {/* Visual Progress Bar */}
+                                <div className="w-24 h-1.5 bg-black/40 rounded-full mt-1.5 ml-auto overflow-hidden">
+                                    <div
+                                        className="h-full rounded-full transition-all duration-500"
+                                        style={{
+                                            width: `${entry.allocation}%`,
+                                            backgroundColor: COLORS[index % COLORS.length]
+                                        }}
+                                    />
+                                </div>
                             </div>
                         </div>
-                    </div>
-                ))}
+                    ))}
+                </div>
+
+                {/* Share Buttons */}
+                <div className="grid grid-cols-2 gap-3 pt-4 border-t border-white/5 mt-2">
+                    <button
+                        onClick={() => {
+                            const topAsset = data[0];
+                            const text = `My Crypto Portfolio on ApexWeb3! 🚀\n\nTotal Balance: ${formatCurrency(totalValue)}\nTop Asset: $${topAsset.name} (${topAsset.allocation.toFixed(1)}%)\nAssets: ${data.length}\n\nTrack your portfolio privacy-first:`;
+                            const url = "https://tools.apexweb3.com/portfolio";
+                            window.open(`https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}&url=${encodeURIComponent(url)}`, '_blank');
+                        }}
+                        className="flex items-center justify-center gap-2 bg-black/40 hover:bg-black/60 border border-white/10 rounded-xl p-3 transition-all text-sm font-medium hover:scale-[1.02]"
+                    >
+                        <svg className="w-4 h-4 fill-current" viewBox="0 0 24 24" aria-hidden="true">
+                            <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" />
+                        </svg>
+                        Share on X
+                    </button>
+                    <button
+                        onClick={() => {
+                            const topAsset = data[0];
+                            const text = `My Crypto Portfolio on ApexWeb3! 🚀\n\nTotal Balance: ${formatCurrency(totalValue)}\nTop Asset: $${topAsset.name} (${topAsset.allocation.toFixed(1)}%)\nAssets: ${data.length}\n\nTrack your portfolio privacy-first: https://tools.apexweb3.com/portfolio`;
+                            window.open(`https://t.me/share/url?url=${encodeURIComponent("https://tools.apexweb3.com/portfolio")}&text=${encodeURIComponent(text)}`, '_blank');
+                        }}
+                        className="flex items-center justify-center gap-2 bg-[#0088cc]/20 hover:bg-[#0088cc]/30 border border-[#0088cc]/30 rounded-xl p-3 transition-all text-sm font-medium text-[#0088cc] hover:scale-[1.02]"
+                    >
+                        <Send className="w-4 h-4" />
+                        Telegram
+                    </button>
+                </div>
             </div>
         </div>
     );

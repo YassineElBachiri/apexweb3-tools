@@ -13,7 +13,7 @@ import {
     ResponsiveContainer,
     CartesianGrid
 } from "recharts";
-import { TrendingUp, TrendingDown, AlertCircle, Info, Activity, BarChart3, Clock, DollarSign, Target } from "lucide-react";
+import { TrendingUp, TrendingDown, AlertCircle, Info, Activity, BarChart3, Clock, DollarSign, Target, Send } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 interface AssetDetailProps {
@@ -132,6 +132,33 @@ export default function AssetDetail({ asset, score }: AssetDetailProps) {
                                 {displayScore.verdict}
                             </div>
                         </div>
+                    </div>
+
+                    {/* Share Buttons */}
+                    <div className="grid grid-cols-2 gap-3 pt-2">
+                        <button
+                            onClick={() => {
+                                const text = `I just analyzed $${asset.token.symbol.toUpperCase()} on ApexWeb3! 🚀\n\nScore: ${displayScore.totalScore}/100\nVerdict: ${displayScore.verdict}\nPrice: $${currentPrice.toFixed(4)}\n\nAnalyze your portfolio for free:`;
+                                const url = "https://tools.apexweb3.com/portfolio"; // Replace with actual URL if known
+                                window.open(`https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}&url=${encodeURIComponent(url)}`, '_blank');
+                            }}
+                            className="flex items-center justify-center gap-2 bg-black/40 hover:bg-black/60 border border-white/10 rounded-xl p-3 transition-all text-sm font-medium hover:scale-[1.02]"
+                        >
+                            <svg className="w-4 h-4 fill-current" viewBox="0 0 24 24" aria-hidden="true">
+                                <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" />
+                            </svg>
+                            Share on X
+                        </button>
+                        <button
+                            onClick={() => {
+                                const text = `I just analyzed $${asset.token.symbol.toUpperCase()} on ApexWeb3! 🚀\n\nScore: ${displayScore.totalScore}/100\nVerdict: ${displayScore.verdict}\nPrice: $${currentPrice.toFixed(4)}\n\nAnalyze your portfolio for free: https://tools.apexweb3.com/portfolio`;
+                                window.open(`https://t.me/share/url?url=${encodeURIComponent("https://apexweb3.tools")}&text=${encodeURIComponent(text)}`, '_blank');
+                            }}
+                            className="flex items-center justify-center gap-2 bg-[#0088cc]/20 hover:bg-[#0088cc]/30 border border-[#0088cc]/30 rounded-xl p-3 transition-all text-sm font-medium text-[#0088cc] hover:scale-[1.02]"
+                        >
+                            <Send className="w-4 h-4" />
+                            Telegram
+                        </button>
                     </div>
                 </div>
 
