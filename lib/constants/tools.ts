@@ -131,5 +131,35 @@ export const TOOLS: Tool[] = [
             "DCA Simulation",
             "Profit/Loss Analysis"
         ]
+    },
+    {
+        id: 'gas-calculator',
+        title: "Gas Fee Calculator",
+        description: "Real-time multi-chain gas estimator with USD conversion and advanced settings",
+        icon: Zap,
+        href: "/gas-fees",
+        category: "Calculation",
+        color: "orange",
+        features: [
+            "Multi-Chain (L1/L2)",
+            "Live Prices & Charts",
+            "Cost Estimator"
+        ],
+        badge: "Hot"
+    },
+    {
+        id: 'contract-analyzer',
+        title: "Smart Contract Audit",
+        description: "Analyze Solidity code for security risks, gas optimizations, and cost estimation",
+        icon: Lock,
+        href: "/contract-analyzer",
+        category: "Analysis",
+        color: "red", // Using red for security/audit theme
+        features: [
+            "Static Analysis",
+            "Gas Optimization",
+            "Vulnerability Scan"
+        ],
+        badge: "Beta"
     }
 ];

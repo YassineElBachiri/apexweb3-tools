@@ -1,18 +1,17 @@
 import { fetchJobBySlug, fetchWeb3Jobs } from "@/lib/web3Career";
 import { ApplyButton } from "@/components/jobs/ApplyButton";
 import { JobCard } from "@/components/jobs/JobCard";
+import { JobHighlights } from "@/components/jobs/JobHighlights"; // Import new component
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
 import { Metadata } from "next";
 import { notFound } from "next/navigation";
-import { Building2, MapPin, CalendarDays, ExternalLink, Briefcase, CheckCircle2, Code2, FileText } from "lucide-react";
-import { formatTimeAgo } from "@/lib/utils";
+import { Building2, Briefcase, CheckCircle2, Code2, FileText } from "lucide-react";
 import Link from "next/link";
+import { generateJobSummary } from "@/lib/generateSummary"; // Import new helper
+import { generateJobPostingJSONLD } from "@/lib/generateJobStructuredData"; // Import new helper
 
-/**
- * Parse a job description (HTML or plain text) into structured sections.
- * Attempts to detect common headings like Responsibilities, Requirements, etc.
- */
+// --- Helper for parsing description sections ---
 function parseJobDescription(description: string | undefined): {
     overview: string;
     responsibilities: string[];
@@ -102,6 +101,7 @@ interface PageProps {
     params: Promise<{ slug: string }>;
 }
 
+// --- Metadata Generation ---
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
     const { slug } = await params;
     const job = await fetchJobBySlug(slug);
@@ -113,16 +113,17 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
         };
     }
 
-    // Create SEO-optimized description (first 160 chars of job description)
-    const description = job.description
-        ? job.description.substring(0, 157) + "..."
-        : `${job.title} position at ${job.company}. ${job.location}. Apply now on Web3.career.`;
+    // AI Summary / Fallback for Description
+    const summary = generateJobSummary(job.description || "");
+    const description = `${summary} Apply at ${job.company}. ${job.location}. ${job.tags.slice(0, 3).join(", ")}.`;
 
-    const title = `${job.title} at ${job.company} | Web3 Jobs`;
+    // Title: [Job Title] | [Tag/Tech] | [City, Country]
+    const mainTag = job.tags.length > 0 ? job.tags[0] : (job.remote ? "Remote" : "Web3");
+    const title = `${job.title} | ${mainTag} | ${job.location}`;
 
     return {
         title,
-        description,
+        description: description.substring(0, 160), // Hard limit for safety
         alternates: {
             canonical: `https://apexweb3.com/jobs/${slug}`,
         },
@@ -161,40 +162,14 @@ export default async function JobDetailPage({ params }: PageProps) {
         .slice(0, 3);
 
     // Generate JSON-LD structured data
-    const jsonLd = {
-        "@context": "https://schema.org",
-        "@type": "JobPosting",
-        "title": job.title,
-        "description": job.description || `${job.title} position at ${job.company}`,
-        "datePosted": job.created_at,
-        "hiringOrganization": {
-            "@type": "Organization",
-            "name": job.company,
-            ...(job.logo && { "logo": job.logo })
-        },
-        "jobLocation": {
-            "@type": "Place",
-            "address": {
-                "@type": "PostalAddress",
-                "addressLocality": job.location
-            }
-        },
-        "employmentType": job.employmentType || (job.remote ? "TELECOMMUTE" : "FULL_TIME"),
-        "directApply": true,
-        "applicantLocationRequirements": job.remote ? {
-            "@type": "Country",
-            "name": "Remote"
-        } : undefined,
-        "url": `https://apexweb3.com/jobs/${slug}`,
-        "applicationUrl": job.apply_url
-    };
+    const jsonLd = generateJobPostingJSONLD(job);
 
     return (
         <div className="min-h-screen bg-background">
             {/* JSON-LD Structured Data */}
             <script
                 type="application/ld+json"
-                dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+                dangerouslySetInnerHTML={{ __html: jsonLd }}
             />
 
             {/* Background Gradients */}
@@ -210,7 +185,7 @@ export default async function JobDetailPage({ params }: PageProps) {
                     <span>/</span>
                     <Link href="/jobs" className="hover:text-foreground transition-colors">Jobs</Link>
                     <span>/</span>
-                    <span className="text-foreground">{job.title}</span>
+                    <span className="text-foreground truncate max-w-[200px]">{job.title}</span>
                 </div>
 
                 {/* Hero Section */}
@@ -231,52 +206,10 @@ export default async function JobDetailPage({ params }: PageProps) {
 
                             {/* Job Info */}
                             <div className="flex-1 space-y-4">
-                                <div>
-                                    <h1 className="text-3xl md:text-4xl font-bold mb-2">{job.title}</h1>
-                                    <div className="flex items-center gap-2 text-lg text-muted-foreground">
-                                        <Building2 className="w-5 h-5" />
-                                        <span className="font-semibold">{job.company}</span>
-                                    </div>
-                                </div>
+                                <h1 className="text-3xl md:text-4xl font-bold mb-2">{job.title}</h1>
 
-                                {/* Meta Info */}
-                                <div className="flex flex-wrap gap-4 text-sm text-muted-foreground">
-                                    <div className="flex items-center gap-1.5 bg-background/50 px-3 py-1.5 rounded-md border border-white/5">
-                                        <MapPin className="w-4 h-4" />
-                                        <span>{job.location}</span>
-                                    </div>
-                                    {job.remote && (
-                                        <div className="flex items-center gap-1.5 text-blue-400 font-medium bg-blue-500/10 px-3 py-1.5 rounded-md border border-blue-500/20">
-                                            <span className="relative flex h-2 w-2">
-                                                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75"></span>
-                                                <span className="relative inline-flex rounded-full h-2 w-2 bg-blue-500"></span>
-                                            </span>
-                                            Remote
-                                        </div>
-                                    )}
-                                    <div className="flex items-center gap-1.5">
-                                        <CalendarDays className="w-4 h-4" />
-                                        <span>Posted {formatTimeAgo(job.created_at)}</span>
-                                    </div>
-                                    {job.salary && (
-                                        <div className="flex items-center gap-1.5 font-medium text-green-500/90 bg-green-500/10 px-3 py-1.5 rounded-md border border-green-500/10">
-                                            <span>💰 {job.salary}</span>
-                                        </div>
-                                    )}
-                                </div>
-
-                                {/* Tags */}
-                                <div className="flex flex-wrap gap-2">
-                                    {job.tags.map((tag) => (
-                                        <Badge
-                                            key={tag}
-                                            variant="secondary"
-                                            className="px-3 py-1 text-xs font-medium bg-secondary/50 hover:bg-secondary/70 border-transparent transition-colors"
-                                        >
-                                            {tag}
-                                        </Badge>
-                                    ))}
-                                </div>
+                                {/* Refactored Highlights Component */}
+                                <JobHighlights job={job} />
                             </div>
                         </div>
                     </CardContent>
@@ -418,6 +351,10 @@ export default async function JobDetailPage({ params }: PageProps) {
                                 applyUrl={job.apply_url}
                                 jobTitle={job.title}
                                 company={job.company}
+                                location={job.location}
+                                remote={job.remote}
+                                tags={job.tags}
+                                summary={generateJobSummary(job.description || "")}
                             />
                         </div>
                     </CardContent>
@@ -453,6 +390,10 @@ export default async function JobDetailPage({ params }: PageProps) {
                     applyUrl={job.apply_url}
                     jobTitle={job.title}
                     company={job.company}
+                    location={job.location}
+                    remote={job.remote}
+                    tags={job.tags}
+                    summary={generateJobSummary(job.description || "")}
                 />
             </div>
         </div>
@@ -464,6 +405,10 @@ export async function generateStaticParams() {
     const { jobs } = await fetchWeb3Jobs();
 
     // Generate static pages for first 50 jobs
+    // In a real production build with thousands of pages, we might want to increase this 
+    // or rely on on-demand ISR for the rest (by not returning them here but setting fallback to blocking/true)
+    // Next.js default behavior for generic generateStaticParams in app router with dynamic routes
+    // is to build what is returned and for others, it depends on `dynamicParams` (default true)
     return jobs.slice(0, 50).map((job) => ({
         slug: job.slug,
     }));
@@ -471,3 +416,4 @@ export async function generateStaticParams() {
 
 // Revalidate every hour
 export const revalidate = 3600;
+
