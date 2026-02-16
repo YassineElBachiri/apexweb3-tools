@@ -28,7 +28,9 @@ export interface PortfolioAsset {
     id: string;
     token: TokenData;
     entryPrice: number;
-    investedAmount?: number;
+    price: number; // Current price reference
+    quantity: number; // Number of tokens
+    investedAmount?: number; // entryPrice * quantity
     entryDate?: string;
 }
 

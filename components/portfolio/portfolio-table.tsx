@@ -125,7 +125,7 @@ export function PortfolioTable({
                                             </td>
                                         )}
 
-                                        <td className="py-4 px-4 text-right">${formatCurrency(currentPrice)}</td>
+                                        <td className="py-4 px-4 text-right">{formatCurrency(currentPrice)}</td>
 
                                         {isPersonal && (
                                             <td className={`py-4 px-4 text-right font-semibold ${roi >= 0 ? "text-green-400" : "text-red-400"}`}>
@@ -135,7 +135,7 @@ export function PortfolioTable({
 
                                         {isPublic && (
                                             <td className="py-4 px-4 text-right font-semibold">
-                                                ${formatCurrency(valueUsd)}
+                                                {formatCurrency(valueUsd)}
                                             </td>
                                         )}
 
@@ -213,7 +213,7 @@ export function PortfolioTable({
                                 </div>
                                 <div className="grid grid-cols-2 gap-2 text-sm">
                                     <div className="text-muted-foreground">Price</div>
-                                    <div className="text-right">${formatCurrency(currentPrice)}</div>
+                                    <div className="text-right">{formatCurrency(currentPrice)}</div>
 
                                     {isPersonal && (
                                         <>
@@ -231,7 +231,7 @@ export function PortfolioTable({
                                             <div className="text-muted-foreground">Balance</div>
                                             <div className="text-right">{item.balance}</div>
                                             <div className="text-muted-foreground">Value</div>
-                                            <div className="text-right font-bold">${formatCurrency(valueUsd)}</div>
+                                            <div className="text-right font-bold">{formatCurrency(valueUsd)}</div>
                                         </>
                                     )}
                                 </div>

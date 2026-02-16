@@ -13,24 +13,26 @@ function calculateMarketCapScore(marketCap: number): number {
     return 2;                                   // < $10M (Nano Cap)
 }
 
+
 /**
  * Calculate Tokenomics Health Score (max 25)
  * Based on inflation risk and supply distribution
  */
 function calculateTokenomicsScore(inflationRisk: number, fdvToMcap: number): number {
-    let score = 25;
+    let score = 20; // Lowered base from 25 to 20
 
     // Penalize for high inflation risk
-    if (inflationRisk > 200) score -= 15;
-    else if (inflationRisk > 100) score -= 10;
-    else if (inflationRisk > 50) score -= 5;
+    if (inflationRisk >= 200) score -= 15;
+    else if (inflationRisk >= 100) score -= 10;
+    else if (inflationRisk >= 50) score -= 5;
+    else if (inflationRisk < 10 && fdvToMcap < 1.2) score += 5; // Bonus for great tokenomics
 
     // Penalize for high FDV/Mcap ratio (dilution overhang)
-    if (fdvToMcap > 10) score -= 10;
-    else if (fdvToMcap > 5) score -= 5;
-    else if (fdvToMcap > 2) score -= 2;
+    if (fdvToMcap >= 10) score -= 10;
+    else if (fdvToMcap >= 5) score -= 5;
+    else if (fdvToMcap >= 2) score -= 2;
 
-    return Math.max(0, score);
+    return Math.max(0, Math.min(25, score));
 }
 
 /**
@@ -40,10 +42,11 @@ function calculateTokenomicsScore(inflationRisk: number, fdvToMcap: number): num
  */
 function calculateVolatilityScore(marketCap: number): number {
     // Assumption: Larger caps are less volatile
-    if (marketCap > 10_000_000_000) return 20;
-    if (marketCap > 1_000_000_000) return 16;
-    if (marketCap > 100_000_000) return 12;
-    return 8;
+    if (marketCap > 50_000_000_000) return 20; // Increased threshold
+    if (marketCap > 10_000_000_000) return 16;
+    if (marketCap > 1_000_000_000) return 10; // Lowered for mid caps
+    if (marketCap > 100_000_000) return 6;
+    return 2;
 }
 
 /**
@@ -54,11 +57,11 @@ function calculatePerformanceScore(priceChange24h: number): number {
     let score = 10; // Start middle
 
     // Reward positive short term momentum but penalize extreme pumps (FOMO risk)
-    if (priceChange24h > 50) score = 5;      // Too hot
-    else if (priceChange24h > 20) score = 15; // Strong
-    else if (priceChange24h > 0) score = 18;  // Steady
-    else if (priceChange24h > -10) score = 12; // Correction
-    else score = 6;                           // Dumping
+    if (priceChange24h > 50) score = 4;       // Too hot/Pump risk
+    else if (priceChange24h > 20) score = 14; // Strong uptrend
+    else if (priceChange24h > 0) score = 12;  // Steady growth (lowered from 18)
+    else if (priceChange24h > -10) score = 10; // Healthy correction
+    else score = 4;                           // Dumping
 
     return Math.min(20, Math.max(0, score));
 }
@@ -68,8 +71,8 @@ function calculatePerformanceScore(priceChange24h: number): number {
  * Simple momentum indicator
  */
 function calculateTrendScore(priceChange24h: number): number {
-    if (priceChange24h > 10) return 10;
-    if (priceChange24h > 0) return 7;
+    if (priceChange24h > 15) return 9;
+    if (priceChange24h > 0) return 6;
     if (priceChange24h > -5) return 4;
     return 2;
 }
@@ -78,8 +81,8 @@ function calculateTrendScore(priceChange24h: number): number {
  * Determine Investment Verdict based on Total Score
  */
 function getVerdict(score: number): InvestmentScore['verdict'] {
-    if (score >= 75) return 'Strong Hold';
-    if (score >= 55) return 'Speculative';
+    if (score >= 80) return 'Strong Hold'; // Raised from 75
+    if (score >= 60) return 'Speculative'; // Raised from 55
     if (score >= 40) return 'High Risk';
     return 'Overvalued';
 }
