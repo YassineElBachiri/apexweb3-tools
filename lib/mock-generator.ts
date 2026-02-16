@@ -1,4 +1,38 @@
-import { SecurityScanResult, TokenomicsAnalysis, TokenData, SecurityCheck, InvestmentScore } from "@/types";
+import { SecurityScanResult, TokenomicsAnalysis, TokenData, SecurityCheck, InvestmentScore, WhaleTransaction } from "@/types";
+
+export function generateMockWhaleTransactions(count: number = 10): WhaleTransaction[] {
+    const rng = new SeededRandom(Date.now().toString());
+    const txs: WhaleTransaction[] = [];
+
+    const types: ("buy" | "sell" | "transfer")[] = ["buy", "sell", "transfer"];
+    const tokens = ["ETH", "USDT", "USDC", "WBTC", "PEPE", "SHIB"];
+
+    for (let i = 0; i < count; i++) {
+        const type = rng.pick(types);
+        const token = rng.pick(tokens);
+        const valueUsd = rng.nextInt(50000, 5000000);
+
+        let amount = 0;
+        if (token === "ETH") amount = valueUsd / 2500;
+        else if (token === "WBTC") amount = valueUsd / 65000;
+        else if (token.includes("USD")) amount = valueUsd;
+        else amount = valueUsd * 1000; // Meme tokens
+
+        txs.push({
+            hash: "0x" + Array(64).fill(0).map(() => rng.pick("0123456789abcdef".split(""))).join(""),
+            from: "0x" + Array(40).fill(0).map(() => rng.pick("0123456789abcdef".split(""))).join(""),
+            to: "0x" + Array(40).fill(0).map(() => rng.pick("0123456789abcdef".split(""))).join(""),
+            value: amount, // ETH value or token amount
+            valueUsd: valueUsd,
+            token: token,
+            amount: amount,
+            timestamp: Date.now() - rng.nextInt(0, 3600000), // Last hour
+            type: type
+        });
+    }
+
+    return txs.sort((a, b) => b.timestamp - a.timestamp);
+}
 
 // Simple seeded random number generator
 class SeededRandom {
