@@ -2,12 +2,15 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Shield, Menu, X, ChevronDown, Search, Moon } from "lucide-react";
+import { Shield, Menu, X, ChevronDown } from "lucide-react";
 import { useState } from "react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { MegaMenu } from "@/components/home/navigation/MegaMenu";
 import { NAV_LINKS } from "@/lib/constants/navigation";
+import { TOOLS, PILLAR_META, ToolPillar } from "@/lib/constants/tools";
+
+const PILLAR_ORDER: ToolPillar[] = ['Intelligence', 'Risk', 'Utilities', 'Careers'];
 
 export function Navigation() {
     const pathname = usePathname();
@@ -33,7 +36,7 @@ export function Navigation() {
                     {/* Desktop Navigation */}
                     <div className="hidden lg:flex items-center gap-8">
 
-                        {/* Tools - Mega Menu Trigger */}
+                        {/* Tools — Mega Menu Trigger */}
                         <div
                             className="relative group h-20 flex items-center"
                             onMouseEnter={() => setMegaMenuOpen(true)}
@@ -57,20 +60,13 @@ export function Navigation() {
                                 {link.label}
                             </Link>
                         ))}
-
                     </div>
 
                     {/* Right Actions */}
                     <div className="hidden lg:flex items-center gap-4">
-                        <Button variant="ghost" size="icon" className="text-gray-400 hover:text-white hover:bg-white/5">
-                            <Search className="w-5 h-5" />
-                        </Button>
-                        <Button variant="ghost" size="icon" className="text-gray-400 hover:text-white hover:bg-white/5">
-                            <Moon className="w-5 h-5" />
-                        </Button>
-                        <Link href="/dashboard">
-                            <Button className="bg-white text-brand-dark hover:bg-gray-200 font-bold rounded-full px-6">
-                                Launch App
+                        <Link href="/intelligence">
+                            <Button className="bg-brand-purple hover:bg-brand-purple/90 text-white font-bold rounded-full px-6">
+                                Start Here →
                             </Button>
                         </Link>
                     </div>
@@ -89,9 +85,9 @@ export function Navigation() {
 
                 {/* Mobile Navigation */}
                 {mobileMenuOpen && (
-                    <div className="lg:hidden py-4 border-t border-white/5 bg-brand-dark animate-in slide-in-from-top-4">
-                        <div className="flex flex-col gap-2">
-                            <div className="px-4 py-2 font-bold text-gray-500 uppercase text-xs tracking-wider">Menu</div>
+                    <div className="lg:hidden py-4 border-t border-white/5 bg-brand-dark animate-in slide-in-from-top-4 max-h-[80vh] overflow-y-auto">
+                        <div className="flex flex-col gap-1">
+
                             <Link
                                 href="/"
                                 onClick={() => setMobileMenuOpen(false)}
@@ -99,6 +95,7 @@ export function Navigation() {
                             >
                                 Home
                             </Link>
+
                             {NAV_LINKS.map(link => (
                                 <Link
                                     key={link.href}
@@ -109,16 +106,40 @@ export function Navigation() {
                                     {link.label}
                                 </Link>
                             ))}
+
                             <div className="border-t border-white/5 my-2" />
-                            <div className="px-4 py-2 font-bold text-gray-500 uppercase text-xs tracking-wider">Tools</div>
-                            {/* Simplified Tools List for Mobile */}
-                            <Link href="/portfolio" className="px-4 py-3 text-gray-400 hover:text-white hover:bg-white/5">Portfolio Tracker</Link>
-                            <Link href="/analyzer" className="px-4 py-3 text-gray-400 hover:text-white hover:bg-white/5">Token Analyzer</Link>
-                            <Link href="/converter" className="px-4 py-3 text-gray-400 hover:text-white hover:bg-white/5">Crypto Converter</Link>
-                            <div className="p-4 mt-4">
-                                <Link href="/dashboard" onClick={() => setMobileMenuOpen(false)}>
+
+                            {/* Pillar sections in mobile */}
+                            {PILLAR_ORDER.map((pillarKey) => {
+                                const meta = PILLAR_META[pillarKey];
+                                const pillarTools = TOOLS.filter(t => t.pillar === pillarKey);
+                                return (
+                                    <div key={pillarKey}>
+                                        <Link
+                                            href={meta.href}
+                                            onClick={() => setMobileMenuOpen(false)}
+                                            className={`px-4 py-2 font-bold uppercase text-xs tracking-wider ${meta.color} hover:opacity-80 block`}
+                                        >
+                                            {meta.label} →
+                                        </Link>
+                                        {pillarTools.map(tool => (
+                                            <Link
+                                                key={tool.id}
+                                                href={tool.href}
+                                                onClick={() => setMobileMenuOpen(false)}
+                                                className="px-6 py-2.5 text-gray-400 hover:text-white hover:bg-white/5 transition-colors block text-sm"
+                                            >
+                                                {tool.title}
+                                            </Link>
+                                        ))}
+                                    </div>
+                                );
+                            })}
+
+                            <div className="p-4 mt-2">
+                                <Link href="/intelligence" onClick={() => setMobileMenuOpen(false)}>
                                     <Button className="w-full bg-brand-purple text-white font-bold py-6">
-                                        Launch App
+                                        Start with Intelligence →
                                     </Button>
                                 </Link>
                             </div>

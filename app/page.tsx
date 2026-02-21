@@ -1,5 +1,5 @@
 import { Hero } from "@/components/home/Hero";
-import { ToolsGrid } from "@/components/home/ToolsGrid";
+import { PillarGrid } from "@/components/home/PillarGrid";
 import { HowItWorks } from "@/components/home/HowItWorks";
 import { FeaturesShowcase } from "@/components/home/FeaturesShowcase";
 import { StatsSection } from "@/components/home/StatsSection";
@@ -9,7 +9,7 @@ export default function Home() {
     return (
         <div className="min-h-screen bg-brand-dark text-white selection:bg-brand-purple/30">
             <Hero />
-            <ToolsGrid />
+            <PillarGrid />
             <HowItWorks />
             <FeaturesShowcase />
             <StatsSection />

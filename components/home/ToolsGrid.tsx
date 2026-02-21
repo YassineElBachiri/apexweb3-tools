@@ -8,11 +8,11 @@ import Link from 'next/link';
 
 export function ToolsGrid() {
     const [activeCategory, setActiveCategory] = useState<string>('All');
-    const categories = ['All', 'Analysis', 'Tracking', 'Conversion', 'Calculation'];
+    const categories = ['All', 'Intelligence', 'Risk', 'Utilities', 'Careers'];
 
     const filteredTools = activeCategory === 'All'
         ? TOOLS
-        : TOOLS.filter(tool => tool.category === activeCategory);
+        : TOOLS.filter(tool => tool.pillar === activeCategory);
 
     return (
         <section id="tools" className="py-24 bg-brand-dark relative">
