@@ -10,7 +10,7 @@ export function RelatedTools() {
     // Filter to show 3 relevant tools, excluding gas-fees
     const related = TOOLS.filter(t =>
         t.id !== 'gas-fees' &&
-        (t.category === 'Calculation' || t.id === 'contract-analyzer' || t.id === 'converter')
+        (t.pillar === 'Utilities' || t.id === 'contract-analyzer' || t.id === 'converter')
     ).slice(0, 3);
 
     return (
