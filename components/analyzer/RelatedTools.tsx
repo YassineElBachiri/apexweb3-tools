@@ -10,7 +10,7 @@ export function RelatedTools() {
     // Filter to show 3 relevant tools (Analysis/Calculation/Security)
     const related = TOOLS.filter(t =>
         t.id !== 'contract-analyzer' &&
-        (t.category === 'Analysis' || t.id === 'gas-calculator' || t.id === 'converter')
+        (t.pillar === 'Intelligence' || t.id === 'gas-calculator' || t.id === 'converter')
     ).slice(0, 3);
 
     return (
