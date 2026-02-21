@@ -21,9 +21,13 @@ export function Footer() {
                             Web3 intelligence, risk tools, and career clarity for active crypto participants.
                         </p>
                         <div className="flex gap-4">
-                            {[Twitter, Github, Send].map((Icon, i) => (
-                                <a key={i} href="#" className="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center text-gray-400 hover:bg-white/10 hover:text-white transition-colors">
-                                    <Icon className="w-5 h-5" />
+                            {([
+                                { Icon: Twitter, label: 'Follow us on Twitter', href: '#' },
+                                { Icon: Github, label: 'View our GitHub', href: '#' },
+                                { Icon: Send, label: 'Join our Telegram', href: '#' },
+                            ] as const).map(({ Icon, label, href }) => (
+                                <a key={label} href={href} aria-label={label} className="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center text-gray-400 hover:bg-white/10 hover:text-white transition-colors">
+                                    <Icon className="w-5 h-5" aria-hidden="true" />
                                 </a>
                             ))}
                         </div>

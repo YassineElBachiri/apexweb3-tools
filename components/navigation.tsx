@@ -42,7 +42,11 @@ export function Navigation() {
                             onMouseEnter={() => setMegaMenuOpen(true)}
                             onMouseLeave={() => setMegaMenuOpen(false)}
                         >
-                            <button className={`flex items-center gap-1 text-sm font-medium transition-colors ${megaMenuOpen ? 'text-white' : 'text-gray-400 hover:text-white'}`}>
+                            <button
+                                aria-label="Browse all tools"
+                                aria-expanded={megaMenuOpen}
+                                className={`flex items-center gap-1 text-sm font-medium transition-colors ${megaMenuOpen ? 'text-white' : 'text-gray-400 hover:text-white'}`}
+                            >
                                 Tools <ChevronDown className={`w-4 h-4 transition-transform duration-200 ${megaMenuOpen ? 'rotate-180' : ''}`} />
                             </button>
                             <MegaMenu isOpen={megaMenuOpen} onClose={() => setMegaMenuOpen(false)} />
@@ -75,10 +79,11 @@ export function Navigation() {
                     <Button
                         variant="ghost"
                         size="icon"
+                        aria-label={mobileMenuOpen ? 'Close menu' : 'Open menu'}
                         className="lg:hidden text-white"
                         onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
                     >
-                        {mobileMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
+                        {mobileMenuOpen ? <X className="h-6 w-6" aria-hidden="true" /> : <Menu className="h-6 w-6" aria-hidden="true" />}
                     </Button>
 
                 </div>

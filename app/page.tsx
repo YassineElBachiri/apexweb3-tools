@@ -1,9 +1,12 @@
+import dynamic from "next/dynamic";
 import { Hero } from "@/components/home/Hero";
 import { PillarGrid } from "@/components/home/PillarGrid";
-import { HowItWorks } from "@/components/home/HowItWorks";
-import { FeaturesShowcase } from "@/components/home/FeaturesShowcase";
-import { StatsSection } from "@/components/home/StatsSection";
-import { CTASection } from "@/components/home/CTASection";
+
+// Below-the-fold sections loaded lazily to reduce initial JS bundle & TBT
+const HowItWorks = dynamic(() => import("@/components/home/HowItWorks").then(m => m.HowItWorks), { ssr: true });
+const FeaturesShowcase = dynamic(() => import("@/components/home/FeaturesShowcase").then(m => m.FeaturesShowcase), { ssr: true });
+const StatsSection = dynamic(() => import("@/components/home/StatsSection").then(m => m.StatsSection), { ssr: true });
+const CTASection = dynamic(() => import("@/components/home/CTASection").then(m => m.CTASection), { ssr: true });
 
 export default function Home() {
     return (
