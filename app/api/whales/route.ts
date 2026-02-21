@@ -52,7 +52,7 @@ export async function GET(request: Request) {
         } catch (apiError) {
             console.warn("Whale API failed, using fallback data:", apiError);
             // Fallback to mock data
-            whaleTransactions = generateMockWhaleTransactions(15).filter(t => t.valueUsd >= minValue);
+            whaleTransactions = generateMockWhaleTransactions(15).filter(t => (t.valueUsd ?? 0) >= minValue);
         }
 
         const data: WhaleWatchData = {
