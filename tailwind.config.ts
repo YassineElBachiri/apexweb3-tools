@@ -50,6 +50,7 @@ const config: Config = {
                     blue: '#00D4FF',
                     pink: '#FF006E',
                     dark: '#0a0118',
+                    primary: '#00D4FF',
                 },
                 muted: {
                     DEFAULT: "hsl(var(--muted))",
@@ -82,12 +83,17 @@ const config: Config = {
                     from: { transform: "translateY(10px)", opacity: "0" },
                     to: { transform: "translateY(0)", opacity: "1" },
                 },
+                ticker: {
+                    "0%": { transform: "translateX(0)" },
+                    "100%": { transform: "translateX(-50%)" },
+                },
             },
             animation: {
                 "accordion-down": "accordion-down 0.2s ease-out",
                 "accordion-up": "accordion-up 0.2s ease-out",
                 glow: "glow 2s ease-in-out infinite",
                 slideIn: "slideIn 0.3s ease-out",
+                ticker: "ticker 40s linear infinite",
             },
         },
     },
