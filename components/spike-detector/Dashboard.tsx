@@ -4,7 +4,8 @@ import useSWR from "swr";
 import { useMemo } from "react";
 import { SpikeCard } from "@/components/SpikeCard";
 import { AlphaStream } from "@/components/spike-detector/AlphaStream";
-import { ScoredPair } from "@/app/api/spike-detector/route";
+import { ScoredPair } from "@/lib/actions/spike-detector";
+import { getSpikingTokens } from "@/lib/actions/spike-detector";
 import { Activity, RefreshCw, Flame } from "lucide-react";
 
 // ── SWR fetcher ───────────────────────────────────────────────────────────────
@@ -124,8 +125,8 @@ function StatsBar({ pairs, lastUpdated }: { pairs: ScoredPair[]; lastUpdated: nu
 // ── Main Dashboard ─────────────────────────────────────────────────────────────
 export function SpikeDetectorDashboard() {
     const { data, error, isLoading } = useSWR<{ pairs: ScoredPair[]; timestamp: number }>(
-        "/api/spike-detector",
-        fetcher,
+        "spiking-tokens",
+        getSpikingTokens,
         { refreshInterval: 5000, revalidateOnFocus: true }
     );
 

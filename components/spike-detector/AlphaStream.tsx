@@ -1,7 +1,7 @@
 "use client";
 
 import { useMemo } from "react";
-import { ScoredPair } from "@/app/api/spike-detector/route";
+import { ScoredPair } from "@/lib/actions/spike-detector";
 import { Zap, Clock } from "lucide-react";
 
 interface AlphaStreamProps {
@@ -68,12 +68,23 @@ function AlphaStreamEntry({ pair }: { pair: ScoredPair }) {
     const change5m = pair.priceChange?.m5 || 0;
     const isPositive = change5m >= 0;
 
+    const handleSnapTo = (e: React.MouseEvent) => {
+        e.preventDefault();
+        const el = document.getElementById(`token-${pair.pairAddress}`);
+        if (el) {
+            el.scrollIntoView({ behavior: "smooth", block: "center" });
+            // Subtle highlight effect
+            el.classList.add("ring-2", "ring-emerald-500", "ring-offset-2", "ring-offset-slate-900");
+            setTimeout(() => {
+                el.classList.remove("ring-2", "ring-emerald-500", "ring-offset-2", "ring-offset-slate-900");
+            }, 2000);
+        }
+    };
+
     return (
-        <a
-            href={pair.url}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="group flex items-center gap-2.5 rounded-lg border border-slate-800 bg-slate-800/40 px-2.5 py-2 transition-all duration-200 hover:border-emerald-500/30 hover:bg-emerald-500/5"
+        <button
+            onClick={handleSnapTo}
+            className="group flex w-full items-center gap-2.5 rounded-lg border border-slate-800 bg-slate-800/40 px-2.5 py-2 text-left transition-all duration-200 hover:border-emerald-500/30 hover:bg-emerald-500/5"
         >
             {/* Pulse dot */}
             <span className="relative flex h-2 w-2 shrink-0">
@@ -89,6 +100,8 @@ function AlphaStreamEntry({ pair }: { pair: ScoredPair }) {
                     <span className="text-[9px] uppercase text-slate-600">
                         {pair.chainId.slice(0, 3)}
                     </span>
+                    {pair.isAI && <span className="text-[9px]">🤖</span>}
+                    {pair.isPump && <span className="text-[9px]">💊</span>}
                 </div>
                 <span className="text-[10px] text-slate-500">
                     {timeAgo(pair.pairCreatedAt)}
@@ -102,6 +115,6 @@ function AlphaStreamEntry({ pair }: { pair: ScoredPair }) {
                 {isPositive ? "+" : ""}
                 {change5m.toFixed(1)}%
             </span>
-        </a>
+        </button>
     );
 }

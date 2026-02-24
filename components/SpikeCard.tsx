@@ -2,7 +2,7 @@
 
 import { useState, useCallback } from "react";
 import { Copy, Check, ExternalLink, Zap, Shield, AlertTriangle, XCircle, Search } from "lucide-react";
-import { ScoredPair } from "@/app/api/spike-detector/route";
+import { ScoredPair } from "@/lib/actions/spike-detector";
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
 function formatNumber(n: number, compact = false): string {
@@ -102,12 +102,16 @@ export function SpikeCard({ pair }: SpikeCardProps) {
 
     return (
         <div
+            id={`token-${pair.pairAddress}`}
             className={[
                 "group relative flex flex-col gap-3 rounded-xl border bg-slate-900/60 p-4 backdrop-blur-sm",
                 "transition-all duration-300 hover:-translate-y-0.5 hover:bg-slate-900/80",
                 pair.isSpiking
                     ? "border-emerald-500/40 shadow-[0_0_18px_rgba(16,185,129,0.15)] hover:shadow-[0_0_28px_rgba(16,185,129,0.25)]"
-                    : "border-slate-700/60 hover:border-slate-600/60",
+                    : pair.isHeatingUp
+                        ? "border-amber-500/40 shadow-[0_0_12px_rgba(245,158,11,0.1)]"
+                        : "border-slate-700/60 hover:border-slate-600/60",
+                pair.isDevSold ? "ring-2 ring-red-500 ring-offset-2 ring-offset-slate-900" : ""
             ].join(" ")}
         >
             {/* Spike indicator badge */}
@@ -115,6 +119,19 @@ export function SpikeCard({ pair }: SpikeCardProps) {
                 <div className="absolute -top-2.5 left-3 flex items-center gap-1 rounded-full border border-emerald-500/40 bg-emerald-500/20 px-2 py-0.5 text-[10px] font-bold text-emerald-300">
                     <Zap className="h-2.5 w-2.5 fill-current" />
                     SPIKING
+                </div>
+            )}
+
+            {pair.isHeatingUp && (
+                <div className="absolute -top-2.5 left-3 flex items-center gap-1 rounded-full border border-amber-500/40 bg-amber-500/20 px-2 py-0.5 text-[10px] font-bold text-amber-300">
+                    <span className="h-2.5 w-2.5">🟡</span>
+                    HEATING UP
+                </div>
+            )}
+
+            {pair.isDevSold && (
+                <div className="absolute -top-2.5 right-3 flex items-center gap-1 rounded-full border border-red-500 bg-red-600 px-2 py-0.5 text-[10px] font-bold text-white animate-pulse">
+                    🚨 RUG WARNING
                 </div>
             )}
 
@@ -130,6 +147,16 @@ export function SpikeCard({ pair }: SpikeCardProps) {
                         >
                             {pair.chainId.toUpperCase().slice(0, 3)}
                         </span>
+                        {pair.isAI && (
+                            <span className="inline-flex items-center rounded-full border border-brand-primary/30 bg-brand-primary/10 px-1.5 py-0.5 text-[10px] font-bold text-brand-primary">
+                                🤖 AI AGENT
+                            </span>
+                        )}
+                        {pair.isPump && (
+                            <span className="inline-flex items-center rounded-full border border-pink-500/30 bg-pink-500/10 px-1.5 py-0.5 text-[10px] font-bold text-pink-400">
+                                💊 PUMP
+                            </span>
+                        )}
                     </div>
                     <p className="text-xs text-slate-500 truncate">{pair.baseToken.name}</p>
                 </div>
@@ -244,6 +271,18 @@ export function SpikeCard({ pair }: SpikeCardProps) {
                 >
                     <ExternalLink className="h-3.5 w-3.5" />
                 </a>
+
+                {pair.chainId === "solana" && (
+                    <a
+                        href={`https://neo.bullx.io/terminal?chain=solana&address=${pair.baseToken.address}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="flex items-center justify-center gap-1.5 rounded-lg border border-emerald-500/50 bg-emerald-500/10 px-3 py-2 text-xs font-bold text-emerald-400 transition-all duration-200 hover:bg-emerald-500/20"
+                    >
+                        <Zap className="h-3 w-3 fill-current" />
+                        BullX
+                    </a>
+                )}
             </div>
         </div>
     );
