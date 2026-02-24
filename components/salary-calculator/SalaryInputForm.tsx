@@ -9,9 +9,10 @@ import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"; // We'll mock this if needed or use basic select
 import { Slider } from "@/components/ui/slider"; // Check if exists
 import { Button } from "@/components/ui/button";
+import { Switch } from "@/components/ui/switch";
 import { AdvancedToggle } from "./AdvancedToggle";
 import { TooltipHelper } from "./TooltipHelper";
-import { Trash2, Plus } from "lucide-react";
+import { Trash2, Plus, Globe, Wallet, TrendingUp } from "lucide-react";
 
 // Mock Select if needed, or use standard HTML select for robustness
 const StandardSelect = ({ value, onChange, options, className }: any) => (
@@ -50,19 +51,24 @@ export function SalaryInputForm({ value, onChange, onCalculate, loading }: Salar
         onChange({ ...value, allocations: newAllocations });
     };
 
-    const addAllocation = () => {
-        const currentTotal = value.allocations.reduce((sum, a) => sum + a.percentage, 0);
-        const remaining = Math.max(0, 100 - currentTotal);
+    const handleAddAsset = () => {
+        const currentTotal = value.allocations.reduce((sum, a) => sum + a.percent, 0);
+        if (currentTotal >= 100) {
+            window.alert("Allocation already at 100%");
+            return;
+        }
+
         onChange({
             ...value,
             allocations: [
                 ...value.allocations,
-                { cryptoId: 'bitcoin', percentage: remaining }
+                { asset: 'usd-coin', percent: 0 }
             ]
         });
     };
 
     const removeAllocation = (index: number) => {
+        if (value.allocations.length <= 1) return;
         onChange({
             ...value,
             allocations: value.allocations.filter((_, i) => i !== index)
@@ -126,6 +132,73 @@ export function SalaryInputForm({ value, onChange, onCalculate, loading }: Salar
                         />
                     </div>
                 </div>
+
+                {/* Network Selection */}
+                <div className="space-y-2 col-span-2 md:col-span-1">
+                    <Label className="flex items-center gap-2">
+                        <Globe className="w-3.5 h-3.5" />
+                        Network (Gas Fee Estimation)
+                    </Label>
+                    <StandardSelect
+                        value={value.network || 'ethereum'}
+                        onChange={(val: any) => onChange({ ...value, network: val })}
+                        options={[
+                            { value: 'ethereum', label: 'Ethereum (High Fee: ~$15)' },
+                            { value: 'base', label: 'Base (Low Fee: ~$0.01)' },
+                            { value: 'solana', label: 'Solana (Low Fee: ~$0.01)' },
+                            { value: 'arbitrum', label: 'Arbitrum (Low Fee: ~$0.01)' },
+                        ]}
+                        className="w-full"
+                    />
+                </div>
+
+                {/* Monthly Expenses */}
+                <div className="space-y-2 col-span-2 md:col-span-1">
+                    <Label className="flex items-center gap-2">
+                        <Wallet className="w-3.5 h-3.5" />
+                        Monthly Fixed Expenses (USD)
+                        <TooltipHelper content="Used for the 'Volatility Shield' calculation to ensure your stablecoins cover your rent/bills." />
+                    </Label>
+                    <div className="relative">
+                        <span className="absolute left-3 top-2.5 text-gray-400 font-bold">$</span>
+                        <Input
+                            type="number"
+                            placeholder="2000"
+                            className="pl-8 bg-brand-dark/50 border-white/10"
+                            value={value.monthlyExpensesUSD || ''}
+                            onChange={(e) => onChange({ ...value, monthlyExpensesUSD: parseFloat(e.target.value) || 0 })}
+                        />
+                    </div>
+                </div>
+            </div>
+
+            {/* Staking & Tax (Advanced) */}
+            <div className="flex flex-col sm:flex-row gap-6 p-4 rounded-xl bg-white/5 border border-white/5">
+                <div className="flex items-center justify-between flex-1 gap-4">
+                    <div className="space-y-0.5">
+                        <Label className="flex items-center gap-2">
+                            <TrendingUp className="w-4 h-4 text-emerald-400" />
+                            Enable Staking
+                        </Label>
+                        <p className="text-xs text-gray-400">Apply 5%-7% yield to crypto holdings</p>
+                    </div>
+                    <Switch
+                        checked={value.isStakingActive || false}
+                        onCheckedChange={(checked) => onChange({ ...value, isStakingActive: checked })}
+                    />
+                </div>
+
+                {isAdvanced && (
+                    <div className="flex-1 space-y-2">
+                        <Label className="text-xs">Est. Tax Bracket (%)</Label>
+                        <Input
+                            type="number"
+                            className="h-8 bg-brand-dark/50 border-white/10 text-xs"
+                            value={value.taxBracket || 25}
+                            onChange={(e) => onChange({ ...value, taxBracket: parseFloat(e.target.value) || 0 })}
+                        />
+                    </div>
+                )}
             </div>
 
             {/* Crypto Allocations */}
@@ -140,8 +213,8 @@ export function SalaryInputForm({ value, onChange, onCalculate, loading }: Salar
                         <div className="flex-1 space-y-1">
                             {index === 0 && <span className="text-xs text-muted-foreground w-full block mb-1">Asset</span>}
                             <CryptoSelector
-                                value={allocation.cryptoId}
-                                onChange={(id) => handleAllocationChange(index, 'cryptoId', id)}
+                                value={allocation.asset}
+                                onChange={(id) => handleAllocationChange(index, 'asset', id)}
                             />
                         </div>
 
@@ -153,16 +226,15 @@ export function SalaryInputForm({ value, onChange, onCalculate, loading }: Salar
                                     min="0"
                                     max="100"
                                     className="pr-6 bg-brand-dark/50 border-white/10"
-                                    value={allocation.percentage}
-                                    onChange={(e) => handleAllocationChange(index, 'percentage', parseFloat(e.target.value))}
+                                    value={allocation.percent}
+                                    onChange={(e) => handleAllocationChange(index, 'percent', parseFloat(e.target.value) || 0)}
                                 />
                                 <span className="absolute right-2 top-2.5 text-xs text-gray-400">%</span>
                             </div>
                         </div>
 
-                        {value.allocations.length > 1 && (
+                        {index !== 0 && (
                             <div className="space-y-1 pt-1">
-                                {index === 0 && <span className="block h-5 mb-1"></span>}
                                 <Button
                                     variant="ghost"
                                     size="icon"
@@ -180,9 +252,8 @@ export function SalaryInputForm({ value, onChange, onCalculate, loading }: Salar
                     <Button
                         variant="outline"
                         size="sm"
-                        onClick={addAllocation}
+                        onClick={handleAddAsset}
                         className="w-full border-dashed border-white/20 hover:border-brand-purple/50 hover:bg-brand-purple/5 text-gray-400 hover:text-white"
-                        disabled={value.allocations.reduce((s, a) => s + a.percentage, 0) >= 100}
                     >
                         <Plus className="w-4 h-4 mr-2" />
                         Add Another Asset
@@ -191,8 +262,8 @@ export function SalaryInputForm({ value, onChange, onCalculate, loading }: Salar
 
                 <div className="flex justify-between text-xs text-gray-500 px-1">
                     <span>Total Allocation:</span>
-                    <span className={value.allocations.reduce((s, a) => s + a.percentage, 0) !== 100 ? "text-yellow-500" : "text-green-500"}>
-                        {value.allocations.reduce((s, a) => s + a.percentage, 0)}%
+                    <span className={value.allocations.reduce((s, a) => s + a.percent, 0) !== 100 ? "text-yellow-500" : "text-green-500"}>
+                        {value.allocations.reduce((s, a) => s + a.percent, 0)}%
                     </span>
                 </div>
             </div>
@@ -202,7 +273,7 @@ export function SalaryInputForm({ value, onChange, onCalculate, loading }: Salar
                 disabled={loading}
                 className="w-full h-12 text-lg font-bold bg-gradient-to-r from-brand-purple to-brand-blue hover:opacity-90 transition-opacity shadow-lg shadow-brand-purple/20 mt-6"
             >
-                {loading ? 'Calculating...' : 'Calculate Income'}
+                {loading ? 'Calculating...' : 'Generate Wealth Report'}
             </Button>
         </div>
     );

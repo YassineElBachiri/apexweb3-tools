@@ -9,10 +9,11 @@ export type PaymentFrequency = 'annual' | 'monthly' | 'biweekly' | 'weekly';
 export type EmploymentType = 'employee' | 'freelancer' | 'dao';
 
 export type Country = 'US' | 'UK' | 'CA' | 'AU' | 'DE' | 'FR' | 'NL' | 'SG' | 'JP';
+export type CryptoNetwork = 'ethereum' | 'base' | 'solana' | 'arbitrum';
 
 export interface SalaryAllocation {
-    cryptoId: CryptoAsset;
-    percentage: number; // 0-100
+    asset: CryptoAsset;
+    percent: number; // 0-100
 }
 
 export interface SalaryInput {
@@ -20,6 +21,10 @@ export interface SalaryInput {
     fiatCurrency: FiatCurrency;
     frequency: PaymentFrequency;
     allocations: SalaryAllocation[]; // Total should equal 100%
+    network?: CryptoNetwork;
+    isStakingActive?: boolean;
+    monthlyExpensesUSD?: number;
+    taxBracket?: number;
 }
 
 export interface PaycheckBreakdown {
@@ -37,6 +42,13 @@ export interface SalaryConversionResult {
     paychecksPerYear: number;
     totalFiatAnnual: number;
     calculatedAt: string;
+    stakingYieldAnnual?: number;
+    gasFeesPerPaycheck?: number;
+    volatilityShield?: {
+        warning: string;
+        suggestion: string;
+        isRiskHigh: boolean;
+    };
 }
 
 export interface DCADataPoint {

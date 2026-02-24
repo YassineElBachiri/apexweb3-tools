@@ -2,9 +2,12 @@
 "use client";
 
 import { SalaryConversionResult, PaycheckBreakdown } from "@/types/salary-calculator";
-import { formatCurrency, formatCrypto } from "@/lib/salary-calculator";
+import { formatCurrency, formatCrypto, generateWealthProjection, generate1099DAForecast } from "@/lib/salary-calculator";
 import { Card, CardContent } from "@/components/ui/card";
-import { ArrowRight, Wallet, Calendar, PieChart } from "lucide-react";
+import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert";
+import { ProjectionChart } from "./ProjectionChart";
+import { ArrowRight, Wallet, Calendar, PieChart, ShieldAlert, Download, Printer, TrendingUp, Fuel } from "lucide-react";
+import { Button } from "@/components/ui/button";
 
 interface ResultsDisplayProps {
     result: SalaryConversionResult | null;
@@ -13,8 +16,55 @@ interface ResultsDisplayProps {
 export function ResultsDisplay({ result }: ResultsDisplayProps) {
     if (!result) return null;
 
+    const projectionData = generateWealthProjection(
+        result.totalFiatAnnual,
+        result.stakingYieldAnnual || 0,
+        result.annual.find(a => !['usd-coin', 'tether'].includes(a.cryptoId)) ? 100 : 0 // Simplified allocation % for chart
+    );
+
+    const handleDownloadCSV = () => {
+        const csvContent = generate1099DAForecast(result);
+        const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement("a");
+        link.setAttribute("href", url);
+        link.setAttribute("download", `ApexWeb3_1099DA_Forecast_${new Date().getFullYear()}.csv`);
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+    };
+
+    const handlePrint = () => {
+        window.print();
+    };
+
     return (
-        <div className="space-y-6 w-full max-w-4xl mx-auto animate-in fade-in slide-in-from-bottom-4 duration-500">
+        <div className="space-y-6 w-full max-w-4xl mx-auto animate-in fade-in slide-in-from-bottom-4 duration-500 print:max-w-none print:px-0">
+            {/* Volatility Shield Warning */}
+            {result.volatilityShield && (
+                <Alert variant="destructive" className="bg-red-950/20 border-red-900/50 animate-pulse">
+                    <ShieldAlert className="h-5 w-5" />
+                    <AlertTitle className="font-bold">Volatility Shield Warning</AlertTitle>
+                    <AlertDescription>
+                        {result.volatilityShield.warning} <br />
+                        <span className="font-semibold">{result.volatilityShield.suggestion}</span>
+                    </AlertDescription>
+                </Alert>
+            )}
+
+            <div className="flex flex-col sm:flex-row justify-between items-center gap-4 bg-white/5 p-4 rounded-xl border border-white/5">
+                <h3 className="text-xl font-bold text-white">Wealth Strategy Report</h3>
+                <div className="flex gap-2">
+                    <Button onClick={handleDownloadCSV} variant="outline" size="sm" className="gap-2 border-white/10 hover:bg-white/10">
+                        <Download className="w-4 h-4" />
+                        1099-DA CSV
+                    </Button>
+                    <Button onClick={handlePrint} variant="outline" size="sm" className="gap-2 border-white/10 hover:bg-white/10">
+                        <Printer className="w-4 h-4" />
+                        Print to PDF
+                    </Button>
+                </div>
+            </div>
             {/* Primary Result Cards */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <Card className="bg-brand-dark/40 border-brand-purple/20 shadow-lg shadow-brand-purple/5">
@@ -60,20 +110,27 @@ export function ResultsDisplay({ result }: ResultsDisplayProps) {
                         <div className="mx-auto w-10 h-10 rounded-full bg-green-500/10 flex items-center justify-center mb-2">
                             <PieChart className="w-5 h-5 text-green-400" />
                         </div>
-                        <p className="text-sm text-gray-400 uppercase tracking-wider font-medium">Breakdown</p>
+                        <p className="text-sm text-gray-400 uppercase tracking-wider font-medium">Wealth Summary</p>
                         <ul className="text-sm text-gray-300 space-y-2 pt-1 text-left px-4">
                             <li className="flex justify-between">
-                                <span className="text-gray-500">Paychecks/Yr:</span>
-                                <span className="font-mono">{result.paychecksPerYear}</span>
+                                <span className="text-gray-500">Gas Fees:</span>
+                                <span className="font-mono text-red-400">-{formatCurrency(result.gasFeesPerPaycheck || 0)}/chk</span>
                             </li>
                             <li className="flex justify-between">
-                                <span className="text-gray-500">Total Fiat:</span>
-                                <span className="font-mono">{formatCurrency(result.totalFiatAnnual)}</span>
+                                <span className="text-gray-500">Staking Yield (Est):</span>
+                                <span className="font-mono text-emerald-400">+{formatCurrency(result.stakingYieldAnnual || 0)}/yr</span>
+                            </li>
+                            <li className="flex justify-between border-t border-white/5 pt-1">
+                                <span className="text-gray-500 font-bold">Total Annual:</span>
+                                <span className="font-mono text-white">{formatCurrency(result.totalFiatAnnual + (result.stakingYieldAnnual || 0))}</span>
                             </li>
                         </ul>
                     </CardContent>
                 </Card>
             </div>
+
+            {/* Projection Chart */}
+            <ProjectionChart data={projectionData} />
 
             {/* Detailed Table */}
             <div className="rounded-xl border border-white/5 bg-black/20 overflow-hidden">

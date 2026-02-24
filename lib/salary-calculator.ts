@@ -38,22 +38,39 @@ export function calculateCryptoSalary(
     cryptoMetadata: Map<string, { symbol: string; name: string }>
 ): SalaryConversionResult {
     const paychecksPerYear = getAnnualMultiplier(salaryInput.frequency);
-    const perPaycheckFiat = salaryInput.fiatAmount / paychecksPerYear;
+
+    // 1. Calculate Gas Fees based on network
+    let gasFeesPerPaycheck = 0;
+    if (salaryInput.network === 'ethereum') {
+        gasFeesPerPaycheck = 15;
+    } else if (salaryInput.network) {
+        gasFeesPerPaycheck = 0.01;
+    }
+
+    const perPaycheckFiatBase = salaryInput.fiatAmount / paychecksPerYear;
+    const perPaycheckFiat = Math.max(0, perPaycheckFiatBase - gasFeesPerPaycheck);
 
     const perPaycheck: PaycheckBreakdown[] = [];
     const annual: PaycheckBreakdown[] = [];
 
+    let totalStablecoinValue = 0;
+
     for (const allocation of salaryInput.allocations) {
-        const allocationFiat = perPaycheckFiat * (allocation.percentage / 100);
-        const cryptoPrice = cryptoPrices.get(allocation.cryptoId) || 0;
-        const metadata = cryptoMetadata.get(allocation.cryptoId);
+        const allocationFiat = perPaycheckFiat * (allocation.percent / 100);
+        const cryptoPrice = cryptoPrices.get(allocation.asset) || 0;
+        const metadata = cryptoMetadata.get(allocation.asset);
 
         if (cryptoPrice > 0 && metadata) {
             const cryptoAmount = allocationFiat / cryptoPrice;
             const annualCrypto = cryptoAmount * paychecksPerYear;
 
+            // Track stablecoins for volatility shield
+            if (allocation.asset === 'usd-coin' || allocation.asset === 'tether') {
+                totalStablecoinValue += allocationFiat;
+            }
+
             perPaycheck.push({
-                cryptoId: allocation.cryptoId,
+                cryptoId: allocation.asset,
                 cryptoAmount,
                 cryptoSymbol: metadata.symbol.toUpperCase(),
                 cryptoName: metadata.name,
@@ -62,7 +79,7 @@ export function calculateCryptoSalary(
             });
 
             annual.push({
-                cryptoId: allocation.cryptoId,
+                cryptoId: allocation.asset,
                 cryptoAmount: annualCrypto,
                 cryptoSymbol: metadata.symbol.toUpperCase(),
                 cryptoName: metadata.name,
@@ -72,12 +89,37 @@ export function calculateCryptoSalary(
         }
     }
 
+    // 2. Staking Yield
+    let stakingYieldAnnual = 0;
+    if (salaryInput.isStakingActive) {
+        salaryInput.allocations.forEach(a => {
+            if (a.asset === 'ethereum') stakingYieldAnnual += 0.05 * (perPaycheckFiatBase * paychecksPerYear * (a.percent / 100));
+            if (a.asset === 'solana') stakingYieldAnnual += 0.07 * (perPaycheckFiatBase * paychecksPerYear * (a.percent / 100));
+        });
+    }
+
+    // 3. Volatility Shield
+    let volatilityShield = undefined;
+    if (salaryInput.monthlyExpensesUSD !== undefined) {
+        const isRiskHigh = totalStablecoinValue < salaryInput.monthlyExpensesUSD;
+        if (isRiskHigh) {
+            volatilityShield = {
+                warning: "Your stablecoin split may not cover your monthly expenses if BTC drops 40%.",
+                suggestion: "Consider increasing USDC split to 45% for safety.",
+                isRiskHigh: true
+            };
+        }
+    }
+
     return {
         perPaycheck,
         annual,
         paychecksPerYear,
         totalFiatAnnual: salaryInput.fiatAmount,
         calculatedAt: new Date().toISOString(),
+        gasFeesPerPaycheck,
+        stakingYieldAnnual,
+        volatilityShield
     };
 }
 
@@ -92,13 +134,13 @@ export function simulateDCA(
 ): DCASimulation {
     const dataPoints: DCADataPoint[] = [];
     const paychecksPerYear = getAnnualMultiplier(salaryInput.frequency);
-    const allocation = salaryInput.allocations.find(a => a.cryptoId === cryptoId);
+    const allocation = salaryInput.allocations.find(a => a.asset === cryptoId);
 
     if (!allocation) {
         throw new Error(`Crypto ${cryptoId} not found in allocations`);
     }
 
-    const perPaycheckFiat = (salaryInput.fiatAmount / paychecksPerYear) * (allocation.percentage / 100);
+    const perPaycheckFiat = (salaryInput.fiatAmount / paychecksPerYear) * (allocation.percent / 100);
 
     // Calculate payment interval in milliseconds
     const yearMs = 365.25 * 24 * 60 * 60 * 1000;
@@ -271,7 +313,7 @@ export const STRATEGY_PRESETS: AllocationStrategy[] = [
     {
         name: '100% Crypto',
         description: 'All-in on crypto for maximum upside potential',
-        allocations: [{ cryptoId: 'bitcoin', percentage: 100 }],
+        allocations: [{ asset: 'bitcoin', percent: 100 }],
         riskLevel: 'very-high',
         stabilityScore: 20,
         upsidePotential: 100,
@@ -281,8 +323,8 @@ export const STRATEGY_PRESETS: AllocationStrategy[] = [
         name: '50/50 Crypto + Stablecoin',
         description: 'Balanced exposure with stability',
         allocations: [
-            { cryptoId: 'bitcoin', percentage: 50 },
-            { cryptoId: 'usd-coin', percentage: 50 },
+            { asset: 'bitcoin', percent: 50 },
+            { asset: 'usd-coin', percent: 50 },
         ],
         riskLevel: 'medium',
         stabilityScore: 70,
@@ -293,8 +335,8 @@ export const STRATEGY_PRESETS: AllocationStrategy[] = [
         name: '80/20 Conservative',
         description: 'Mostly stable with some upside',
         allocations: [
-            { cryptoId: 'usd-coin', percentage: 80 },
-            { cryptoId: 'ethereum', percentage: 20 },
+            { asset: 'usd-coin', percent: 80 },
+            { asset: 'ethereum', percent: 20 },
         ],
         riskLevel: 'low',
         stabilityScore: 90,
@@ -305,9 +347,9 @@ export const STRATEGY_PRESETS: AllocationStrategy[] = [
         name: 'Stablecoin + BTC/ETH Upside',
         description: 'Priority on stability with crypto exposure',
         allocations: [
-            { cryptoId: 'usd-coin', percentage: 60 },
-            { cryptoId: 'bitcoin', percentage: 25 },
-            { cryptoId: 'ethereum', percentage: 15 },
+            { asset: 'usd-coin', percent: 60 },
+            { asset: 'bitcoin', percent: 25 },
+            { asset: 'ethereum', percent: 15 },
         ],
         riskLevel: 'medium',
         stabilityScore: 75,
@@ -429,6 +471,52 @@ export function formatCurrency(amount: number, currency: string = 'USD'): string
         minimumFractionDigits: 2,
         maximumFractionDigits: 2,
     }).format(amount);
+}
+
+// Generate 5-year wealth projection
+export function generateWealthProjection(
+    annualSalary: number,
+    stakingYield: number = 0,
+    cryptoAllocationPercent: number = 25
+) {
+    const years = [0, 1, 2, 3, 4, 5];
+    const cryptoCAGR = 0.25; // 25% historical CAGR placeholder
+
+    return years.map(year => {
+        const fiatValue = annualSalary * year;
+
+        // Crypto projection with compounding growth + staking
+        const cryptoPortion = annualSalary * (cryptoAllocationPercent / 100);
+        const stablePortion = annualSalary * ((100 - cryptoAllocationPercent) / 100);
+
+        // Simplified future value of annuity: P * [((1 + r)^n - 1) / r]
+        const rate = cryptoCAGR + (stakingYield / (annualSalary * (cryptoAllocationPercent / 100) || 1));
+        const cryptoValue = year === 0 ? 0 : cryptoPortion * (Math.pow(1 + rate, year) - 1) / rate;
+        const stableValue = stablePortion * year;
+
+        return {
+            year: `Year ${year}`,
+            fiat: fiatValue,
+            crypto: cryptoValue + stableValue,
+        };
+    });
+}
+
+// Generate CSV data for 1099-DA Forecast
+export function generate1099DAForecast(result: SalaryConversionResult, taxBracket: number = 25) {
+    const headers = ['Date', 'Fiat_Value_at_Receipt', 'Token_Amount', 'Token_Symbol', 'Est_Tax_Liability'];
+    const rows = result.annual.map(item => {
+        const taxLiability = item.fiatValue * (taxBracket / 100);
+        return [
+            new Date().toISOString().split('T')[0],
+            item.fiatValue.toFixed(2),
+            item.cryptoAmount.toFixed(8),
+            item.cryptoSymbol,
+            taxLiability.toFixed(2),
+        ];
+    });
+
+    return [headers, ...rows].map(row => row.join(',')).join('\n');
 }
 
 // Helper: Format crypto amount

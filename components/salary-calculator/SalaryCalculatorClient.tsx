@@ -15,14 +15,18 @@ export function SalaryCalculatorClient() {
         fiatAmount: 60000,
         fiatCurrency: 'USD',
         frequency: 'monthly',
-        allocations: [{ cryptoId: 'bitcoin', percentage: 100 }],
+        allocations: [{ asset: 'bitcoin', percent: 100 }],
+        network: 'ethereum',
+        isStakingActive: false,
+        monthlyExpensesUSD: 2000,
+        taxBracket: 25,
     });
 
     const handleCalculate = async () => {
         setLoading(true);
         try {
             // Fetch live prices
-            const cryptoIds = input.allocations.map(a => a.cryptoId).join(',');
+            const cryptoIds = input.allocations.map(a => a.asset).join(',');
             const response = await fetch(`/api/salary/prices?crypto=${cryptoIds}`);
 
             if (!response.ok) {
@@ -40,9 +44,9 @@ export function SalaryCalculatorClient() {
             // Mock metadata (in real app, fetch this too)
             const metadataMap = new Map<string, { symbol: string; name: string }>();
             input.allocations.forEach(a => {
-                metadataMap.set(a.cryptoId, {
-                    symbol: a.cryptoId.substring(0, 3).toUpperCase(), // fallback
-                    name: a.cryptoId.charAt(0).toUpperCase() + a.cryptoId.slice(1) // fallback
+                metadataMap.set(a.asset, {
+                    symbol: a.asset.substring(0, 3).toUpperCase(), // fallback
+                    name: a.asset.charAt(0).toUpperCase() + a.asset.slice(1) // fallback
                 });
             });
 
