@@ -1,4 +1,4 @@
-import { ScoredPair } from "@/app/api/spike-detector/route";
+import { ScoredPair } from "@/lib/actions/spike-detector";
 import { Badge } from "@/components/ui/badge";
 import { ExternalLink, Flame, Droplets, TrendingUp } from "lucide-react";
 import Image from "next/image";

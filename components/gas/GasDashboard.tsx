@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { GasPriceData, SupportedChainId, fetchGasFees, fetchNativeTokenPrice } from "@/lib/gas";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -29,7 +29,7 @@ export function GasDashboard({ initialChainId = 1 }: GasDashboardProps) {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState("");
 
-    const refresh = async () => {
+    const refresh = useCallback(async () => {
         setLoading(true);
         setError("");
         try {
@@ -45,13 +45,13 @@ export function GasDashboard({ initialChainId = 1 }: GasDashboardProps) {
             setLoading(false);
             // Re-fetch every 15s automatically? Maybe overkill for this strict component, let user refresh.
         }
-    };
+    }, [chainId]);
 
     useEffect(() => {
         refresh();
         const interval = setInterval(refresh, 15000); // Auto-refresh every 15s
         return () => clearInterval(interval);
-    }, [chainId]);
+    }, [refresh]);
 
     // Derived Display Data
     const isSolana = chainId === "solana";

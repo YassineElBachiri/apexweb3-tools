@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -27,7 +27,7 @@ export function CostEstimator({ chainId }: CostEstimatorProps) {
     const [tokenPrice, setTokenPrice] = useState<number>(0);
     const [loading, setLoading] = useState(true);
 
-    const refreshData = async () => {
+    const refreshData = useCallback(async () => {
         setLoading(true);
         try {
             const [fees, price] = await Promise.all([
@@ -42,11 +42,11 @@ export function CostEstimator({ chainId }: CostEstimatorProps) {
         } finally {
             setLoading(false);
         }
-    };
+    }, [chainId]);
 
     useEffect(() => {
         refreshData();
-    }, [chainId]);
+    }, [refreshData]);
 
     useEffect(() => {
         const predef = TX_TYPES.find(t => t.id === txType);
