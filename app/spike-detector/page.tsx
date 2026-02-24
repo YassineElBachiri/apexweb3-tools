@@ -1,27 +1,28 @@
 import { Metadata } from "next";
 import { SpikeDetectorDashboard } from "@/components/spike-detector/Dashboard";
+import { getSpikingTokens } from "@/lib/actions/spike-detector";
+import { SEOContent } from "@/components/spike-detector/SEOContent";
 import { Badge } from "@/components/ui/badge";
 import { Zap, Info, Shield } from "lucide-react";
 import { JsonLd } from "@/components/seo/json-ld";
 
-export const metadata: Metadata = {
-    title: "Trench Hunter — Micro-Cap Spike Detector | ApexWeb3",
-    description:
-        "Hunt micro-cap trench tokens (MCAP < $1.5M) with real-time Volume Velocity scoring. Filters big-cap noise, checks RugCheck safety, and surfaces only the freshest momentum plays.",
-    keywords: [
-        "trench tokens",
-        "micro-cap scanner",
-        "rugcheck",
-        "solana trench",
-        "memecoin spike detector",
-        "volume velocity dashboard",
-        "live crypto feed",
-        "dexscreener alternative",
-        "gem finder",
-    ],
-};
+export async function generateMetadata(): Promise<Metadata> {
+    const data = await getSpikingTokens();
+    const spikeCount = "pairs" in data ? data.pairs.filter(p => p.isSpiking).length : 0;
+    const title = spikeCount > 0
+        ? `${spikeCount} Spikes Detected - Trench Hunter | ApexWeb3`
+        : "Trench Hunter — Micro-Cap Spike Detector | ApexWeb3";
 
-export default function SpikeDetectorPage() {
+    return {
+        title,
+        description: "Hunt micro-cap trench tokens (MCAP < $1.5M) with real-time Volume Velocity scoring. Filters big-cap noise, checks RugCheck safety, and surfaces only the freshest momentum plays.",
+        keywords: ["trench tokens", "micro-cap scanner", "rugcheck", "solana trench", "memecoin spike detector", "volume velocity dashboard", "live crypto feed", "dexscreener alternative", "gem finder"],
+    };
+}
+
+export default async function SpikeDetectorPage() {
+    const initialData = await getSpikingTokens();
+
     const structuredData = {
         "@context": "https://schema.org",
         "@type": "SoftwareApplication",
@@ -82,17 +83,20 @@ export default function SpikeDetectorPage() {
 
             {/* Dashboard */}
             <div className="container mx-auto px-4 py-8 md:px-6">
-                <SpikeDetectorDashboard />
+                <SpikeDetectorDashboard initialData={"pairs" in initialData ? initialData : undefined} />
             </div>
 
-            {/* How It Works */}
-            <div className="container mx-auto px-4 py-4 md:px-6">
+            {/* SEO Content & FAQ */}
+            <SEOContent />
+
+            {/* How It Works & Disclaimer */}
+            <div className="container mx-auto px-4 py-8 md:px-6">
                 <div className="rounded-xl border border-slate-800 bg-slate-900/30 p-6 text-sm text-slate-400">
                     <div className="mb-3 flex items-center gap-2 font-semibold text-slate-300">
                         <Info className="h-4 w-4 text-brand-primary" />
-                        How It Works
+                        Platform Methodology
                     </div>
-                    <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3">
+                    <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3 text-xs">
                         <HowItWorksItem
                             emoji="⚡"
                             title="Trench Spike Logic"
@@ -110,14 +114,21 @@ export default function SpikeDetectorPage() {
                         />
                     </div>
 
-                    <div className="mt-5 flex items-start gap-2 rounded-lg border border-slate-800 bg-slate-900/50 p-3 text-xs">
-                        <Shield className="mt-0.5 h-3.5 w-3.5 shrink-0 text-red-400" />
-                        <p>
-                            <strong className="text-red-400">Disclaimer:</strong> This tool aggregates
-                            public blockchain data and does not constitute financial advice. New tokens
-                            carry extreme risk. Always verify contracts independently before trading.
-                            Past spikes do not guarantee future gains.
-                        </p>
+                    <div className="mt-8 border-t border-slate-800 pt-6">
+                        <div className="flex items-start gap-2 rounded-lg border border-red-900/30 bg-red-950/20 p-4 text-xs leading-relaxed">
+                            <Shield className="mt-0.5 h-4 w-4 shrink-0 text-red-500" />
+                            <div>
+                                <p className="font-bold text-red-400 mb-1 tracking-wide uppercase">Legal Risk Disclaimer (E-E-A-T Compliance)</p>
+                                <p className="text-slate-400">
+                                    Trading digital assets, especially micro-cap &quot;memecoins,&quot; involves extreme volatility and permanent capital loss risk.
+                                    ApexWeb3 Trench Hunter is an analytical tool aggregating on-chain data for informational purposes only.
+                                    It does **NOT** constitute financial, investment, or legal advice.
+                                    Smart contract vulnerabilities (rug pulls, honeypots) are prevalent; security scores are historical and do not guarantee future safety.
+                                    Always perform your own due diligence (DYOR) before interacting with any smart contract.
+                                    © 2026 ApexWeb3 Intelligence. All rights reserved.
+                                </p>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>

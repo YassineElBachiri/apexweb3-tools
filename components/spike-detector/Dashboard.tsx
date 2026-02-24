@@ -123,11 +123,19 @@ function StatsBar({ pairs, lastUpdated }: { pairs: ScoredPair[]; lastUpdated: nu
 }
 
 // ── Main Dashboard ─────────────────────────────────────────────────────────────
-export function SpikeDetectorDashboard() {
+interface SpikeDetectorDashboardProps {
+    initialData?: { pairs: ScoredPair[]; timestamp: number };
+}
+
+export function SpikeDetectorDashboard({ initialData }: SpikeDetectorDashboardProps) {
     const { data, error, isLoading } = useSWR<{ pairs: ScoredPair[]; timestamp: number }>(
         "spiking-tokens",
         getSpikingTokens,
-        { refreshInterval: 5000, revalidateOnFocus: true }
+        {
+            refreshInterval: 5000,
+            revalidateOnFocus: true,
+            fallbackData: initialData
+        }
     );
 
     const pairs: ScoredPair[] = data?.pairs ?? [];

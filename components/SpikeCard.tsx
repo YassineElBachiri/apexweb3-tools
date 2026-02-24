@@ -162,12 +162,18 @@ export function SpikeCard({ pair }: SpikeCardProps) {
                 </div>
 
                 {/* Safety Badge */}
-                <span
-                    className={`inline-flex shrink-0 items-center gap-1 rounded-full border px-2 py-0.5 text-[10px] font-semibold ${getSafetyClass(pair.safetyLabel)}`}
+                <a
+                    href={pair.chainId === "solana"
+                        ? `https://rugcheck.xyz/tokens/${pair.baseToken.address}`
+                        : `https://gopluslabs.io/token-security/${pair.chainId}/${pair.baseToken.address}`
+                    }
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className={`inline-flex shrink-0 items-center gap-1 rounded-full border px-2 py-0.5 text-[10px] font-semibold hover:opacity-80 transition-opacity ${getSafetyClass(pair.safetyLabel)}`}
                 >
                     {getSafetyIcon(pair.safetyLabel)}
                     {pair.safetyLabel}
-                </span>
+                </a>
             </div>
 
             {/* Stats Grid — 4 columns: MCAP | Liquidity | 5m Chg | Age */}
@@ -225,6 +231,16 @@ export function SpikeCard({ pair }: SpikeCardProps) {
 
             {/* Action Buttons */}
             <div className="flex gap-2">
+                <a
+                    href={`https://neo.bullx.io/terminal?chain=${pair.chainId === "solana" ? "solana" : pair.chainId}&address=${pair.baseToken.address}&p=APEXWEB3`}
+                    target="_blank"
+                    rel="sponsored nofollow"
+                    className="flex flex-[2] items-center justify-center gap-1.5 rounded-lg border border-[#00E5FF]/50 bg-[#00E5FF]/10 px-3 py-2 text-xs font-bold text-[#00E5FF] transition-all duration-200 hover:bg-[#00E5FF]/20 shadow-[0_0_10px_rgba(0,229,255,0.1)]"
+                >
+                    <Zap className="h-3.5 w-3.5 fill-current" />
+                    Buy on BullX
+                </a>
+
                 <button
                     onClick={handleCopy}
                     id={`copy-ca-${pair.pairAddress}`}
@@ -245,20 +261,18 @@ export function SpikeCard({ pair }: SpikeCardProps) {
                     ) : (
                         <>
                             <Copy className="h-3 w-3" />
-                            Copy CA
+                            CA
                         </>
                     )}
                 </button>
 
-                {/* Quick X Search — searches by contract address */}
                 <button
                     onClick={handleSearchX}
                     id={`search-x-${pair.pairAddress}`}
-                    className="flex items-center justify-center gap-1.5 rounded-lg border border-slate-700 bg-slate-800 px-3 py-2 text-xs font-semibold text-slate-300 transition-all duration-200 hover:border-sky-500/50 hover:bg-sky-500/10 hover:text-sky-300"
+                    className="flex items-center justify-center rounded-lg border border-slate-700 bg-slate-800 p-2 text-slate-300 transition-all duration-200 hover:border-sky-500/50 hover:bg-sky-500/10 hover:text-sky-300"
                     aria-label={`Quick X Search for ${pair.baseToken.symbol}`}
                 >
-                    <Search className="h-3 w-3" />
-                    X Search
+                    <Search className="h-3.5 w-3.5" />
                 </button>
 
                 <a
@@ -271,18 +285,6 @@ export function SpikeCard({ pair }: SpikeCardProps) {
                 >
                     <ExternalLink className="h-3.5 w-3.5" />
                 </a>
-
-                {pair.chainId === "solana" && (
-                    <a
-                        href={`https://neo.bullx.io/terminal?chain=solana&address=${pair.baseToken.address}`}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="flex items-center justify-center gap-1.5 rounded-lg border border-emerald-500/50 bg-emerald-500/10 px-3 py-2 text-xs font-bold text-emerald-400 transition-all duration-200 hover:bg-emerald-500/20"
-                    >
-                        <Zap className="h-3 w-3 fill-current" />
-                        BullX
-                    </a>
-                )}
             </div>
         </div>
     );
