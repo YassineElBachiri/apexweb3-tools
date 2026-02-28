@@ -2,6 +2,7 @@
 import type { Metadata } from 'next';
 import { SalaryCalculatorClient } from '@/components/salary-calculator/SalaryCalculatorClient';
 import { FAQ } from '@/components/salary-calculator/FAQ';
+import RiskDisclaimer from '@/components/global/RiskDisclaimer';
 import { SALARY_ESTIMATOR_CONTENT, SALARY_ESTIMATOR_SEO } from '@/lib/seo-content/salary-estimator';
 import { Shield, ArrowRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -59,11 +60,16 @@ export default function SalaryEstimatorPage() {
                 </div>
 
                 {/* Calculator Section */}
-                <div className="relative mb-24 animate-in fade-in zoom-in-95 duration-700 delay-300">
+                <div className="relative mb-8 animate-in fade-in zoom-in-95 duration-700 delay-300">
                     <div className="absolute -inset-1 bg-gradient-to-r from-brand-purple to-brand-blue rounded-2xl opacity-20 blur-lg" />
                     <div className="relative bg-brand-dark/50 backdrop-blur-xl border border-white/10 rounded-2xl p-6 md:p-8 lg:p-12 shadow-2xl">
                         <SalaryCalculatorClient />
                     </div>
+                </div>
+
+                {/* Risk Disclaimer */}
+                <div className="mb-24 animate-in fade-in zoom-in-95 duration-700 delay-400">
+                    <RiskDisclaimer />
                 </div>
 
                 {/* Features / Content Section */}

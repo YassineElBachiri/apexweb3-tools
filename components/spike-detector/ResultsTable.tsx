@@ -97,14 +97,25 @@ export function ResultsTable({ pairs }: ResultsTableProps) {
                                     </div>
                                 </td>
                                 <td className="px-6 py-4 text-right">
-                                    <a
-                                        href={pair.url}
-                                        target="_blank"
-                                        rel="noopener noreferrer"
-                                        className="inline-flex h-8 w-8 items-center justify-center rounded-lg border border-slate-700 hover:bg-slate-700 hover:text-white"
-                                    >
-                                        <ExternalLink className="h-4 w-4" />
-                                    </a>
+                                    <div className="flex items-center justify-end gap-2">
+                                        <a
+                                            href={`https://bullx.io/terminal?chainId=${pair.chainId}&address=${pair.baseToken.address}`}
+                                            target="_blank"
+                                            rel="sponsored nofollow noopener noreferrer"
+                                            className="inline-flex h-8 px-3 items-center justify-center rounded-lg border border-brand-primary/50 bg-brand-primary/10 text-brand-primary hover:bg-brand-primary/20 text-xs font-bold transition-colors"
+                                        >
+                                            Buy on BullX
+                                        </a>
+                                        <a
+                                            href={pair.url}
+                                            target="_blank"
+                                            rel="noopener noreferrer"
+                                            className="inline-flex h-8 w-8 items-center justify-center rounded-lg border border-slate-700 hover:bg-slate-700 hover:text-white"
+                                            title="View Data"
+                                        >
+                                            <ExternalLink className="h-4 w-4" />
+                                        </a>
+                                    </div>
                                 </td>
                             </tr>
                         ))}

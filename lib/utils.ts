@@ -197,3 +197,16 @@ export function loadFromLocalStorage<T>(key: string, defaultValue: T): T {
         return defaultValue;
     }
 }
+
+/**
+ * Determine the correct URL for a Category based on legacy indexed SEO routes.
+ */
+const ROOT_CATEGORIES = new Set([
+    'news', 'defi', 'guide', 'blockchain-basics',
+    'web3-and-ai', 'reviews-and-analysis',
+    'blockchain-dev-hub', 'nfts-and-metaverse', 'security-and-audits'
+]);
+
+export function getCategoryUrl(slug: string): string {
+    return ROOT_CATEGORIES.has(slug) ? `/${slug}` : `/category/${slug}`;
+}

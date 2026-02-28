@@ -4,7 +4,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Shield, Menu, X, ChevronDown } from "lucide-react";
 import { useState } from "react";
-import { cn } from "@/lib/utils";
+import { cn, getCategoryUrl } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { MegaMenu } from "@/components/home/navigation/MegaMenu";
 import { NAV_LINKS } from "@/lib/constants/navigation";
@@ -12,7 +12,11 @@ import { TOOLS, PILLAR_META, ToolPillar } from "@/lib/constants/tools";
 
 const PILLAR_ORDER: ToolPillar[] = ['Intelligence', 'Risk', 'Utilities', 'Careers'];
 
-export function Navigation() {
+interface NavigationProps {
+    categories?: Array<{ name: string; slug: string; count: number }>;
+}
+
+export function Navigation({ categories = [] }: NavigationProps) {
     const pathname = usePathname();
     const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
     const [megaMenuOpen, setMegaMenuOpen] = useState(false);
@@ -52,18 +56,52 @@ export function Navigation() {
                             <MegaMenu isOpen={megaMenuOpen} onClose={() => setMegaMenuOpen(false)} />
                         </div>
 
-                        {NAV_LINKS.map(link => (
-                            <Link
-                                key={link.href}
-                                href={link.href}
-                                className={cn(
-                                    "text-sm font-medium transition-colors hover:text-white",
-                                    pathname === link.href ? "text-white" : "text-gray-400"
-                                )}
-                            >
-                                {link.label}
-                            </Link>
-                        ))}
+                        {NAV_LINKS.map(link => {
+                            if (link.label === "Articles") {
+                                return (
+                                    <div key={link.href} className="relative group h-20 flex items-center">
+                                        <Link
+                                            href={link.href}
+                                            className={cn(
+                                                "flex items-center gap-1 text-sm font-medium transition-colors hover:text-white",
+                                                pathname.startsWith(link.href) || pathname.startsWith("/category") ? "text-white" : "text-gray-400"
+                                            )}
+                                        >
+                                            {link.label} <ChevronDown className="w-4 h-4 transition-transform group-hover:rotate-180" />
+                                        </Link>
+
+                                        {/* Dropdown for Categories */}
+                                        <div className="absolute top-20 left-0 hidden group-hover:block w-56 bg-brand-dark/95 backdrop-blur-xl border border-white/10 rounded-xl shadow-2xl overflow-hidden animate-in fade-in slide-in-from-top-2">
+                                            <div className="p-2 flex flex-col">
+                                                <Link href="/categories" className="px-4 py-2 text-sm text-gray-400 hover:text-white hover:bg-white/5 rounded-lg transition-colors font-medium">
+                                                    All Categories
+                                                </Link>
+                                                <div className="h-px bg-white/10 my-1 mx-2" />
+                                                {categories.map(cat => (
+                                                    <Link key={cat.slug} href={getCategoryUrl(cat.slug)} className="px-4 py-2 text-sm text-gray-400 hover:text-white hover:bg-white/5 rounded-lg transition-colors flex items-center justify-between">
+                                                        <span>{cat.name}</span>
+                                                        <span className="text-[10px] font-bold bg-brand-primary/10 text-brand-primary px-2 py-0.5 rounded-full">{cat.count}</span>
+                                                    </Link>
+                                                ))}
+                                            </div>
+                                        </div>
+                                    </div>
+                                );
+                            }
+
+                            return (
+                                <Link
+                                    key={link.href}
+                                    href={link.href}
+                                    className={cn(
+                                        "text-sm font-medium transition-colors hover:text-white",
+                                        pathname === link.href ? "text-white" : "text-gray-400"
+                                    )}
+                                >
+                                    {link.label}
+                                </Link>
+                            );
+                        })}
                     </div>
 
                     {/* Right Actions */}
@@ -101,16 +139,42 @@ export function Navigation() {
                                 Home
                             </Link>
 
-                            {NAV_LINKS.map(link => (
-                                <Link
-                                    key={link.href}
-                                    href={link.href}
-                                    onClick={() => setMobileMenuOpen(false)}
-                                    className="px-4 py-3 text-gray-400 hover:text-white hover:bg-white/5 transition-colors"
-                                >
-                                    {link.label}
-                                </Link>
-                            ))}
+                            {NAV_LINKS.map(link => {
+                                if (link.label === "Articles") {
+                                    return (
+                                        <div key={link.href} className="flex flex-col">
+                                            <Link
+                                                href={link.href}
+                                                onClick={() => setMobileMenuOpen(false)}
+                                                className="px-4 py-3 text-gray-400 hover:text-white hover:bg-white/5 transition-colors font-medium flex items-center justify-between"
+                                            >
+                                                {link.label}
+                                            </Link>
+                                            <div className="pl-6 flex flex-col gap-1 py-1 border-l-2 border-white/5 ml-4">
+                                                <Link href="/categories" onClick={() => setMobileMenuOpen(false)} className="text-sm text-brand-primary hover:text-teal-400 py-1.5 transition-colors font-medium">
+                                                    Browse All Categories &rarr;
+                                                </Link>
+                                                {categories.map(cat => (
+                                                    <Link key={cat.slug} href={getCategoryUrl(cat.slug)} onClick={() => setMobileMenuOpen(false)} className="text-sm text-gray-500 hover:text-white py-1.5 transition-colors">
+                                                        {cat.name} ({cat.count})
+                                                    </Link>
+                                                ))}
+                                            </div>
+                                        </div>
+                                    );
+                                }
+
+                                return (
+                                    <Link
+                                        key={link.href}
+                                        href={link.href}
+                                        onClick={() => setMobileMenuOpen(false)}
+                                        className="px-4 py-3 text-gray-400 hover:text-white hover:bg-white/5 transition-colors"
+                                    >
+                                        {link.label}
+                                    </Link>
+                                );
+                            })}
 
                             <div className="border-t border-white/5 my-2" />
 

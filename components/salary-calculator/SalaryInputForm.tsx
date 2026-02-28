@@ -33,7 +33,7 @@ const StandardSelect = ({ value, onChange, options, className }: any) => (
 
 interface SalaryInputFormProps {
     value: SalaryInput;
-    onChange: (value: SalaryInput) => void;
+    onChange: React.Dispatch<React.SetStateAction<SalaryInput>>;
     onCalculate: () => void;
     loading: boolean;
 }
@@ -42,36 +42,41 @@ export function SalaryInputForm({ value, onChange, onCalculate, loading }: Salar
     const [isAdvanced, setIsAdvanced] = useState(false);
 
     const handleFiatChange = (amount: string) => {
-        onChange({ ...value, fiatAmount: parseFloat(amount) || 0 });
+        onChange((prev) => ({ ...prev, fiatAmount: parseFloat(amount) || 0 }));
     };
 
     const handleAllocationChange = (index: number, field: keyof SalaryAllocation, val: any) => {
-        const newAllocations = [...value.allocations];
-        newAllocations[index] = { ...newAllocations[index], [field]: val };
-        onChange({ ...value, allocations: newAllocations });
+        onChange((prev) => {
+            const newAllocations = [...prev.allocations];
+            newAllocations[index] = { ...newAllocations[index], [field]: val };
+            return { ...prev, allocations: newAllocations };
+        });
     };
 
     const handleAddAsset = () => {
-        const currentTotal = value.allocations.reduce((sum, a) => sum + a.percent, 0);
-        if (currentTotal >= 100) {
-            window.alert("Allocation already at 100%");
-            return;
-        }
-
-        onChange({
-            ...value,
-            allocations: [
-                ...value.allocations,
-                { asset: 'usd-coin', percent: 0 }
-            ]
+        onChange((prev) => {
+            const currentTotal = prev.allocations.reduce((sum, a) => sum + a.percent, 0);
+            if (currentTotal >= 100) {
+                window.alert("Allocation already at 100%");
+                return prev;
+            }
+            return {
+                ...prev,
+                allocations: [
+                    ...prev.allocations,
+                    { asset: 'usd-coin', percent: 0 }
+                ]
+            };
         });
     };
 
     const removeAllocation = (index: number) => {
-        if (value.allocations.length <= 1) return;
-        onChange({
-            ...value,
-            allocations: value.allocations.filter((_, i) => i !== index)
+        onChange((prev) => {
+            if (prev.allocations.length <= 1) return prev;
+            return {
+                ...prev,
+                allocations: prev.allocations.filter((_, i) => i !== index)
+            };
         });
     };
 
@@ -109,7 +114,7 @@ export function SalaryInputForm({ value, onChange, onCalculate, loading }: Salar
                     <div className="flex gap-2">
                         <StandardSelect
                             value={value.fiatCurrency}
-                            onChange={(val: any) => onChange({ ...value, fiatCurrency: val })}
+                            onChange={(val: any) => onChange((prev) => ({ ...prev, fiatCurrency: val }))}
                             options={[
                                 { value: 'USD', label: 'USD ($)' },
                                 { value: 'EUR', label: 'EUR (€)' },
@@ -121,7 +126,7 @@ export function SalaryInputForm({ value, onChange, onCalculate, loading }: Salar
                         />
                         <StandardSelect
                             value={value.frequency}
-                            onChange={(val: any) => onChange({ ...value, frequency: val })}
+                            onChange={(val: any) => onChange((prev) => ({ ...prev, frequency: val }))}
                             options={[
                                 { value: 'annual', label: 'Annual' },
                                 { value: 'monthly', label: 'Monthly' },
@@ -141,7 +146,7 @@ export function SalaryInputForm({ value, onChange, onCalculate, loading }: Salar
                     </Label>
                     <StandardSelect
                         value={value.network || 'ethereum'}
-                        onChange={(val: any) => onChange({ ...value, network: val })}
+                        onChange={(val: any) => onChange((prev) => ({ ...prev, network: val }))}
                         options={[
                             { value: 'ethereum', label: 'Ethereum (High Fee: ~$15)' },
                             { value: 'base', label: 'Base (Low Fee: ~$0.01)' },
@@ -166,7 +171,7 @@ export function SalaryInputForm({ value, onChange, onCalculate, loading }: Salar
                             placeholder="2000"
                             className="pl-8 bg-brand-dark/50 border-white/10"
                             value={value.monthlyExpensesUSD || ''}
-                            onChange={(e) => onChange({ ...value, monthlyExpensesUSD: parseFloat(e.target.value) || 0 })}
+                            onChange={(e) => onChange((prev) => ({ ...prev, monthlyExpensesUSD: parseFloat(e.target.value) || 0 }))}
                         />
                     </div>
                 </div>
@@ -184,7 +189,7 @@ export function SalaryInputForm({ value, onChange, onCalculate, loading }: Salar
                     </div>
                     <Switch
                         checked={value.isStakingActive || false}
-                        onCheckedChange={(checked) => onChange({ ...value, isStakingActive: checked })}
+                        onCheckedChange={(checked) => onChange((prev) => ({ ...prev, isStakingActive: checked }))}
                     />
                 </div>
 
@@ -195,7 +200,7 @@ export function SalaryInputForm({ value, onChange, onCalculate, loading }: Salar
                             type="number"
                             className="h-8 bg-brand-dark/50 border-white/10 text-xs"
                             value={value.taxBracket || 25}
-                            onChange={(e) => onChange({ ...value, taxBracket: parseFloat(e.target.value) || 0 })}
+                            onChange={(e) => onChange((prev) => ({ ...prev, taxBracket: parseFloat(e.target.value) || 0 }))}
                         />
                     </div>
                 )}

@@ -4,7 +4,13 @@ const nextConfig: NextConfig = {
     compress: true,
     poweredByHeader: false,
     images: {
+        formats: ['image/avif', 'image/webp'],
         remotePatterns: [
+            {
+                protocol: 'https',
+                hostname: 'apexweb3.com',
+                pathname: '/wp-content/uploads/**',
+            },
             {
                 protocol: 'https',
                 hostname: 'ui-avatars.com',
@@ -54,6 +60,14 @@ const nextConfig: NextConfig = {
     },
     experimental: {
         useCache: true,
+    },
+    async rewrites() {
+        return [
+            {
+                source: '/:category(news|defi|guide|blockchain-basics|web3-and-ai|reviews-and-analysis|blockchain-dev-hub|nfts-and-metaverse|security-and-audits)',
+                destination: '/category/:category',
+            }
+        ];
     },
 };
 

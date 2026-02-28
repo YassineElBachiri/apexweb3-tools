@@ -1,8 +1,9 @@
 
-import { LayoutDashboard, Briefcase } from "lucide-react";
+import { LayoutDashboard, Briefcase, BookOpen, Folder } from "lucide-react";
 
 export const NAV_LINKS = [
     { href: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
+    { href: "/insights", label: "Articles", icon: BookOpen },
     { href: "/jobs", label: "Jobs", icon: Briefcase },
 ];
 
