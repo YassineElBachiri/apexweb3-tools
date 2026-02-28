@@ -1,6 +1,7 @@
 import { SearchBar } from "@/components/search-bar";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Shield, Wallet, TrendingUp, Eye, ArrowRightLeft, DollarSign } from "lucide-react";
+import Link from "next/link";
 
 export default function DashboardPage() {
     return (
@@ -115,7 +116,7 @@ export default function DashboardPage() {
                     </CardHeader>
                     <CardContent>
                         <div className="text-sm text-muted-foreground">
-                            <strong>How to use:</strong> <a href="/converter" className="text-primary hover:underline">Launch Converter</a>
+                            <strong>How to use:</strong> <Link href="/finance/converter" className="text-primary hover:underline">Launch Converter</Link>
                         </div>
                     </CardContent>
                 </Card>
@@ -135,7 +136,7 @@ export default function DashboardPage() {
                     </CardHeader>
                     <CardContent>
                         <div className="text-sm text-muted-foreground">
-                            <strong>How to use:</strong> <a href="/fiat-converter" className="text-primary hover:underline">Launch Fiat Exchange</a>
+                            <strong>How to use:</strong> <Link href="/finance/fiat-converter" className="text-primary hover:underline">Launch Fiat Exchange</Link>
                         </div>
                     </CardContent>
                 </Card>
