@@ -6,20 +6,22 @@ import Image from 'next/image';
 import { notFound } from 'next/navigation';
 
 interface CategoryParams {
-    params: {
+    params: Promise<{
         slug: string;
-    }
+    }>
 }
 
 export async function generateMetadata({ params }: CategoryParams): Promise<Metadata> {
+    const { slug } = await params;
     return {
-        title: `${params.slug.toUpperCase()} Insights | ApexWeb3`,
-        description: `Deep dives and analysis for the ${params.slug} category by the ApexWeb3 research team.`,
+        title: `${slug.toUpperCase()} Insights | ApexWeb3`,
+        description: `Deep dives and analysis for the ${slug} category by the ApexWeb3 research team.`,
     };
 }
 
 export default async function CategoryPage({ params }: CategoryParams) {
-    const posts = await getPostsByCategory(params.slug, 12);
+    const { slug } = await params;
+    const posts = await getPostsByCategory(slug, 12);
 
     if (!posts || posts.length === 0) {
         return (
@@ -27,7 +29,7 @@ export default async function CategoryPage({ params }: CategoryParams) {
                 <div className="text-center p-8 border border-slate-800 rounded-2xl bg-slate-900/50">
                     <Folder className="mx-auto h-12 w-12 text-slate-500 mb-4" />
                     <h2 className="text-2xl font-bold text-slate-300 mb-2">Category Empty</h2>
-                    <p className="text-slate-500 mb-6">No insights found for category &quot;{params.slug}&quot;.</p>
+                    <p className="text-slate-500 mb-6">No insights found for category &quot;{slug}&quot;.</p>
                     <Link href="/insights" className="text-brand-primary hover:text-teal-400 font-medium">
                         Return to All Insights &rarr;
                     </Link>
@@ -46,7 +48,7 @@ export default async function CategoryPage({ params }: CategoryParams) {
                             &larr; Back to Intelligence
                         </Link>
                         <h1 className="mb-4 text-3xl font-extrabold tracking-tight text-white md:text-5xl capitalize">
-                            <span className="text-slate-500">Category:</span> {params.slug.replace(/-/g, ' ')}
+                            <span className="text-slate-500">Category:</span> {slug.replace(/-/g, ' ')}
                         </h1>
                         <p className="text-lg text-slate-400">
                             Browsing the latest Web3 research and tokenomics for this topic.

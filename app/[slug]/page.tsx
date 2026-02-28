@@ -7,13 +7,14 @@ import Link from 'next/link';
 import Image from 'next/image';
 
 interface PostParams {
-    params: {
+    params: Promise<{
         slug: string;
-    }
+    }>
 }
 
 export async function generateMetadata({ params }: PostParams): Promise<Metadata> {
-    const post = await getPostBySlug(params.slug);
+    const { slug } = await params;
+    const post = await getPostBySlug(slug);
 
     if (!post) {
         return { title: 'Post Not Found | ApexWeb3' };
@@ -34,7 +35,8 @@ export async function generateMetadata({ params }: PostParams): Promise<Metadata
 }
 
 export default async function BlogPostPage({ params }: PostParams) {
-    const post = await getPostBySlug(params.slug);
+    const { slug } = await params;
+    const post = await getPostBySlug(slug);
 
     if (!post) {
         notFound();
