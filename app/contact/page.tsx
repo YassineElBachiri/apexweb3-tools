@@ -1,3 +1,4 @@
+import { Metadata } from "next";
 import { Mail, Instagram, Twitter, Linkedin, MessageSquare, ExternalLink, ArrowRight, ShieldCheck } from "lucide-react";
 import Link from "next/link";
 import { ContactForm } from "@/components/contact/ContactForm";
