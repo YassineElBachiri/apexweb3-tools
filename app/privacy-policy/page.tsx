@@ -41,7 +41,7 @@ export default function PrivacyPolicyPage() {
                                 </div>
                                 <div>
                                     <h3 className="text-white font-semibold mb-2">b. Usage Data</h3>
-                                    <p>We may collect information on how our website is accessed and used. This includes your device’s IP address, browser type, version, pages you visit, and time spent on those pages.</p>
+                                    <p>We may collect information on how our website is accessed and used. This includes your device&apos;s IP address, browser type, version, pages you visit, and time spent on those pages.</p>
                                 </div>
                             </div>
                         </section>

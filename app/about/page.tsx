@@ -11,7 +11,7 @@ const focuses = [
     {
         icon: Globe,
         title: "Stay Updated",
-        description: "News is one of our top priorities. The blockchain and crypto space moves fast, and we're here to keep you updated with market trends and regulations.",
+        description: "News is one of our top priorities. The blockchain and crypto space moves fast, and we&apos;re here to keep you updated with market trends and regulations.",
         color: "text-blue-400",
     },
     {
@@ -58,9 +58,9 @@ export default function AboutPage() {
                     <div className="space-y-6">
                         <h2 className="text-3xl font-bold">Who Am I?</h2>
                         <p className="text-gray-400 leading-relaxed text-lg">
-                            I'm <span className="text-white font-semibold">Yassine</span>, the founder of ApexWeb3.
-                            I'm passionate about everything blockchain and Web3. I've spent years exploring this space,
-                            and now I'm here to share everything I've learned with you.
+                            I&apos;m <span className="text-white font-semibold">Yassine</span>, the founder of ApexWeb3.
+                            I&apos;m passionate about everything blockchain and Web3. I&apos;ve spent years exploring this space,
+                            and now I&apos;m here to share everything I&apos;ve learned with you.
                         </p>
                         <p className="text-gray-400 leading-relaxed">
                             The vision behind ApexWeb3 is simple: to make Web3 and blockchain accessible,
@@ -109,8 +109,8 @@ export default function AboutPage() {
                     <div className="space-y-4">
                         <h2 className="text-4xl font-bold">Why ApexWeb3?</h2>
                         <p className="text-xl text-gray-400 leading-relaxed">
-                            It's simple: We believe in the transformative power of blockchain and Web3 technologies,
-                            and we're here to make sure you don't miss out on it. We prioritize honesty,
+                            It&apos;s simple: We believe in the transformative power of blockchain and Web3 technologies,
+                            and we&apos;re here to make sure you don&apos;t miss out on it. We prioritize honesty,
                             transparency, and education above all.
                         </p>
                     </div>

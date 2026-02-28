@@ -1,4 +1,5 @@
 import { Metadata } from "next";
+import Link from "next/link";
 
 export const metadata: Metadata = {
     title: "Terms of Service | ApexWeb3",
@@ -29,7 +30,7 @@ const terms = [
     {
         id: "5",
         title: "5. Disclaimer of Warranties",
-        content: "The content and services provided on ApexWeb3 are on an 'as is' and 'as available' basis. We make no warranties regarding the accuracy, completeness, or reliability of any content."
+        content: "The content and services provided on ApexWeb3 are on an &apos;as is&apos; and &apos;as available&apos; basis. We make no warranties regarding the accuracy, completeness, or reliability of any content."
     },
     {
         id: "6",
@@ -65,11 +66,11 @@ export default function TermsOfServicePage() {
                         <h2 className="text-2xl font-bold mb-4">Questions about our Terms?</h2>
                         <p className="text-gray-400 mb-8 max-w-lg mx-auto">
                             If you have any questions regarding these terms, please reach out to us.
-                            We're happy to clarify our policies.
+                            We&apos;re happy to clarify our policies.
                         </p>
-                        <a href="/contact" className="inline-block px-8 py-4 rounded-full bg-brand-purple text-white font-bold hover:bg-brand-purple/90 transition-all">
+                        <Link href="/contact" className="inline-block px-8 py-4 rounded-full bg-brand-purple text-white font-bold hover:bg-brand-purple/90 transition-all">
                             Contact Support
-                        </a>
+                        </Link>
                     </div>
 
                     <div className="mt-12 text-center text-gray-500 text-sm">
