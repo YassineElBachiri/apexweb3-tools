@@ -46,7 +46,7 @@ function AnalyzerContent() {
         if (q) {
             fetchTokenomicsData(q);
             // Clear URL without reloading
-            window.history.replaceState(null, "", "/analyzer");
+            window.history.replaceState(null, "", "/analysis/analyzer");
         }
     }, [searchParams]);
 
@@ -239,7 +239,7 @@ const relatedTools = [
     {
         name: "Security Scanner",
         description: "Detect rug pulls, honeypots, and scam tokens before investing",
-        href: "/scan",
+        href: "/discovery/scan",
     },
     {
         name: "Portfolio Tracker",
@@ -249,7 +249,7 @@ const relatedTools = [
     {
         name: "Whale Watch",
         description: "Monitor large wallet movements and follow smart money",
-        href: "/whales",
+        href: "/analysis/whales",
     },
 ];
 

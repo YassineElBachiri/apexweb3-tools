@@ -9,22 +9,22 @@ export const NAV_LINKS = [
 
 export const FOOTER_LINKS = {
     intelligence: [
-        { label: "Tokenomics Analyzer", href: "/analyzer" },
-        { label: "Whale Watch", href: "/whales" },
-        { label: "Meme Coin Scanner", href: "/spike-detector" },
+        { label: "Tokenomics Analyzer", href: "/analysis/analyzer" },
+        { label: "Whale Watch", href: "/analysis/whales" },
+        { label: "Meme Coin Scanner", href: "/discovery/spike-detector" },
     ],
     risk: [
-        { label: "Security Scanner", href: "/scan" },
+        { label: "Security Scanner", href: "/discovery/scan" },
         { label: "Portfolio Tracker", href: "/portfolio" },
     ],
     utilities: [
-        { label: "Avg Cost Calculator", href: "/calculator" },
-        { label: "Crypto Converter", href: "/converter" },
-        { label: "Fiat Exchange", href: "/fiat-converter" },
+        { label: "Avg Cost Calculator", href: "/finance/calculator" },
+        { label: "Crypto Converter", href: "/finance/converter" },
+        { label: "Fiat Exchange", href: "/finance/fiat-converter" },
     ],
     careers: [
         { label: "Web3 Jobs", href: "/jobs" },
-        { label: "Salary Estimator", href: "/salary-estimator" },
+        { label: "Salary Estimator", href: "/finance/salary-estimator" },
     ],
     resources: [
         { label: "Documentation", href: "/docs" },
@@ -34,8 +34,8 @@ export const FOOTER_LINKS = {
     ],
     company: [
         { label: "About Us", href: "/about" },
-        { label: "Privacy Policy", href: "/privacy" },
-        { label: "Terms of Service", href: "/terms" },
+        { label: "Privacy Policy", href: "/privacy-policy" },
+        { label: "Terms of Service", href: "/terms-of-service" },
         { label: "Contact", href: "/contact" },
     ]
 };

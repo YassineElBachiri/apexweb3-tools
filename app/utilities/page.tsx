@@ -12,35 +12,35 @@ const tools = [
     {
         icon: Calculator,
         title: "Avg Cost Calculator",
-        href: "/calculator",
+        href: "/finance/calculator",
         description: "Calculate your average buy price across multiple purchases, simulate DCA strategies, and find your break-even point.",
         features: ["Multi-Purchase Tracking", "DCA Simulation", "Profit/Loss Analysis", "Break-even Calculator"],
         color: "text-cyan-400",
         bg: "bg-cyan-500/10",
         border: "border-cyan-500/20",
-        nextTool: { label: "Convert your crypto values →", href: "/converter" },
+        nextTool: { label: "Convert your crypto values →", href: "/finance/converter" },
     },
     {
         icon: ArrowRightLeft,
         title: "Crypto Converter",
-        href: "/converter",
+        href: "/finance/converter",
         description: "Real-time conversion between 100+ cryptocurrencies with live exchange rates. Bi-directional and instant.",
         features: ["100+ Crypto Pairs", "Real-Time Rates", "Bi-Directional", "Live Price Updates"],
         color: "text-indigo-400",
         bg: "bg-indigo-500/10",
         border: "border-indigo-500/20",
-        nextTool: { label: "Check fiat exchange rates →", href: "/fiat-converter" },
+        nextTool: { label: "Check fiat exchange rates →", href: "/finance/fiat-converter" },
     },
     {
         icon: DollarSign,
         title: "Fiat Exchange",
-        href: "/fiat-converter",
+        href: "/finance/fiat-converter",
         description: "Check your crypto holdings' value in 30+ fiat currencies at once. Ideal for international investors and cross-border payments.",
         features: ["30+ Fiat Currencies", "Multi-Currency Grid", "Fee Calculator", "Real-Time Rates"],
         color: "text-emerald-400",
         bg: "bg-emerald-500/10",
         border: "border-emerald-500/20",
-        nextTool: { label: "Calculate your average cost →", href: "/calculator" },
+        nextTool: { label: "Calculate your average cost →", href: "/finance/calculator" },
     },
 ];
 
@@ -127,7 +127,7 @@ export default function UtilitiesPage() {
                             <div className="text-sm text-gray-400">Use the Avg Cost Calculator after spotting a new token on our Meme Coin Scanner.</div>
                         </div>
                     </div>
-                    <Link href="/spike-detector" className="flex items-center gap-1 text-sm font-bold text-orange-400 hover:opacity-80 transition-opacity whitespace-nowrap">
+                    <Link href="/discovery/spike-detector" className="flex items-center gap-1 text-sm font-bold text-orange-400 hover:opacity-80 transition-opacity whitespace-nowrap">
                         Meme Coin Scanner <ArrowRight className="w-4 h-4" />
                     </Link>
                 </div>

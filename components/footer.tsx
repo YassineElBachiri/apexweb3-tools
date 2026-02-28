@@ -32,7 +32,7 @@ export function Footer() {
                                 </Link>
                             </li>
                             <li>
-                                <Link href="/whales" className="hover:text-primary transition-smooth">
+                                <Link href="/analysis/whales" className="hover:text-primary transition-smooth">
                                     Whale Watch
                                 </Link>
                             </li>

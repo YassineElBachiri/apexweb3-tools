@@ -16,7 +16,7 @@ export const metadata: Metadata = generateMetadata({
         "fdv market cap ratio",
         "circulating supply",
     ],
-    canonical: "/analyzer",
+    canonical: "/analysis/analyzer",
 });
 
 export { default } from "./page";

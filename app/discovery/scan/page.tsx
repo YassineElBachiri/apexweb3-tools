@@ -10,7 +10,7 @@ const relatedTools = [
     {
         name: "Tokenomics Analyzer",
         description: "Analyze token economics and get investment scores",
-        href: "/analyzer",
+        href: "/analysis/analyzer",
     },
     {
         name: "Portfolio Tracker",
@@ -20,7 +20,7 @@ const relatedTools = [
     {
         name: "Whale Watch",
         description: "Monitor large wallet movements in real-time",
-        href: "/whales",
+        href: "/analysis/whales",
     },
 ];
 

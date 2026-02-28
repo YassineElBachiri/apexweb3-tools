@@ -103,19 +103,15 @@ export function SearchBar({ onSearch }: SearchBarProps) {
             }
 
             // Context-aware routing
-            if (pathname?.startsWith("/scan")) {
-                router.push(`/scan/${valueToSearch}`);
-            } else if (pathname?.startsWith("/analyzer")) {
-                // If on analyzer page but onSearch prop missing (unlikely but safe), force reload/update?
-                // Actually if on analyzer, the parent should have passed onSearch. 
-                // If we are here, it means we might want to just reload the page with the query?
-                // But let's assume standard routing:
-                router.push(`/analyzer?q=${valueToSearch}`);
+            if (pathname?.startsWith("/discovery/scan")) {
+                router.push(`/discovery/scan/${valueToSearch}`);
+            } else if (pathname?.startsWith("/analysis/analyzer")) {
+                router.push(`/analysis/analyzer?q=${valueToSearch}`);
             } else if (pathname?.startsWith("/portfolio")) {
                 router.push(`/portfolio/${valueToSearch}`);
             } else {
                 // Default fallback: Go to Analyzer
-                router.push(`/analyzer?q=${valueToSearch}`);
+                router.push(`/analysis/analyzer?q=${valueToSearch}`);
             }
         } else {
             alert("Invalid address format. Please enter a valid Ethereum address (0x...) or search for a coin name.");
@@ -140,7 +136,7 @@ export function SearchBar({ onSearch }: SearchBarProps) {
             }
 
             // Fallback: Go to Analyzer
-            router.push(`/analyzer?q=${coin.address}`);
+            router.push(`/analysis/analyzer?q=${coin.address}`);
         } else {
             alert(`${coin.name} is not an Ethereum-based token. This platform currently supports ERC-20 tokens on Ethereum. Please search for Ethereum-based tokens like UNI, LINK, AAVE, etc.`);
         }

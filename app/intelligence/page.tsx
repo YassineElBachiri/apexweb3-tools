@@ -12,7 +12,7 @@ const tools = [
     {
         icon: TrendingUp,
         title: "Tokenomics Analyzer",
-        href: "/analyzer",
+        href: "/analysis/analyzer",
         description: "Deep-dive token analysis with a 0–100 investment score, supply metrics, vesting schedules, and risk verdicts.",
         features: ["0-100 Investment Score", "Supply & Inflation Analysis", "Vesting Schedule Check", "Risk Verdict"],
         badge: "Most Popular",
@@ -23,7 +23,7 @@ const tools = [
     {
         icon: Eye,
         title: "Whale Watch",
-        href: "/whales",
+        href: "/analysis/whales",
         description: "Monitor large wallet movements ($100K+) in real-time. Track smart money before the market reacts.",
         features: ["Live Transaction Feed", "$100K+ Movements", "Wallet Labels", "Multi-chain Coverage"],
         color: "text-brand-blue",
@@ -33,7 +33,7 @@ const tools = [
     {
         icon: Flame,
         title: "Meme Coin Scanner",
-        href: "/spike-detector",
+        href: "/discovery/spike-detector",
         description: "Detect early liquidity events and volume spikes on meme coins across Solana and Base — before the crowd.",
         features: ["Early Liquidity Alerts", "Solana & Base Coverage", "Volume Spike Detection", "Live Updates"],
         badge: "Live",
@@ -139,7 +139,7 @@ export default function IntelligencePage() {
                         </div>
                     </div>
                     <Link
-                        href="/risk"
+                        href="/analysis/risk"
                         className="flex items-center gap-1 text-sm font-bold text-brand-pink hover:opacity-80 transition-opacity whitespace-nowrap"
                     >
                         Go to Risk Tools <ArrowRight className="w-4 h-4" />

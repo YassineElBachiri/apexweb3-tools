@@ -12,7 +12,7 @@ const tools = [
     {
         icon: Shield,
         title: "Security Scanner",
-        href: "/scan",
+        href: "/discovery/scan",
         description: "Audit any smart contract for honeypots, rug pull risks, owner privileges, and liquidity lock status before you invest a single dollar.",
         features: ["Honeypot Detection", "Liquidity Lock Check", "Owner Privilege Scan", "Mint Function Detection"],
         badge: "New",
@@ -30,7 +30,7 @@ const tools = [
         color: "text-green-400",
         bg: "bg-green-500/10",
         border: "border-green-500/20",
-        nextTool: { label: "Run a Security Scan before adding new tokens →", href: "/scan" },
+        nextTool: { label: "Run a Security Scan before adding new tokens →", href: "/discovery/scan" },
     },
 ];
 
