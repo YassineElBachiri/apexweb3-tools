@@ -239,7 +239,7 @@ const relatedTools = [
     {
         name: "Security Scanner",
         description: "Detect rug pulls, honeypots, and scam tokens before investing",
-        href: "/discovery/scan",
+        href: "/analysis/contract-analyzer",
     },
     {
         name: "Portfolio Tracker",

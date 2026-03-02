@@ -103,8 +103,8 @@ export function SearchBar({ onSearch }: SearchBarProps) {
             }
 
             // Context-aware routing
-            if (pathname?.startsWith("/discovery/scan")) {
-                router.push(`/discovery/scan/${valueToSearch}`);
+            if (pathname?.startsWith("/analysis/contract-analyzer")) {
+                router.push(`/analysis/security-scanner/eth/${valueToSearch}`);
             } else if (pathname?.startsWith("/analysis/analyzer")) {
                 router.push(`/analysis/analyzer?q=${valueToSearch}`);
             } else if (pathname?.startsWith("/portfolio")) {

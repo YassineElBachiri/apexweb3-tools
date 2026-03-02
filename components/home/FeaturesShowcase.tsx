@@ -44,13 +44,16 @@ export function FeaturesShowcase() {
                         </p>
                         <ul className="space-y-3 mb-8">
                             {[
-                                'Whale Watch — $100K+ wallet movements in real-time',
-                                'Meme Coin Scanner — Early liquidity on Solana & Base',
-                                'Tokenomics Analyzer — 0–100 investment score',
+                                { name: 'Whale Watch', desc: '$100K+ wallet movements in real-time', href: '/analysis/whales' },
+                                { name: 'Meme Coin Scanner', desc: 'Early liquidity on Solana & Base', href: '/discovery/spike-detector' },
+                                { name: 'Tokenomics Analyzer', desc: '0–100 investment score', href: '/analysis/analyzer' },
                             ].map((item, i) => (
                                 <li key={i} className="flex items-start text-gray-300">
                                     <Check className="w-5 h-5 text-brand-blue mr-3 flex-shrink-0 mt-0.5" />
-                                    {item}
+                                    <span>
+                                        <Link href={item.href} className="font-semibold text-white hover:text-brand-blue transition-colors">{item.name}</Link>
+                                        <span className="text-gray-400"> — {item.desc}</span>
+                                    </span>
                                 </li>
                             ))}
                         </ul>
@@ -98,12 +101,15 @@ export function FeaturesShowcase() {
                         </p>
                         <ul className="space-y-3 mb-8">
                             {[
-                                'Security Scanner — Honeypot & contract vulnerability detection',
-                                'Portfolio Tracker — P&L, real-time prices, exposure at a glance',
+                                { name: 'Security Scanner', desc: 'Honeypot & contract vulnerability detection', href: '/analysis/contract-analyzer' },
+                                { name: 'Portfolio Tracker', desc: 'P&L, real-time prices, exposure at a glance', href: '/portfolio' },
                             ].map((item, i) => (
                                 <li key={i} className="flex items-start text-gray-300">
                                     <Check className="w-5 h-5 text-brand-pink mr-3 flex-shrink-0 mt-0.5" />
-                                    {item}
+                                    <span>
+                                        <Link href={item.href} className="font-semibold text-white hover:text-brand-pink transition-colors">{item.name}</Link>
+                                        <span className="text-gray-400"> — {item.desc}</span>
+                                    </span>
                                 </li>
                             ))}
                         </ul>
@@ -153,12 +159,15 @@ export function FeaturesShowcase() {
                         </p>
                         <ul className="space-y-3 mb-8">
                             {[
-                                'Web3 Jobs — Live board with DeFi, NFT & L2 roles',
-                                'Salary Estimator — Benchmark compensation by role & seniority',
+                                { name: 'Web3 Jobs', desc: 'Live board with DeFi, NFT & L2 roles', href: '/jobs' },
+                                { name: 'Salary Estimator', desc: 'Benchmark compensation by role & seniority', href: '/finance/salary-estimator' },
                             ].map((item, i) => (
                                 <li key={i} className="flex items-start text-gray-300">
                                     <Check className="w-5 h-5 text-emerald-400 mr-3 flex-shrink-0 mt-0.5" />
-                                    {item}
+                                    <span>
+                                        <Link href={item.href} className="font-semibold text-white hover:text-emerald-400 transition-colors">{item.name}</Link>
+                                        <span className="text-gray-400"> — {item.desc}</span>
+                                    </span>
                                 </li>
                             ))}
                         </ul>

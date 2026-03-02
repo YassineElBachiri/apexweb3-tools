@@ -19,7 +19,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
 
         // Discovery Tools
         { url: `${baseUrl}/discovery/spike-detector`, lastModified: currentDate, changeFrequency: 'hourly', priority: 0.9 },
-        { url: `${baseUrl}/discovery/scan`, lastModified: currentDate, changeFrequency: 'weekly', priority: 0.8 },
+        { url: `${baseUrl}/analysis/contract-analyzer`, lastModified: currentDate, changeFrequency: 'weekly', priority: 0.8 },
         { url: `${baseUrl}/discovery/tracker`, lastModified: currentDate, changeFrequency: 'weekly', priority: 0.8 },
 
         // Analysis Tools

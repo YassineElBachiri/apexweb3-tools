@@ -25,9 +25,9 @@ export function Hero() {
                 <div className="text-center max-w-4xl mx-auto space-y-8 animate-in fade-in slide-in-from-bottom-8 duration-700">
 
                     {/* Badge */}
-                    <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/5 border border-white/10 backdrop-blur-md mb-4">
-                        <span className="w-2 h-2 rounded-full bg-green-400 animate-ping" />
-                        <span className="text-sm font-medium text-gray-300">
+                    <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-red-500/10 border border-red-500/20 backdrop-blur-md mb-4">
+                        <span className="w-2 h-2 rounded-full bg-red-500 animate-ping" />
+                        <span className="text-sm font-bold text-red-400">
                             Live · Meme Coin Scanner is active now
                         </span>
                     </div>
@@ -35,34 +35,31 @@ export function Hero() {
                     {/* Headline */}
                     <h1 className="text-5xl md:text-7xl lg:text-8xl font-bold tracking-tight leading-tight">
                         <span className="bg-clip-text text-transparent bg-gradient-to-r from-brand-purple via-brand-pink to-brand-blue">
-                            Web3 Intelligence.
+                            Find the Alpha.
                         </span>
                         <br />
                         <span className="text-white">
-                            Risk Tools.
+                            Mitigate Risk.
                         </span>
                         <br />
                         <span className="bg-clip-text text-transparent bg-gradient-to-r from-brand-blue to-emerald-400">
-                            Career Clarity.
+                            Build the Future.
                         </span>
                     </h1>
 
                     {/* Subheadline */}
                     <p className="text-xl md:text-2xl text-gray-400 max-w-2xl mx-auto leading-relaxed">
-                        Professional-grade tools for active crypto participants — built around{" "}
-                        <span className="text-brand-blue font-medium">market signals</span>,{" "}
-                        <span className="text-brand-pink font-medium">smart money tracking</span>, and{" "}
-                        <span className="text-emerald-400 font-medium">Web3 careers</span>.
+                        Professional-grade on-chain intelligence for active traders and Web3 developers. Track smart money, scan for vulnerabilities, and execute with an edge.
                     </p>
 
                     {/* CTAs */}
                     <div className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-4">
                         <Button
                             size="lg"
-                            className="bg-brand-purple hover:bg-brand-purple/90 text-white px-8 py-6 text-lg rounded-full shadow-[0_0_30px_rgba(199,125,255,0.3)] transition-all hover:scale-105"
+                            className="bg-brand-purple hover:bg-brand-purple/80 text-white px-8 py-6 text-lg rounded-full shadow-[0_0_30px_rgba(199,125,255,0.4)] hover:shadow-[0_0_40px_rgba(199,125,255,0.6)] transition-all hover:scale-105"
                             onClick={scrollToPillars}
                         >
-                            Explore Intelligence Tools <ArrowRight className="ml-2 h-5 w-5" />
+                            Access Live Signals <ArrowRight className="ml-2 h-5 w-5" />
                         </Button>
                         <Button
                             variant="outline"

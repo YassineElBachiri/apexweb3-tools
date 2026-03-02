@@ -1,7 +1,7 @@
 
 import {
     TrendingUp, Shield, Wallet, Eye, ArrowRightLeft,
-    DollarSign, Calculator, Zap, Briefcase, Flame
+    DollarSign, Calculator, Zap, Briefcase, Flame, ShieldAlert
 } from "lucide-react";
 
 export type ToolPillar = 'Intelligence' | 'Risk' | 'Utilities' | 'Careers';
@@ -50,7 +50,8 @@ export const TOOLS: Tool[] = [
             "Live Transaction Feed",
             "$100K+ Movements",
             "Wallet Labels"
-        ]
+        ],
+        badge: "Hot"
     },
     {
         id: 'spike-detector',
@@ -71,11 +72,11 @@ export const TOOLS: Tool[] = [
 
     // ── RISK PILLAR ──────────────────────────────────────────────────────────
     {
-        id: 'scanner',
+        id: "security-scanner",
         title: "Security Scanner",
-        description: "Detect honeypots, rug pulls, and contract vulnerabilities before you invest",
-        icon: Shield,
-        href: "/discovery/scan",
+        description: "Detect honeypots and vulnerabilities in smart contracts.",
+        icon: ShieldAlert,
+        href: "/analysis/contract-analyzer",
         pillar: "Risk",
         pillarHref: "/risk",
         color: "pink",
@@ -84,7 +85,7 @@ export const TOOLS: Tool[] = [
             "Liquidity Lock Check",
             "Smart Contract Audit"
         ],
-        badge: "New"
+        badge: "Essential"
     },
     {
         id: 'portfolio',
@@ -163,8 +164,7 @@ export const TOOLS: Tool[] = [
             "Live Job Board",
             "Remote & On-site",
             "DeFi, NFT, L2 Roles"
-        ],
-        badge: "New"
+        ]
     },
     {
         id: 'salary-estimator',

@@ -4,7 +4,7 @@ import Link from 'next/link';
 import { TOOLS, PILLAR_META, ToolPillar } from '@/lib/constants/tools';
 import { ArrowRight } from 'lucide-react';
 
-const PILLAR_ORDER: ToolPillar[] = ['Intelligence', 'Risk', 'Utilities', 'Careers'];
+const PILLAR_ORDER: ToolPillar[] = ['Intelligence', 'Risk', 'Careers', 'Utilities'];
 
 function ToolCard({ tool }: { tool: (typeof TOOLS)[0] }) {
     const Icon = tool.icon;
@@ -25,14 +25,14 @@ function ToolCard({ tool }: { tool: (typeof TOOLS)[0] }) {
     return (
         <Link
             href={tool.href}
-            className="group flex flex-col gap-4 p-5 rounded-2xl bg-white/3 border border-white/5 hover:border-white/15 hover:bg-white/5 transition-all duration-300"
+            className={`group flex flex-col gap-4 p-5 rounded-2xl bg-white/3 border transition-all duration-300 ${tool.badge ? 'border-white/20 hover:border-white/40 shadow-[0_0_15px_rgba(255,255,255,0.05)]' : 'border-white/5 hover:border-white/15 hover:bg-white/5'}`}
         >
             <div className="flex items-start justify-between">
                 <div className={`p-2.5 rounded-xl border ${iconClass}`}>
                     <Icon className="w-5 h-5" />
                 </div>
                 {tool.badge && (
-                    <span className="text-[10px] font-bold bg-brand-pink/80 text-white px-2 py-0.5 rounded-full">
+                    <span className="text-[10px] font-bold bg-white/10 text-white border border-white/20 px-2 py-0.5 rounded-full shadow-[0_0_10px_rgba(255,255,255,0.1)]">
                         {tool.badge}
                     </span>
                 )}

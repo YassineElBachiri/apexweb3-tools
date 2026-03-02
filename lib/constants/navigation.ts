@@ -14,7 +14,7 @@ export const FOOTER_LINKS = {
         { label: "Meme Coin Scanner", href: "/discovery/spike-detector" },
     ],
     risk: [
-        { label: "Security Scanner", href: "/discovery/scan" },
+        { label: "Security Scanner", href: "/analysis/contract-analyzer" },
         { label: "Portfolio Tracker", href: "/portfolio" },
     ],
     utilities: [
