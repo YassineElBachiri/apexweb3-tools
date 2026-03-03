@@ -73,12 +73,12 @@ export function Navigation({ categories = [] }: NavigationProps) {
                                         {/* Dropdown for Categories */}
                                         <div className="absolute top-20 left-0 hidden group-hover:block w-56 bg-brand-dark/95 backdrop-blur-xl border border-white/10 rounded-xl shadow-2xl overflow-hidden animate-in fade-in slide-in-from-top-2">
                                             <div className="p-2 flex flex-col">
-                                                <Link href="/categories" className="px-4 py-2 text-sm text-gray-400 hover:text-white hover:bg-white/5 rounded-lg transition-colors font-medium">
+                                                <Link href="/blog" className="px-4 py-2 text-sm text-gray-400 hover:text-white hover:bg-white/5 rounded-lg transition-colors font-medium">
                                                     All Categories
                                                 </Link>
                                                 <div className="h-px bg-white/10 my-1 mx-2" />
                                                 {categories.map(cat => (
-                                                    <Link key={cat.slug} href={getCategoryUrl(cat.slug)} className="px-4 py-2 text-sm text-gray-400 hover:text-white hover:bg-white/5 rounded-lg transition-colors flex items-center justify-between">
+                                                    <Link key={cat.slug} href={`/blog/category/${cat.slug}`} className="px-4 py-2 text-sm text-gray-400 hover:text-white hover:bg-white/5 rounded-lg transition-colors flex items-center justify-between">
                                                         <span>{cat.name}</span>
                                                         <span className="text-[10px] font-bold bg-brand-primary/10 text-brand-primary px-2 py-0.5 rounded-full">{cat.count}</span>
                                                     </Link>
@@ -151,11 +151,11 @@ export function Navigation({ categories = [] }: NavigationProps) {
                                                 {link.label}
                                             </Link>
                                             <div className="pl-6 flex flex-col gap-1 py-1 border-l-2 border-white/5 ml-4">
-                                                <Link href="/categories" onClick={() => setMobileMenuOpen(false)} className="text-sm text-brand-primary hover:text-teal-400 py-1.5 transition-colors font-medium">
+                                                <Link href="/blog" onClick={() => setMobileMenuOpen(false)} className="text-sm text-brand-primary hover:text-teal-400 py-1.5 transition-colors font-medium">
                                                     Browse All Categories &rarr;
                                                 </Link>
                                                 {categories.map(cat => (
-                                                    <Link key={cat.slug} href={getCategoryUrl(cat.slug)} onClick={() => setMobileMenuOpen(false)} className="text-sm text-gray-500 hover:text-white py-1.5 transition-colors">
+                                                    <Link key={cat.slug} href={`/blog/category/${cat.slug}`} onClick={() => setMobileMenuOpen(false)} className="text-sm text-gray-500 hover:text-white py-1.5 transition-colors">
                                                         {cat.name} ({cat.count})
                                                     </Link>
                                                 ))}

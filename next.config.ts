@@ -13,6 +13,11 @@ const nextConfig: NextConfig = {
             },
             {
                 protocol: 'https',
+                hostname: 'wp.apexweb3.com',
+                pathname: '/wp-content/uploads/**',
+            },
+            {
+                protocol: 'https',
                 hostname: 'ui-avatars.com',
                 port: '',
                 pathname: '/api/**',
@@ -61,11 +66,12 @@ const nextConfig: NextConfig = {
     experimental: {
         useCache: true,
     },
-    async rewrites() {
+    async redirects() {
         return [
             {
                 source: '/:category(news|defi|guide|blockchain-basics|web3-and-ai|reviews-and-analysis|blockchain-dev-hub|nfts-and-metaverse|security-and-audits)',
-                destination: '/category/:category',
+                destination: '/blog/category/:category',
+                permanent: true,
             }
         ];
     },

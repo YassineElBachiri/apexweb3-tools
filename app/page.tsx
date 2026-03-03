@@ -1,6 +1,7 @@
 import dynamic from "next/dynamic";
 import { Hero } from "@/components/home/Hero";
 import { PillarGrid } from "@/components/home/PillarGrid";
+import { LatestBlogPosts } from "@/components/home/LatestBlogPosts";
 
 // Below-the-fold sections loaded lazily to reduce initial JS bundle & TBT
 const HowItWorks = dynamic(() => import("@/components/home/HowItWorks").then(m => m.HowItWorks), { ssr: true });
@@ -16,6 +17,7 @@ export default function Home() {
             <HowItWorks />
             <FeaturesShowcase />
             <StatsSection />
+            <LatestBlogPosts />
             <CTASection />
         </div>
     );
