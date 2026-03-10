@@ -1,18 +1,33 @@
 "use client";
 
-import { ApexRiskProfile } from "@/lib/security-service";
+import { ApexRiskProfile, TokenMarketData } from "@/lib/security-service";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { AlertTriangle, CheckCircle, ShieldAlert, ShieldCheck, Share2, Copy, ArrowRight, Activity, Percent, Search } from "lucide-react";
+import { AlertTriangle, CheckCircle, ShieldAlert, ShieldCheck, Share2, Copy, ArrowRight, Activity, TrendingUp, TrendingDown, DollarSign, Droplets, BarChart3, Search, Globe, Calendar } from "lucide-react";
 import Link from "next/link";
 import { useState } from "react";
 
 interface RiskDashboardProps {
     profile: ApexRiskProfile;
+    marketData?: TokenMarketData | null;
 }
 
-export function RiskDashboard({ profile }: RiskDashboardProps) {
+function formatCurrency(value: number): string {
+    if (value >= 1_000_000_000) return `$${(value / 1_000_000_000).toFixed(2)}B`;
+    if (value >= 1_000_000) return `$${(value / 1_000_000).toFixed(2)}M`;
+    if (value >= 1_000) return `$${(value / 1_000).toFixed(2)}K`;
+    return `$${value.toFixed(2)}`;
+}
+
+function formatPrice(value: number): string {
+    if (value < 0.00001) return `$${value.toExponential(2)}`;
+    if (value < 0.01) return `$${value.toFixed(6)}`;
+    if (value < 1) return `$${value.toFixed(4)}`;
+    return `$${value.toFixed(2)}`;
+}
+
+export function RiskDashboard({ profile, marketData }: RiskDashboardProps) {
     const [copied, setCopied] = useState(false);
 
     const isSafe = profile.status === 'SAFE';
@@ -25,7 +40,7 @@ export function RiskDashboard({ profile }: RiskDashboardProps) {
         setTimeout(() => setCopied(false), 2000);
     };
 
-    // Simulated Swap Calculation
+    // Simulated Swap Calculation using REAL data
     const swapAmount = 100;
     const calculateSimulatedResult = () => {
         if (profile.isHoneypot) return 0;
@@ -40,6 +55,16 @@ export function RiskDashboard({ profile }: RiskDashboardProps) {
 
     const simulatedReturn = calculateSimulatedResult();
     const swapFails = profile.isHoneypot || simulatedReturn === 0;
+
+    // Calculate real tokens received
+    const tokensReceived = marketData?.priceUsd
+        ? (swapAmount * (1 - (profile.buyTax || 0) / 100)) / marketData.priceUsd
+        : null;
+
+    // Liquidity impact
+    const liquidityImpact = marketData?.liquidity
+        ? ((swapAmount / marketData.liquidity) * 100)
+        : null;
 
     return (
         <div className="space-y-8 w-full animate-in fade-in slide-in-from-bottom-8 duration-700">
@@ -92,6 +117,62 @@ export function RiskDashboard({ profile }: RiskDashboardProps) {
                 </div>
             </div>
 
+            {/* Token Market Data Card — Only shown when real data is available */}
+            {marketData && (
+                <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
+                    <div className="p-4 rounded-xl bg-card/40 border border-white/5 backdrop-blur-sm">
+                        <div className="flex items-center gap-2 text-xs text-muted-foreground mb-1">
+                            <DollarSign className="w-3.5 h-3.5" /> Price
+                        </div>
+                        <p className="text-lg font-bold text-white">{formatPrice(marketData.priceUsd)}</p>
+                    </div>
+
+                    <div className="p-4 rounded-xl bg-card/40 border border-white/5 backdrop-blur-sm">
+                        <div className="flex items-center gap-2 text-xs text-muted-foreground mb-1">
+                            {marketData.priceChange24h >= 0
+                                ? <TrendingUp className="w-3.5 h-3.5 text-emerald-400" />
+                                : <TrendingDown className="w-3.5 h-3.5 text-rose-400" />}
+                            24h Change
+                        </div>
+                        <p className={`text-lg font-bold ${marketData.priceChange24h >= 0 ? 'text-emerald-400' : 'text-rose-400'}`}>
+                            {marketData.priceChange24h >= 0 ? '+' : ''}{marketData.priceChange24h.toFixed(2)}%
+                        </p>
+                    </div>
+
+                    <div className="p-4 rounded-xl bg-card/40 border border-white/5 backdrop-blur-sm">
+                        <div className="flex items-center gap-2 text-xs text-muted-foreground mb-1">
+                            <BarChart3 className="w-3.5 h-3.5" /> 24h Volume
+                        </div>
+                        <p className="text-lg font-bold text-white">{formatCurrency(marketData.volume24h)}</p>
+                    </div>
+
+                    <div className="p-4 rounded-xl bg-card/40 border border-white/5 backdrop-blur-sm">
+                        <div className="flex items-center gap-2 text-xs text-muted-foreground mb-1">
+                            <Droplets className="w-3.5 h-3.5" /> Liquidity
+                        </div>
+                        <p className="text-lg font-bold text-white">{formatCurrency(marketData.liquidity)}</p>
+                    </div>
+
+                    {marketData.marketCap && (
+                        <div className="p-4 rounded-xl bg-card/40 border border-white/5 backdrop-blur-sm">
+                            <div className="flex items-center gap-2 text-xs text-muted-foreground mb-1">
+                                <Globe className="w-3.5 h-3.5" /> Market Cap
+                            </div>
+                            <p className="text-lg font-bold text-white">{formatCurrency(marketData.marketCap)}</p>
+                        </div>
+                    )}
+
+                    {marketData.pairCreatedAt && (
+                        <div className="p-4 rounded-xl bg-card/40 border border-white/5 backdrop-blur-sm">
+                            <div className="flex items-center gap-2 text-xs text-muted-foreground mb-1">
+                                <Calendar className="w-3.5 h-3.5" /> Created
+                            </div>
+                            <p className="text-sm font-bold text-white mt-1">{marketData.pairCreatedAt}</p>
+                        </div>
+                    )}
+                </div>
+            )}
+
             {/* Grid Layout for Flags and Simulation */}
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
 
@@ -102,7 +183,11 @@ export function RiskDashboard({ profile }: RiskDashboardProps) {
                             <Activity className="w-5 h-5" />
                             Simulated Swap
                         </CardTitle>
-                        <p className="text-xs text-muted-foreground">Testing execution on a $100 sequence.</p>
+                        <p className="text-xs text-muted-foreground">
+                            {marketData
+                                ? `Testing execution on $${swapAmount} of ${marketData.tokenSymbol}.`
+                                : `Testing execution on a $${swapAmount} sequence.`}
+                        </p>
                     </CardHeader>
                     <CardContent className="pt-6 space-y-6">
                         <div className="space-y-3 relative">
@@ -112,13 +197,18 @@ export function RiskDashboard({ profile }: RiskDashboardProps) {
                             <div className="flex items-center gap-4 relative z-10">
                                 <div className="w-7 h-7 rounded-full bg-blue-500/20 border border-blue-500/50 flex items-center justify-center text-blue-400 text-xs font-bold">1</div>
                                 <div className="flex-1">
-                                    <p className="text-sm font-medium">Buy $100</p>
+                                    <p className="text-sm font-medium">Buy ${swapAmount}</p>
                                     <p className="text-xs text-muted-foreground flex justify-between">
                                         Tax: {profile.buyTax ?? 0}%
                                         <span className={profile.buyTax ? 'text-orange-400' : 'text-green-400'}>
-                                            -${profile.buyTax ?? 0}
+                                            -${((profile.buyTax ?? 0) / 100 * swapAmount).toFixed(2)}
                                         </span>
                                     </p>
+                                    {tokensReceived !== null && marketData && (
+                                        <p className="text-xs text-blue-400 mt-0.5">
+                                            ≈ {tokensReceived.toLocaleString(undefined, { maximumFractionDigits: 2 })} {marketData.tokenSymbol}
+                                        </p>
+                                    )}
                                 </div>
                             </div>
 
@@ -133,7 +223,7 @@ export function RiskDashboard({ profile }: RiskDashboardProps) {
                                     <p className="text-xs text-muted-foreground flex justify-between">
                                         Tax: {profile.sellTax ?? 0}%
                                         <span className={profile.sellTax ? 'text-orange-400' : 'text-green-400'}>
-                                            -${profile.sellTax ? ((100 - (profile.buyTax || 0)) * ((profile.sellTax || 0) / 100)).toFixed(2) : 0}
+                                            -${profile.sellTax ? ((swapAmount - (swapAmount * (profile.buyTax || 0) / 100)) * ((profile.sellTax || 0) / 100)).toFixed(2) : '0.00'}
                                         </span>
                                     </p>
                                 </div>
@@ -149,6 +239,38 @@ export function RiskDashboard({ profile }: RiskDashboardProps) {
                                 {swapFails ? "Transaction simulated to fail. Do not trade." : "Simulation successful. Taxes accounted for."}
                             </p>
                         </div>
+
+                        {/* Liquidity Impact Warning */}
+                        {liquidityImpact !== null && liquidityImpact > 1 && (
+                            <div className="p-3 rounded-lg border border-yellow-500/20 bg-yellow-500/5">
+                                <p className="text-xs text-yellow-400 font-semibold flex items-center gap-1.5">
+                                    <AlertTriangle className="w-3.5 h-3.5" />
+                                    {liquidityImpact > 5
+                                        ? `High Price Impact: ~${liquidityImpact.toFixed(1)}% of total liquidity`
+                                        : `Moderate Price Impact: ~${liquidityImpact.toFixed(2)}% of liquidity`}
+                                </p>
+                            </div>
+                        )}
+
+                        {/* Liquidity Info */}
+                        {marketData && (
+                            <div className="text-xs text-muted-foreground space-y-1 pt-2 border-t border-white/5">
+                                <div className="flex justify-between">
+                                    <span>Pool Liquidity</span>
+                                    <span className="text-white font-medium">{formatCurrency(marketData.liquidity)}</span>
+                                </div>
+                                {marketData.dexName && (
+                                    <div className="flex justify-between">
+                                        <span>DEX</span>
+                                        <span className="text-white font-medium capitalize">{marketData.dexName}</span>
+                                    </div>
+                                )}
+                                <div className="flex justify-between">
+                                    <span>24h Volume</span>
+                                    <span className="text-white font-medium">{formatCurrency(marketData.volume24h)}</span>
+                                </div>
+                            </div>
+                        )}
                     </CardContent>
                 </Card>
 
@@ -180,7 +302,7 @@ export function RiskDashboard({ profile }: RiskDashboardProps) {
                                         <h4 className={`text-sm font-bold ${flag.passed ? 'text-gray-200' : 'text-rose-400'}`}>
                                             {flag.name}
                                         </h4>
-                                        <p className="text-xs text-muted-foreground mt-1 mt-0.5 leading-relaxed">
+                                        <p className="text-xs text-muted-foreground mt-0.5 leading-relaxed">
                                             {flag.description}
                                         </p>
                                     </div>

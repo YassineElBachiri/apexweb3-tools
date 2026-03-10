@@ -1,5 +1,27 @@
 // lib/security-service.ts
 import { NextResponse } from 'next/server';
+// @ts-ignore
+import { GoPlus } from '@goplus/sdk-node';
+import { unstable_cache } from 'next/cache';
+
+if (process.env.GOPLUS_API_KEY && process.env.GOPLUS_API_SECRET) {
+    GoPlus.config({
+        appKey: process.env.GOPLUS_API_KEY,
+        appSecret: process.env.GOPLUS_API_SECRET
+    });
+}
+
+const fetchGoPlusSecurity = unstable_cache(
+    async (chainId: string, address: string) => {
+        const res = await GoPlus.tokenSecurity(chainId, [address]);
+        if (res.code !== 1 && res.code !== 2) {
+            throw new Error(`GoPlus SDK Error: ${res.message}`);
+        }
+        return res.result?.[address.toLowerCase()];
+    },
+    ['goplus-security-scan'],
+    { revalidate: 60 }
+);
 
 export interface ApexRiskProfile {
     score: number; // 0-100 (100 = safe, 0 = rug)
@@ -12,12 +34,75 @@ export interface ApexRiskProfile {
     address: string;
 }
 
+export interface TokenMarketData {
+    tokenName: string;
+    tokenSymbol: string;
+    priceUsd: number;
+    priceChange24h: number;
+    volume24h: number;
+    liquidity: number;
+    marketCap?: number;
+    pairAddress?: string;
+    dexName?: string;
+    fdv?: number;
+    pairCreatedAt?: string;
+}
+
+export async function fetchTokenMarketData(address: string): Promise<TokenMarketData | null> {
+    try {
+        const response = await fetch(`https://api.dexscreener.com/latest/dex/tokens/${address}`, {
+            next: { revalidate: 30 }
+        });
+        if (!response.ok) return null;
+        const data = await response.json();
+        if (!data.pairs || data.pairs.length === 0) return null;
+
+        // Pick the pair with the highest liquidity
+        const sorted = data.pairs.sort((a: any, b: any) => (b.liquidity?.usd || 0) - (a.liquidity?.usd || 0));
+        const best = sorted[0];
+
+        return {
+            tokenName: best.baseToken?.name || 'Unknown',
+            tokenSymbol: best.baseToken?.symbol || '???',
+            priceUsd: parseFloat(best.priceUsd || '0'),
+            priceChange24h: best.priceChange?.h24 || 0,
+            volume24h: best.volume?.h24 || 0,
+            liquidity: best.liquidity?.usd || 0,
+            marketCap: best.marketCap || undefined,
+            pairAddress: best.pairAddress || undefined,
+            dexName: best.dexId || undefined,
+            fdv: best.fdv || undefined,
+            pairCreatedAt: best.pairCreatedAt ? new Date(best.pairCreatedAt).toLocaleDateString() : undefined,
+        };
+    } catch (e) {
+        console.warn("Failed to fetch market data from DexScreener:", e);
+        return null;
+    }
+}
+
 export async function determineNetwork(address: string): Promise<'solana' | 'eth' | 'base'> {
+    // Attempt dynamic network detection via Dexscreener
+    try {
+        const response = await fetch(`https://api.dexscreener.com/latest/dex/tokens/${address}`, {
+            next: { revalidate: 3600 } // Cache for 1 hour since network rarely changes
+        });
+        if (response.ok) {
+            const data = await response.json();
+            if (data.pairs && data.pairs.length > 0) {
+                const chainId = data.pairs[0].chainId?.toLowerCase();
+                if (chainId === 'solana') return 'solana';
+                if (chainId === 'ethereum') return 'eth';
+                if (chainId === 'base') return 'base';
+            }
+        }
+    } catch (e) {
+        console.warn("Dexscreener network detection failed, falling back to heuristics", e);
+    }
+
+    // Heuristics fallback
     // Basic heuristic: 0x is EVM. Usually 42 chars.
     if (address.startsWith('0x') && address.length === 42) {
         // Defaulting to ETH for 0x for now unless we can verify chain ID.
-        // GoPlus can take multi-chain checks, but for simplicity we rely on the user or default to eth.
-        // We will refine this in the component's routing if the user selects the chain.
         return 'eth';
     }
     // Base 58 Solana addresses are 32-44 characters
@@ -32,7 +117,7 @@ export async function determineNetwork(address: string): Promise<'solana' | 'eth
 export async function analyzeSecurity(network: 'solana' | 'eth' | 'base', address: string): Promise<ApexRiskProfile> {
     const USE_MOCK = process.env.NEXT_PUBLIC_USE_MOCK_DATA === "true";
 
-    if (USE_MOCK || !process.env.GOPLUS_API_KEY) {
+    if (USE_MOCK) {
         // Return realistic mock data
         return generateMockRiskProfile(network, address);
     }
@@ -43,13 +128,13 @@ export async function analyzeSecurity(network: 'solana' | 'eth' | 'base', addres
         } else {
             return await scanEVM(network, address);
         }
-    } catch (e) {
+    } catch (e: any) {
         console.error("Error analyzing security:", e);
         // Fallback to warning if API fails rather than crashing
         return {
             score: 50,
             status: 'WARNING',
-            flags: [{ name: "API Error", description: "Could not fetch complete security data.", passed: false }],
+            flags: [{ name: "API Error", description: `Could not fetch complete security data. Error: ${e.message}`, passed: false }],
             isHoneypot: false,
             network,
             address
@@ -59,7 +144,9 @@ export async function analyzeSecurity(network: 'solana' | 'eth' | 'base', addres
 
 async function scanSolana(address: string): Promise<ApexRiskProfile> {
     // RugCheck integration for Solana
-    const response = await fetch(`https://api.rugcheck.xyz/v1/tokens/${address}/report/summary`);
+    const response = await fetch(`https://api.rugcheck.xyz/v1/tokens/${address}/report/summary`, {
+        next: { revalidate: 60 } // Cache for 60 seconds to economize API calls
+    });
 
     if (!response.ok) {
         throw new Error('RugCheck API Error');
@@ -113,16 +200,7 @@ async function scanSolana(address: string): Promise<ApexRiskProfile> {
 async function scanEVM(network: 'eth' | 'base', address: string): Promise<ApexRiskProfile> {
     const chainId = network === 'eth' ? '1' : '8453';
     // GoPlus Security API
-    const response = await fetch(`https://api.gopluslabs.io/api/v1/token_security/${chainId}?contract_addresses=${address}`, {
-        // headers: { "Authorization": `Bearer ${process.env.GOPLUS_API_KEY}` } // If required
-    });
-
-    if (!response.ok) {
-        throw new Error('GoPlus API Error');
-    }
-
-    const json = await response.json();
-    const data = json.result?.[address.toLowerCase()];
+    const data = await fetchGoPlusSecurity(chainId, address);
 
     if (!data) {
         throw new Error('Token not found in GoPlus');
@@ -170,6 +248,26 @@ async function scanEVM(network: 'eth' | 'base', address: string): Promise<ApexRi
         flags.push({ name: "Not Open Source", description: "Source code is not verified.", passed: false });
     } else {
         flags.push({ name: "Open Source", description: "Contract source is verified.", passed: true });
+    }
+
+    if (data.is_blacklisted === "1") {
+        score -= 5;
+        flags.push({ name: "Blacklist Function", description: "Owner can blacklist addresses from trading.", passed: false });
+    }
+
+    if (data.owner_change_balance === "1") {
+        score -= 15;
+        flags.push({ name: "Owner Can Change Balance", description: "Owner has privilege to modify token balances.", passed: false });
+    }
+
+    if (data.external_call === "1") {
+        score -= 5;
+        flags.push({ name: "External Call", description: "Contract makes external calls that could introduce risk.", passed: false });
+    }
+
+    if (data.can_take_back_ownership === "1") {
+        score -= 20;
+        flags.push({ name: "Ownership Recovery", description: "Ownership can be reclaimed after renouncing.", passed: false });
     }
 
     score = Math.max(0, Math.min(100, score));

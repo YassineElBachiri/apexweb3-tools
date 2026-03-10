@@ -1,33 +1,53 @@
 import { SecurityScanResult, TokenomicsAnalysis, TokenData, SecurityCheck, InvestmentScore, WhaleTransaction } from "@/types";
 
-export function generateMockWhaleTransactions(count: number = 10): WhaleTransaction[] {
-    const rng = new SeededRandom(Date.now().toString());
+export function generateMockWhaleTransactions(count: number = 10, targetNetwork?: string): WhaleTransaction[] {
+    const rng = new SeededRandom(Date.now().toString() + (targetNetwork || ""));
     const txs: WhaleTransaction[] = [];
 
     const types: ("buy" | "sell" | "transfer")[] = ["buy", "sell", "transfer"];
-    const tokens = ["ETH", "USDT", "USDC", "WBTC", "PEPE", "SHIB"];
+
+    // Pick tokens based on network
+    const getTokensForNetwork = (net?: string) => {
+        switch (net?.toLowerCase()) {
+            case "ethereum": return ["ETH", "USDT", "USDC", "PEPE", "SHIB"];
+            case "solana": return ["SOL", "USDC", "BONK", "WIF"];
+            case "bitcoin": return ["BTC", "WBTC"];
+            case "base": return ["ETH", "USDC", "BRETT"];
+            default: return ["ETH", "SOL", "BTC", "USDT", "USDC", "PEPE"];
+        }
+    };
+
+    const tokens = getTokensForNetwork(targetNetwork);
 
     for (let i = 0; i < count; i++) {
         const type = rng.pick(types);
         const token = rng.pick(tokens);
-        const valueUsd = rng.nextInt(50000, 5000000);
+        const valueUsd = rng.nextInt(100000, 5000000); // Whale threshold is 100k
 
         let amount = 0;
-        if (token === "ETH") amount = valueUsd / 2500;
-        else if (token === "WBTC") amount = valueUsd / 65000;
+        if (token === "ETH" || token === "SOL") amount = valueUsd / (token === "ETH" ? 2500 : 140);
+        else if (token === "BTC" || token === "WBTC") amount = valueUsd / 65000;
         else if (token.includes("USD")) amount = valueUsd;
         else amount = valueUsd * 1000; // Meme tokens
 
+        const net = targetNetwork || (
+            token === "SOL" || ["BONK", "WIF"].includes(token) ? "solana" :
+                token === "BTC" ? "bitcoin" :
+                    token === "BRETT" ? "base" : "ethereum"
+        );
+
         txs.push({
-            hash: "0x" + Array(64).fill(0).map(() => rng.pick("0123456789abcdef".split(""))).join(""),
-            from: "0x" + Array(40).fill(0).map(() => rng.pick("0123456789abcdef".split(""))).join(""),
-            to: "0x" + Array(40).fill(0).map(() => rng.pick("0123456789abcdef".split(""))).join(""),
-            value: amount, // ETH value or token amount
+            hash: (net === "solana" ? "" : "0x") + Array(net === "solana" ? 88 : 64).fill(0).map(() => rng.pick("0123456789abcdef".split(""))).join(""),
+            from: (net === "solana" ? "" : "0x") + Array(net === "solana" ? 44 : 40).fill(0).map(() => rng.pick("0123456789abcdef".split(""))).join(""),
+            to: (net === "solana" ? "" : "0x") + Array(net === "solana" ? 44 : 40).fill(0).map(() => rng.pick("0123456789abcdef".split(""))).join(""),
+            value: amount,
             valueUsd: valueUsd,
             token: token,
             amount: amount,
             timestamp: Date.now() - rng.nextInt(0, 3600000), // Last hour
-            type: type
+            type: type,
+            network: net,
+            explorerUrl: undefined // Will be set in API route
         });
     }
 
@@ -116,13 +136,13 @@ export function generateTokenData(identifier: string): TokenData {
     if (knownToken) {
         symbol = knownToken.symbol;
         name = knownToken.name;
-        logo = knownToken.logo || `https://placehold.co/64?text=${knownToken.symbol}`;
+        logo = knownToken.logo || `data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='50' fill='%236366f1'/%3E%3Ctext x='50' y='50' font-family='Arial' font-size='40' fill='white' text-anchor='middle' dy='.3em'%3E${knownToken.symbol.charAt(0)}%3C/text%3E%3C/svg%3E`;
         address = knownToken.address || identifier;
     } else {
         const idx = rng.nextInt(0, symbols.length - 1);
         symbol = symbols[idx];
         name = names[idx];
-        logo = `https://placehold.co/64?text=${symbol}`;
+        logo = `data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='50' fill='%236366f1'/%3E%3Ctext x='50' y='50' font-family='Arial' font-size='40' fill='white' text-anchor='middle' dy='.3em'%3E${symbol.charAt(0)}%3C/text%3E%3C/svg%3E`;
         address = identifier;
     }
 

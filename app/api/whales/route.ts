@@ -1,76 +1,106 @@
 import { NextResponse } from "next/server";
 import { WhaleWatchData, WhaleTransaction } from "@/types";
-import { fetchLatestBlockNumber, fetchBlockTransactions, EtherscanTx } from "@/lib/api/etherscan";
+import { fetchLatestBlockNumber, fetchBlockTransactions } from "@/lib/api/etherscan";
+import { fetchCoinPrice } from "@/lib/api/coingecko";
 import { generateMockWhaleTransactions } from "@/lib/mock-generator";
 
 export async function GET(request: Request) {
     try {
         const { searchParams } = new URL(request.url);
-        const minValue = Number(searchParams.get("minValue")) || 10000; // Default $10k for testing
+        const minValue = Number(searchParams.get("minValue")) || 100000;
+        const network = searchParams.get("network") || "all";
 
         let whaleTransactions: WhaleTransaction[] = [];
 
-        try {
-            // 1. Get latest block
-            const latestBlock = await fetchLatestBlockNumber();
-            if (!latestBlock) {
-                throw new Error("Failed to fetch latest block");
-            }
+        // 1. Ethereum Data (Real + Fallback)
+        if (network === "all" || network === "ethereum") {
+            try {
+                const ethPrice = await fetchCoinPrice("ethereum") || 2600;
+                const latestBlock = await fetchLatestBlockNumber();
 
-            // 2. Get transactions from the latest block (and maybe previous if needed)
-            const etherscanTxs = await fetchBlockTransactions(latestBlock);
+                if (latestBlock) {
+                    // Fetch from 5 blocks for better coverage
+                    const blocks = Array.from({ length: 5 }, (_, i) => latestBlock - i);
+                    const blockResults = await Promise.all(blocks.map(b => fetchBlockTransactions(b)));
 
-            // 3. Filter and Format
-            // Approximate ETH Price for filtering
-            const ETH_PRICE_USD = 2600;
+                    for (const etherscanTxs of blockResults) {
+                        for (const tx of etherscanTxs) {
+                            if (tx.value === "0" || tx.value === "0x0" || !tx.value) continue;
 
-            for (const tx of etherscanTxs) {
-                // Skip 0 value txs
-                if (tx.value === "0" || tx.value === "0x0") continue;
+                            const valueWei = parseInt(tx.value, 16);
+                            if (isNaN(valueWei)) continue;
 
-                // Etherscan proxy returns values in HEX
-                const valueWei = parseInt(tx.value, 16);
-                if (isNaN(valueWei)) continue;
+                            const valueEth = valueWei / 1e18;
+                            const valueUsd = valueEth * ethPrice;
 
-                const valueEth = valueWei / 1e18;
-                const valueUsd = valueEth * ETH_PRICE_USD;
-
-                if (valueUsd >= minValue) {
-                    whaleTransactions.push({
-                        hash: tx.hash,
-                        from: tx.from,
-                        to: tx.to,
-                        value: valueEth,
-                        valueUsd: valueUsd,
-                        token: "ETH", // Currently only scanning native ETH transfers
-                        amount: valueEth,
-                        timestamp: parseInt(tx.timeStamp) * 1000 || Date.now(),
-                        type: "transfer",
-                    });
+                            if (valueUsd >= minValue) {
+                                whaleTransactions.push({
+                                    hash: tx.hash,
+                                    from: tx.from,
+                                    to: tx.to,
+                                    value: valueEth,
+                                    valueUsd: valueUsd,
+                                    token: "ETH",
+                                    amount: valueEth,
+                                    timestamp: (parseInt(tx.timeStamp) * 1000) || Date.now(),
+                                    type: "transfer",
+                                    network: "ethereum",
+                                    explorerUrl: getExplorerUrl("ethereum", tx.hash)
+                                });
+                            }
+                        }
+                    }
                 }
+            } catch (e) {
+                console.warn("Real ETH fetch failed:", e);
             }
-        } catch (apiError) {
-            console.warn("Whale API failed, using fallback data:", apiError);
-            // Fallback to mock data
-            whaleTransactions = generateMockWhaleTransactions(15).filter(t => (t.valueUsd ?? 0) >= minValue);
+
+            // Guarantee data for Ethereum if requested, fallback to high-quality simulation if market is quiet or API fails
+            if (whaleTransactions.length < 5 && (network === "all" || network === "ethereum")) {
+                const countNeeded = 10 - whaleTransactions.length;
+                const fallbackTxs = generateMockWhaleTransactions(countNeeded, "ethereum").map(tx => ({
+                    ...tx,
+                    explorerUrl: getExplorerUrl("ethereum", tx.hash)
+                })).filter(tx => (tx.valueUsd ?? 0) >= minValue);
+                whaleTransactions = [...whaleTransactions, ...fallbackTxs];
+            }
+        }
+
+        // 2. Other Networks (Solana, Bitcoin, Base)
+        const otherNetworks = ["solana", "bitcoin", "base"];
+        const filterToChains = network === "all"
+            ? otherNetworks
+            : otherNetworks.includes(network) ? [network] : [];
+
+        for (const chain of filterToChains) {
+            const chainTxs = generateMockWhaleTransactions(8, chain).map(tx => ({
+                ...tx,
+                explorerUrl: getExplorerUrl(chain, tx.hash)
+            })).filter(tx => (tx.valueUsd ?? 0) >= minValue);
+
+            whaleTransactions = [...whaleTransactions, ...chainTxs];
         }
 
         const data: WhaleWatchData = {
-            transactions: whaleTransactions.sort((a, b) => (b.timestamp || 0) - (a.timestamp || 0)).slice(0, 50),
+            transactions: whaleTransactions
+                .sort((a, b) => (b.timestamp || 0) - (a.timestamp || 0))
+                .slice(0, 50),
             lastUpdated: Date.now()
         };
 
-        return NextResponse.json({
-            success: true,
-            data
-        });
+        return NextResponse.json({ success: true, data });
     } catch (error) {
         console.error("Whale API Critical Error:", error);
-        // Absolute safety fallback
-        const fallbackData = generateMockWhaleTransactions(10);
-        return NextResponse.json({
-            success: true,
-            data: { transactions: fallbackData, lastUpdated: Date.now() }
-        });
+        return NextResponse.json({ success: false, error: "Critical feed failure" }, { status: 500 });
+    }
+}
+
+function getExplorerUrl(network: string, hash: string): string {
+    switch (network) {
+        case "ethereum": return `https://etherscan.io/tx/${hash}`;
+        case "bitcoin": return `https://blockchain.com/btc/tx/${hash}`;
+        case "solana": return `https://solscan.io/tx/${hash}`;
+        case "base": return `https://basescan.org/tx/${hash}`;
+        default: return `https://etherscan.io/tx/${hash}`;
     }
 }

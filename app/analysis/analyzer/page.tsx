@@ -24,6 +24,11 @@ function AnalyzerContent() {
 
     // Debounced search
     useEffect(() => {
+        // Prevent searching again if the query was just set by selecting a token
+        if (selectedToken && query === selectedToken.name) {
+            return;
+        }
+
         const delayDebounceFn = setTimeout(async () => {
             if (query.length > 1) {
                 setIsSearching(true);
@@ -38,7 +43,7 @@ function AnalyzerContent() {
         }, 300);
 
         return () => clearTimeout(delayDebounceFn);
-    }, [query]);
+    }, [query, selectedToken]);
 
     // Ephemeral URL parameter handling  
     useEffect(() => {
@@ -84,74 +89,99 @@ function AnalyzerContent() {
 
     return (
         <div className="container mx-auto px-4 py-8">
-            {/* Header / Hero Section */}
-            <div className="mb-8 text-center max-w-3xl mx-auto">
-                <div className="flex items-center justify-center gap-2 mb-4">
-                    <TrendingUp className="h-8 w-8 text-primary" />
-                    <h1 className="text-4xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-primary to-secondary">
-                        Tokenomics Analyzer
-                    </h1>
+            {/* Redesigned Hero Section */}
+            <div className="relative mb-12 text-center max-w-4xl mx-auto pt-8">
+                {/* Background decorative elements */}
+                <div className="absolute inset-0 -z-10 flex items-center justify-center overflow-hidden">
+                    <div className="absolute w-[800px] h-[400px] bg-primary/10 rounded-full blur-[120px] -top-20 opacity-50" />
+                    <div className="absolute w-[600px] h-[300px] bg-secondary/10 rounded-full blur-[100px] top-10 opacity-50" />
                 </div>
-                <p className="text-muted-foreground text-lg mb-8">
-                    Deep dive into any token&apos;s economy. Analyze inflation, supply distribution, and safety scores instantly.
+
+                <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 border border-primary/20 text-primary text-sm font-medium mb-6 backdrop-blur-sm shadow-[0_0_15px_rgba(255,51,102,0.15)]">
+                    <TrendingUp className="w-4 h-4" />
+                    <span>Real-Time Tokenomics Engine</span>
+                </div>
+
+                <h1 className="text-5xl md:text-7xl font-extrabold mb-6 tracking-tight">
+                    Tokenomics <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary via-secondary to-accent animate-gradient-x">Analyzer</span>
+                </h1>
+
+                <p className="text-muted-foreground text-lg md:text-xl mb-10 max-w-2xl mx-auto leading-relaxed">
+                    Deep dive into any token&apos;s economy. Analyze inflation risk, supply distribution, and real-time market data across all major blockchains.
                 </p>
 
-                <Card className="bg-background/50 backdrop-blur border-primary/20 shadow-lg glow-card">
-                    <CardContent className="p-6">
-                        <div className="flex flex-col items-center gap-4">
-                            <label className="text-sm font-medium text-muted-foreground">
-                                Search Tokens from All Blockchains
-                            </label>
+                {/* Stat Pills */}
+                <div className="flex flex-wrap justify-center gap-4 mb-10">
+                    <div className="px-4 py-2 rounded-xl bg-card border border-border shadow-sm flex items-center gap-2">
+                        <PieChart className="w-4 h-4 text-primary" />
+                        <span className="text-sm font-medium text-muted-foreground">Unlock Schedules</span>
+                    </div>
+                    <div className="px-4 py-2 rounded-xl bg-card border border-border shadow-sm flex items-center gap-2">
+                        <Activity className="w-4 h-4 text-secondary" />
+                        <span className="text-sm font-medium text-muted-foreground">Inflation Tracking</span>
+                    </div>
+                    <div className="px-4 py-2 rounded-xl bg-card border border-border shadow-sm flex items-center gap-2">
+                        <AlertCircle className="w-4 h-4 text-accent" />
+                        <span className="text-sm font-medium text-muted-foreground">Risk Scoring</span>
+                    </div>
+                </div>
 
+                <Card className="bg-background/40 backdrop-blur-md border-primary/20 shadow-[0_0_40px_rgba(0,0,0,0.3)] glow-card overflow-visible">
+                    <CardContent className="p-6 md:p-8">
+                        <div className="flex flex-col items-center gap-4">
                             {/* Token Search */}
-                            <div className="relative w-full max-w-xl">
-                                <div className="relative">
-                                    <Search
-                                        className="absolute left-3 top-2.5 text-gray-400"
-                                        size={20}
-                                    />
-                                    <input
-                                        type="text"
-                                        value={query}
-                                        onChange={(e) => {
-                                            setQuery(e.target.value);
-                                            setSelectedToken(null);
-                                        }}
-                                        placeholder="Search any token (Bitcoin, Solana, etc...)"
-                                        className="w-full bg-background border border-border rounded-lg pl-10 pr-4 py-3 text-base focus:outline-none focus:border-primary transition-colors"
-                                    />
+                            <div className="relative w-full max-w-2xl">
+                                <div className="relative group">
+                                    <div className="absolute -inset-1 bg-gradient-to-r from-primary via-secondary to-accent rounded-xl blur opacity-25 group-hover:opacity-50 transition duration-500"></div>
+                                    <div className="relative flex items-center bg-background border border-border rounded-xl">
+                                        <Search className="absolute left-4 text-muted-foreground w-5 h-5" />
+                                        <input
+                                            type="text"
+                                            value={query}
+                                            onChange={(e) => {
+                                                setQuery(e.target.value);
+                                                setSelectedToken(null);
+                                            }}
+                                            placeholder="Search by token name or paste contract address..."
+                                            className="w-full bg-transparent pl-12 pr-12 py-4 text-lg focus:outline-none focus:ring-2 focus:ring-primary/50 transition-all rounded-xl"
+                                        />
+                                        {isSearching && (
+                                            <div className="absolute right-4 text-primary">
+                                                <Loader2 className="h-5 w-5 animate-spin" />
+                                            </div>
+                                        )}
+                                    </div>
                                 </div>
 
                                 {/* Search Results Dropdown */}
                                 {showResults && searchResults.length > 0 && (
-                                    <div className="absolute z-20 w-full mt-2 bg-card border border-border rounded-lg shadow-xl max-h-80 overflow-y-auto">
+                                    <div className="absolute z-50 w-full mt-2 bg-background/95 backdrop-blur-xl border border-primary/20 rounded-xl shadow-2xl max-h-80 overflow-y-auto overflow-x-hidden animate-in fade-in slide-in-from-top-2">
                                         {searchResults.map((token) => (
                                             <button
                                                 key={token.id}
                                                 type="button"
                                                 onClick={() => handleSelectToken(token)}
-                                                className="w-full flex items-center gap-3 p-3 hover:bg-white/5 transition-colors text-left"
+                                                className="w-full flex items-center gap-4 p-4 hover:bg-primary/10 transition-colors text-left border-b border-border/50 last:border-0"
                                             >
                                                 {/* eslint-disable-next-line @next/next/no-img-element */}
                                                 <img
                                                     src={token.thumb}
                                                     alt={token.name}
-                                                    className="w-8 h-8 rounded-full"
+                                                    className="w-10 h-10 rounded-full bg-background-card"
+                                                    onError={(e) => {
+                                                        const target = e.target as HTMLImageElement;
+                                                        target.onerror = null;
+                                                        target.src = `data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='50' fill='%236366f1'/%3E%3Ctext x='50' y='50' font-family='Arial' font-size='40' fill='white' text-anchor='middle' dy='.3em'%3E${token.symbol?.charAt(0) || '?'}%3C/text%3E%3C/svg%3E`;
+                                                    }}
                                                 />
-                                                <div>
-                                                    <div className="font-medium">{token.name}</div>
-                                                    <div className="text-sm text-gray-400">
+                                                <div className="flex-1">
+                                                    <div className="font-bold text-[15px]">{token.name}</div>
+                                                    <div className="text-sm text-primary font-mono bg-primary/10 inline-block px-1.5 rounded mt-0.5">
                                                         {token.symbol.toUpperCase()}
                                                     </div>
                                                 </div>
                                             </button>
                                         ))}
-                                    </div>
-                                )}
-
-                                {isSearching && (
-                                    <div className="absolute right-3 top-3">
-                                        <Loader2 className="h-5 w-5 animate-spin text-primary" />
                                     </div>
                                 )}
                             </div>
@@ -257,9 +287,6 @@ export default function AnalyzerPage() {
     return (
         <div className="min-h-screen">
             <div className="container mx-auto px-4 py-8 space-y-12">
-                {/* Breadcrumbs */}
-                <Breadcrumbs items={[{ label: "Tokenomics Analyzer" }]} />
-
                 {/* Main content */}
                 <Suspense fallback={<div className="text-center">Loading...</div>}>
                     <AnalyzerContent />

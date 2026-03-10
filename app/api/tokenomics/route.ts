@@ -147,19 +147,21 @@ export async function GET(request: NextRequest) {
                     data: realData,
                     timestamp: Date.now(),
                 });
+            } else {
+                return NextResponse.json<ApiResponse<null>>({
+                    success: false,
+                    error: `CoinGecko API Error ${response.status}: Failed to fetch token data`,
+                    timestamp: Date.now(),
+                });
             }
         } catch (error) {
             console.error("CoinGecko API error:", error);
-            // Fall through to mock data
+            return NextResponse.json<ApiResponse<null>>({
+                success: false,
+                error: "Failed to connect to CoinGecko API",
+                timestamp: Date.now(),
+            }, { status: 500 });
         }
-
-        // Fallback to mock data if API fails or returns error
-        const mockData = generateTokenomicsData(tokenId);
-        return NextResponse.json<ApiResponse<TokenomicsAnalysis>>({
-            success: true,
-            data: mockData,
-            timestamp: Date.now(),
-        });
 
     } catch (error) {
         console.error("Tokenomics route error:", error);

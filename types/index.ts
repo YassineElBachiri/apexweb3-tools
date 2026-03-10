@@ -142,6 +142,8 @@ export interface WhaleTransaction {
     timestamp: number;
     walletLabel?: string;
     type: "buy" | "sell" | "transfer";
+    network: string; // ethereum, bitcoin, solana, etc.
+    explorerUrl?: string;
 }
 
 export interface WhaleWatchData {

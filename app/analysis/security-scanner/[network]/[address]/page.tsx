@@ -1,4 +1,4 @@
-import { analyzeSecurity } from "@/lib/security-service";
+import { analyzeSecurity, fetchTokenMarketData } from "@/lib/security-service";
 import { RiskDashboard } from "@/components/security/RiskDashboard";
 import { Metadata, ResolvingMetadata } from "next";
 import { notFound } from "next/navigation";
@@ -46,7 +46,11 @@ export default async function SecurityResultPage({ params }: PageProps) {
     }
 
     try {
-        const profile = await analyzeSecurity(network as 'solana' | 'eth' | 'base', address);
+        // Fetch security data and market data in parallel
+        const [profile, marketData] = await Promise.all([
+            analyzeSecurity(network as 'solana' | 'eth' | 'base', address),
+            fetchTokenMarketData(address),
+        ]);
 
         return (
             <div className="min-h-screen bg-background">
@@ -55,20 +59,20 @@ export default async function SecurityResultPage({ params }: PageProps) {
                     <Breadcrumbs items={[
                         { label: "Security Scanner", href: "/analysis/contract-analyzer" },
                         { label: `${network.toUpperCase()} Scan` },
-                        { label: `${address.slice(0, 6)}...${address.slice(-4)}` }
+                        { label: marketData ? `${marketData.tokenSymbol}` : `${address.slice(0, 6)}...${address.slice(-4)}` }
                     ]} />
 
                     <div className="mb-8 text-center md:text-left space-y-2">
                         <h1 className="text-3xl md:text-4xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-primary to-purple-500 flex items-center justify-center md:justify-start gap-3">
                             <Shield className="w-8 h-8 text-primary" />
-                            Security Scan Report
+                            {marketData ? `${marketData.tokenName} (${marketData.tokenSymbol})` : 'Security Scan Report'}
                         </h1>
                         <p className="text-muted-foreground text-lg">
                             Automated analysis for {network.toUpperCase()} contract <span className="font-mono text-sm bg-white/5 px-2 py-1 rounded">{address}</span>
                         </p>
                     </div>
 
-                    <RiskDashboard profile={profile} />
+                    <RiskDashboard profile={profile} marketData={marketData} />
 
                 </div>
             </div>

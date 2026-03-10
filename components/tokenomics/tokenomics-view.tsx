@@ -7,7 +7,7 @@ import { PriceChart } from "@/components/tokenomics/price-chart";
 import { VolumeMetrics } from "@/components/tokenomics/volume-metrics";
 import { AthAtlMetrics } from "@/components/tokenomics/ath-atl-metrics";
 import { formatUSD, formatNumber } from "@/lib/utils";
-import { TrendingUp, DollarSign, Coins, PieChart, Award, Users } from "lucide-react";
+import { TrendingUp, DollarSign, Coins, PieChart, Award, Users, AlertCircle } from "lucide-react";
 import type { TokenomicsAnalysis } from "@/types";
 
 interface TokenomicsViewProps {
@@ -25,7 +25,16 @@ export function TokenomicsView({ data, address, hideAddress = false }: Tokenomic
                     <div className="flex items-center gap-3 mb-3">
                         {data.token.logo && (
                             /* eslint-disable-next-line @next/next/no-img-element */
-                            <img src={data.token.logo} alt={data.token.name} className="w-12 h-12 rounded-full" />
+                            <img
+                                src={data.token.logo}
+                                alt={data.token.name}
+                                className="w-12 h-12 rounded-full"
+                                onError={(e) => {
+                                    const target = e.target as HTMLImageElement;
+                                    target.onerror = null; // Prevent infinite loops
+                                    target.src = `data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='50' fill='%236366f1'/%3E%3Ctext x='50' y='50' font-family='Arial' font-size='40' fill='white' text-anchor='middle' dy='.3em'%3E${data.token.symbol?.charAt(0) || '?'}%3C/text%3E%3C/svg%3E`;
+                                }}
+                            />
                         )}
                         <div>
                             <div className="flex items-center gap-2">
@@ -39,9 +48,27 @@ export function TokenomicsView({ data, address, hideAddress = false }: Tokenomic
                             )}
                         </div>
                     </div>
-                    <p className="text-muted-foreground">
+                    <p className="text-muted-foreground mb-4">
                         Comprehensive tokenomics analysis powered by real-time data
                     </p>
+                    
+                    {/* Action Buttons */}
+                    <div className="flex flex-wrap items-center gap-3">
+                        <a 
+                            href={`/finance/converter?token=${data.token.symbol}`}
+                            className="inline-flex items-center gap-2 bg-primary/10 hover:bg-primary/20 text-primary border border-primary/20 px-4 py-2 rounded-lg text-sm font-medium transition-colors"
+                        >
+                            <DollarSign className="w-4 h-4 cursor-pointer" />
+                            Swap Token
+                        </a>
+                        <a 
+                            href={`/analysis/contract-analyzer?address=${address}`}
+                            className="inline-flex items-center gap-2 bg-secondary/10 hover:bg-secondary/20 text-secondary border border-secondary/20 px-4 py-2 rounded-lg text-sm font-medium transition-colors"
+                        >
+                            <AlertCircle className="w-4 h-4" />
+                            Security Scan
+                        </a>
+                    </div>
                 </div>
                 <TokenShare
                     symbol={data.token.symbol}
@@ -54,7 +81,7 @@ export function TokenomicsView({ data, address, hideAddress = false }: Tokenomic
             {/* Key Stats Grid */}
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
                 {/* Price */}
-                <Card className="group hover:border-primary/50 transition-all duration-300 hover:shadow-lg hover:shadow-primary/10">
+                <Card className="bg-card/50 backdrop-blur-sm border border-border/50 shadow-sm hover:border-primary/30 transition-colors">
                     <CardHeader className="pb-2">
                         <CardTitle className="text-sm font-medium text-muted-foreground flex items-center gap-2">
                             <DollarSign className="h-4 w-4 group-hover:text-primary transition-colors" />
@@ -75,7 +102,7 @@ export function TokenomicsView({ data, address, hideAddress = false }: Tokenomic
                 </Card>
 
                 {/* Market Cap */}
-                <Card className="group hover:border-primary/50 transition-all duration-300 hover:shadow-lg hover:shadow-primary/10">
+                <Card className="bg-card/50 backdrop-blur-sm border border-border/50 shadow-sm hover:border-primary/30 transition-colors">
                     <CardHeader className="pb-2">
                         <CardTitle className="text-sm font-medium text-muted-foreground flex items-center gap-2">
                             <TrendingUp className="h-4 w-4 group-hover:text-primary transition-colors" />
@@ -93,7 +120,7 @@ export function TokenomicsView({ data, address, hideAddress = false }: Tokenomic
                 </Card>
 
                 {/* FDV */}
-                <Card className="group hover:border-primary/50 transition-all duration-300 hover:shadow-lg hover:shadow-primary/10">
+                <Card className="bg-card/50 backdrop-blur-sm border border-border/50 shadow-sm hover:border-primary/30 transition-colors">
                     <CardHeader className="pb-2">
                         <CardTitle className="text-sm font-medium text-muted-foreground flex items-center gap-2">
                             <PieChart className="h-4 w-4 group-hover:text-primary transition-colors" />
@@ -167,7 +194,7 @@ export function TokenomicsView({ data, address, hideAddress = false }: Tokenomic
                 </div>
 
                 {/* Supply Distribution */}
-                <Card className="border-primary/20 bg-gradient-to-br from-background to-background/50">
+                <Card className="bg-card/50 backdrop-blur-sm border border-border/50 shadow-sm hover:border-primary/30 transition-colors">
                     <CardHeader>
                         <CardTitle className="flex items-center gap-2">
                             <PieChart className="h-5 w-5 text-primary" />
@@ -227,7 +254,7 @@ export function TokenomicsView({ data, address, hideAddress = false }: Tokenomic
             {(data.holderCount || data.burnRate || data.stakingAPY) && (
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                     {data.holderCount && (
-                        <Card className="border-primary/20 bg-gradient-to-br from-background to-background/50">
+                        <Card className="bg-card/50 backdrop-blur-sm border border-border/50 shadow-sm hover:border-primary/30 transition-colors">
                             <CardHeader className="pb-3">
                                 <CardTitle className="text-sm font-medium flex items-center gap-2">
                                     <Users className="h-4 w-4 text-primary" />
