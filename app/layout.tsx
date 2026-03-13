@@ -3,6 +3,7 @@ import "./globals.css";
 import { Navigation } from "@/components/navigation";
 import { Footer } from "@/components/home/Footer";
 import { getCategories } from "@/lib/api/wordpress";
+import { GoogleAnalytics } from '@next/third-parties/google';
 
 export const metadata: Metadata = {
     metadataBase: new URL('https://apexweb3.com'),
@@ -42,6 +43,9 @@ export default async function RootLayout({
                     </main>
                     <Footer />
                 </div>
+                {process.env.NODE_ENV === 'production' && (
+                    <GoogleAnalytics gaId="G-G7ZHCJ9Z4F" />
+                )}
             </body>
         </html>
     );
