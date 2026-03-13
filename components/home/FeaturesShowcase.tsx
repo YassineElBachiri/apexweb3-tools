@@ -113,7 +113,7 @@ export function FeaturesShowcase() {
                                 </li>
                             ))}
                         </ul>
-                        <Link href="/risk" className="inline-flex items-center text-white font-bold hover:text-brand-pink transition-colors">
+                        <Link href="/analysis/risk" className="inline-flex items-center text-white font-bold hover:text-brand-pink transition-colors">
                             Explore Risk Tools <ArrowRight className="ml-2 w-5 h-5" />
                         </Link>
                     </div>

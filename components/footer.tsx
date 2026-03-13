@@ -1,5 +1,6 @@
 import Link from "next/link";
-import { Github, Twitter, Shield } from "lucide-react";
+import { Github, Twitter } from "lucide-react";
+import Image from "next/image";
 
 export function Footer() {
     return (
@@ -9,7 +10,12 @@ export function Footer() {
                     {/* Brand */}
                     <div>
                         <div className="flex items-center gap-2 mb-4">
-                            <Shield className="h-6 w-6 text-primary" />
+                            <Image 
+                                src="/ApexWeb3-icon.png" 
+                                alt="ApexWeb3 tools and analytics icon" 
+                                width={24} 
+                                height={24}
+                            />
                             <span className="text-lg font-bold gradient-text">ApexWeb3 Tools</span>
                         </div>
                         <p className="text-sm text-muted-foreground">

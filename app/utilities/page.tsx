@@ -6,6 +6,9 @@ export const metadata: Metadata = {
     title: "Web3 Utility Tools — Crypto Converter, DCA Calculator & Fiat Exchange | ApexWeb3",
     description: "Convert between 100+ cryptocurrencies, calculate your average cost, and check rates in 30+ fiat currencies. Fast, free Web3 utility tools — no login required.",
     keywords: ["crypto converter", "dollar cost average calculator", "fiat to crypto", "crypto to usd", "web3 utilities"],
+    alternates: {
+        canonical: 'https://apexweb3.com/utilities',
+    },
 };
 
 const tools = [

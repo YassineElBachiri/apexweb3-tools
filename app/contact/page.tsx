@@ -6,6 +6,9 @@ import { ContactForm } from "@/components/contact/ContactForm";
 export const metadata: Metadata = {
     title: "Contact Us | ApexWeb3",
     description: "Get in touch with ApexWeb3 for sponsorship opportunities, guest posts, or general inquiries.",
+    alternates: {
+        canonical: 'https://apexweb3.com/contact',
+    },
 };
 
 const socials = [

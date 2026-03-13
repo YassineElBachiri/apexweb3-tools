@@ -2,7 +2,8 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Shield, Menu, X, ChevronDown } from "lucide-react";
+import { Menu, X, ChevronDown } from "lucide-react";
+import Image from "next/image";
 import { useState } from "react";
 import { cn, getCategoryUrl } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
@@ -27,9 +28,16 @@ export function Navigation({ categories = [] }: NavigationProps) {
                 <div className="flex items-center justify-between h-20">
 
                     {/* Logo */}
-                    <Link href="/" className="flex items-center gap-2 group">
-                        <div className="relative">
-                            <Shield className="h-8 w-8 text-brand-purple group-hover:animate-pulse" />
+                    <Link href="/" className="flex items-center gap-2 group" aria-label="ApexWeb3 Home">
+                        <div className="relative w-8 h-8 flex items-center justify-center">
+                            <Image 
+                                src="/ApexWeb3-icon.png" 
+                                alt="ApexWeb3 icon – Web3 and crypto tools platform" 
+                                width={32} 
+                                height={32}
+                                priority
+                                className="group-hover:animate-pulse relative z-10"
+                            />
                             <div className="absolute inset-0 blur-md bg-brand-purple/30 group-hover:bg-brand-purple/50 transition-opacity" />
                         </div>
                         <span className="text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-white to-gray-400">

@@ -9,6 +9,9 @@ import { RelatedTools } from "@/components/gas/RelatedTools";
 export const metadata: Metadata = {
     title: "Ethereum Gas Fee Calculator (Real-Time & Accurate) | ApexWeb3",
     description: "Track live gas prices for Ethereum, Polygon, Arbitrum, Optimism, and Base. Calculate transaction costs for transfers, swaps, and NFT mints in USD.",
+    alternates: {
+        canonical: 'https://apexweb3.com/finance/gas-fees',
+    },
     openGraph: {
         title: "Crypto Gas Fee Calculator | ApexWeb3 Tools",
         description: "Save money on gas fees. Real-time tracking and cost estimation for EVM chains.",

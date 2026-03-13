@@ -5,6 +5,9 @@ import { ArrowRight, Globe, Shield, Zap, Users, Mail, Linkedin, Twitter } from "
 export const metadata: Metadata = {
     title: "About ApexWeb3 — The Future of AI & Web3",
     description: "Learn about ApexWeb3, our mission to make blockchain accessible, and our founder's vision for a decentralized future.",
+    alternates: {
+        canonical: 'https://apexweb3.com/about',
+    },
 };
 
 const focuses = [

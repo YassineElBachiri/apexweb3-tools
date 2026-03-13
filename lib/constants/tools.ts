@@ -78,7 +78,7 @@ export const TOOLS: Tool[] = [
         icon: ShieldAlert,
         href: "/analysis/contract-analyzer",
         pillar: "Risk",
-        pillarHref: "/risk",
+        pillarHref: "/analysis/risk",
         color: "pink",
         features: [
             "Honeypot Detection",
@@ -94,7 +94,7 @@ export const TOOLS: Tool[] = [
         icon: Wallet,
         href: "/portfolio",
         pillar: "Risk",
-        pillarHref: "/risk",
+        pillarHref: "/analysis/risk",
         color: "green",
         features: [
             "Multi-Asset Support",
@@ -196,7 +196,7 @@ export const PILLAR_META = {
     },
     Risk: {
         label: "Risk",
-        href: "/risk",
+        href: "/analysis/risk",
         description: "Security scanning & portfolio exposure management",
         color: "text-brand-pink",
         bgColor: "bg-brand-pink/10",

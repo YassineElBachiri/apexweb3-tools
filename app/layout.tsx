@@ -5,9 +5,24 @@ import { Footer } from "@/components/home/Footer";
 import { getCategories } from "@/lib/api/wordpress";
 
 export const metadata: Metadata = {
+    metadataBase: new URL('https://apexweb3.com'),
     title: "ApexWeb3 Tools - Web3 Analytics & Token Analysis",
     description: "Real-time Web3 analytics for smart traders. Analyze tokens, track portfolios, detect rug pulls, and monitor whale transactions.",
     keywords: ["web3", "crypto", "token analysis", "portfolio tracker", "rug pull detector", "whale watch"],
+    alternates: {
+        canonical: '/',
+    },
+    icons: {
+        icon: [
+            { url: '/ApexWeb3-icon.png', type: 'image/png' }
+        ],
+        apple: [
+            { url: '/ApexWeb3-icon.png', type: 'image/png' }
+        ],
+    },
+    openGraph: {
+        images: ['/ApexWeb3-logo.png']
+    }
 };
 
 export default async function RootLayout({

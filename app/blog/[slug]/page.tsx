@@ -67,11 +67,20 @@ export default async function BlogPostPage({ params }: PostParams) {
         image: post.featuredImage?.node.sourceUrl ? [post.featuredImage.node.sourceUrl] : [],
         datePublished: post.date,
         dateModified: post.date,
+        url: `https://apexweb3.com/blog/${slug}`,
+        mainEntityOfPage: {
+            '@type': 'WebPage',
+            '@id': `https://apexweb3.com/blog/${slug}`,
+        },
         author: [{
             '@type': 'Person',
             name: post.author.node.name,
-            url: `https://apexweb3.com/author/${post.author.node.name.toLowerCase().replace(/\s+/g, '-')}`
-        }]
+        }],
+        publisher: {
+            '@type': 'Organization',
+            name: 'ApexWeb3',
+            url: 'https://apexweb3.com',
+        },
     };
 
     return (

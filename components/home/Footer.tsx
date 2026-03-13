@@ -1,6 +1,7 @@
 
 import Link from "next/link";
-import { Shield, Twitter, Github, Send } from "lucide-react";
+import { Twitter, Github, Send } from "lucide-react";
+import Image from "next/image";
 import { FOOTER_LINKS } from "@/lib/constants/navigation";
 
 export function Footer() {
@@ -11,8 +12,14 @@ export function Footer() {
                 <div className="grid grid-cols-2 md:grid-cols-6 gap-8 mb-12">
                     {/* Brand Column */}
                     <div className="col-span-2">
-                        <Link href="/" className="flex items-center gap-2 mb-4 group">
-                            <Shield className="w-8 h-8 text-brand-purple group-hover:animate-pulse" />
+                        <Link href="/" className="flex items-center gap-2 mb-4 group" aria-label="ApexWeb3 Home">
+                            <Image 
+                                src="/ApexWeb3-icon.png" 
+                                alt="ApexWeb3 icon – Web3, crypto, and blockchain analytics" 
+                                width={32} 
+                                height={32}
+                                className="group-hover:animate-pulse"
+                            />
                             <span className="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-white to-gray-400">
                                 ApexWeb3
                             </span>

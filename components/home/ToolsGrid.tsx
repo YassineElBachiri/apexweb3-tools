@@ -55,7 +55,7 @@ export function ToolsGrid() {
 
                 {/* Footer Link */}
                 <div className="text-center mt-16">
-                    <Link href="/tools" className="inline-flex items-center text-gray-400 hover:text-white transition-colors group">
+                    <Link href="/dashboard" className="inline-flex items-center text-gray-400 hover:text-white transition-colors group">
                         Can&apos;t find what you need? View detailed directory <ArrowRight className="ml-2 w-4 h-4 group-hover:translate-x-1 transition-transform" />
                     </Link>
                 </div>

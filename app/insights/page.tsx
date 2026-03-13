@@ -7,6 +7,9 @@ import Image from 'next/image';
 export const metadata: Metadata = {
     title: 'Web3 Intelligence & Insights | ApexWeb3',
     description: 'Deep dives, tokenomics analysis, and technical Web3 insights from the ApexWeb3 research team.',
+    alternates: {
+        canonical: 'https://apexweb3.com/insights',
+    },
 };
 
 export default async function InsightsPage() {

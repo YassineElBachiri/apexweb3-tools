@@ -6,6 +6,9 @@ export const metadata: Metadata = {
     title: "Web3 Career Tools — Blockchain Jobs & Salary Estimator | ApexWeb3",
     description: "Browse live Web3 and blockchain job listings. Benchmark your salary by role, seniority, and chain. Free career tools for Web3 professionals — no login required.",
     keywords: ["web3 jobs", "blockchain developer salary", "crypto jobs remote", "defi jobs", "web3 career"],
+    alternates: {
+        canonical: 'https://apexweb3.com/careers',
+    },
 };
 
 const tools = [

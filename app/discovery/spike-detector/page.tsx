@@ -17,6 +17,9 @@ export async function generateMetadata(): Promise<Metadata> {
         title,
         description: "Hunt micro-cap trench tokens (MCAP < $1.5M) with real-time Volume Velocity scoring. Filters big-cap noise, checks RugCheck safety, and surfaces only the freshest momentum plays.",
         keywords: ["trench tokens", "micro-cap scanner", "rugcheck", "solana trench", "memecoin spike detector", "volume velocity dashboard", "live crypto feed", "dexscreener alternative", "gem finder"],
+        alternates: {
+            canonical: 'https://apexweb3.com/discovery/spike-detector',
+        },
     };
 }
 
@@ -27,6 +30,7 @@ export default async function SpikeDetectorPage() {
         "@context": "https://schema.org",
         "@type": "SoftwareApplication",
         name: "Volume Velocity Dashboard",
+        url: "https://apexweb3.com/discovery/spike-detector",
         applicationCategory: "FinanceApplication",
         operatingSystem: "Web",
         offers: { "@type": "Offer", price: "0", priceCurrency: "USD" },

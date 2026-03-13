@@ -3,6 +3,7 @@ import type { NextConfig } from "next";
 const nextConfig: NextConfig = {
     compress: true,
     poweredByHeader: false,
+    trailingSlash: false,
     images: {
         formats: ['image/avif', 'image/webp'],
         remotePatterns: [
@@ -72,7 +73,28 @@ const nextConfig: NextConfig = {
                 source: '/:category(news|defi|guide|blockchain-basics|web3-and-ai|reviews-and-analysis|blockchain-dev-hub|nfts-and-metaverse|security-and-audits)',
                 destination: '/blog/category/:category',
                 permanent: true,
-            }
+            },
+            // WordPress duplicate path redirects
+            {
+                source: '/tag/:slug*',
+                destination: '/blog',
+                permanent: true,
+            },
+            {
+                source: '/author/:slug*',
+                destination: '/blog',
+                permanent: true,
+            },
+            {
+                source: '/category/:slug',
+                destination: '/blog/category/:slug',
+                permanent: true,
+            },
+            {
+                source: '/page/:num',
+                destination: '/blog',
+                permanent: true,
+            },
         ];
     },
 };

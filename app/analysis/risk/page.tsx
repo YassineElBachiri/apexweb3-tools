@@ -6,6 +6,9 @@ export const metadata: Metadata = {
     title: "Web3 Risk & Portfolio Tools — Security Scanner & Portfolio Tracker | ApexWeb3",
     description: "Scan smart contracts for honeypots and rug pulls. Track your crypto portfolio risk and P&L in real-time. No wallet connection required.",
     keywords: ["crypto security scanner", "honeypot detector", "rug pull checker", "portfolio tracker", "web3 risk tools"],
+    alternates: {
+        canonical: 'https://apexweb3.com/analysis/risk',
+    },
 };
 
 const tools = [

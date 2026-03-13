@@ -7,25 +7,19 @@ import { JsonLd } from "@/components/seo/json-ld";
 export const metadata: Metadata = {
     title: "Web3 Developer Deals & Crypto Bonuses | ApexWeb3 Tools",
     description: "Exclusive Web3 infrastructure credits, crypto exchange bonuses, security discounts, and cloud hosting perks for blockchain developers.",
+    alternates: {
+        canonical: 'https://apexweb3.com/deals',
+    },
     openGraph: {
         title: "Web3 Developer Deals & Crypto Bonuses | ApexWeb3 Tools",
         description: "Exclusive Web3 infrastructure credits, crypto exchange bonuses, security discounts, and cloud hosting perks for blockchain developers.",
         type: "website",
-        url: "https://apexweb3.tools/deals", // Assuming this is the URL
-        images: [
-            {
-                url: "https://apexweb3.tools/og-deals.jpg", // Placeholder
-                width: 1200,
-                height: 630,
-                alt: "ApexWeb3 Developer Deals",
-            },
-        ],
+        url: "https://apexweb3.com/deals",
     },
     twitter: {
         card: "summary_large_image",
         title: "Web3 Developer Deals & Crypto Bonuses",
         description: "Exclusive Web3 infrastructure credits, crypto exchange bonuses, security discounts, and cloud hosting perks for blockchain developers.",
-        images: ["https://apexweb3.tools/og-deals.jpg"], // Placeholder
     },
 };
 
@@ -35,13 +29,14 @@ export default function DealsPage() {
         "@type": "CollectionPage",
         name: "Web3 Developer Deals & Exclusive Builder Perks",
         description: "Curated infrastructure credits, exchange bonuses, security discounts, and cloud offers for serious Web3 builders.",
+        url: "https://apexweb3.com/deals",
         publisher: {
             "@type": "Organization",
-            name: "ApexWeb3 Tools",
-            url: "https://apexweb3.tools",
+            name: "ApexWeb3",
+            url: "https://apexweb3.com",
             logo: {
                 "@type": "ImageObject",
-                url: "https://apexweb3.tools/logo.png" // Placeholder
+                url: "https://apexweb3.com/logo.png"
             }
         },
         mainEntity: {
@@ -51,19 +46,19 @@ export default function DealsPage() {
                     "@type": "ListItem",
                     position: 1,
                     name: "Alchemy Infrastructure Credits",
-                    url: "https://apexweb3.tools/deals#alchemy"
+                    url: "https://apexweb3.com/deals#alchemy"
                 },
                 {
                     "@type": "ListItem",
                     position: 2,
                     name: "QuickNode RPC Credits",
-                    url: "https://apexweb3.tools/deals#quicknode"
+                    url: "https://apexweb3.com/deals#quicknode"
                 },
                 {
                     "@type": "ListItem",
                     position: 3,
                     name: "Binance Developer Bonus",
-                    url: "https://apexweb3.tools/deals#binance"
+                    url: "https://apexweb3.com/deals#binance"
                 }
             ]
         }

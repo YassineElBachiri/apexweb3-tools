@@ -9,7 +9,7 @@ interface SEOConfig {
 }
 
 export function generateMetadata(config: SEOConfig): Metadata {
-    const baseUrl = "https://tools.apexweb3.com";
+    const baseUrl = "https://apexweb3.com";
 
     return {
         title: config.title,
@@ -62,7 +62,7 @@ export function generateWebApplicationSchema() {
         "@type": "WebApplication",
         "name": "ApexWeb3 Tools",
         "description": "Professional cryptocurrency analysis tools for traders and investors. Track portfolios, analyze tokenomics, detect scams, and more.",
-        "url": "https://tools.apexweb3.com",
+        "url": "https://apexweb3.com",
         "applicationCategory": "FinanceApplication",
         "offers": {
             "@type": "Offer",
@@ -82,14 +82,14 @@ export function generateOrganizationSchema() {
         "@type": "Organization",
         "name": "ApexWeb3",
         "url": "https://apexweb3.com",
-        "logo": "https://tools.apexweb3.com/logo.png",
+        "logo": "https://apexweb3.com/logo.png",
         "sameAs": [
             // Add social media links when available
         ],
         "subOrganization": {
             "@type": "WebApplication",
             "name": "ApexWeb3 Tools",
-            "url": "https://tools.apexweb3.com"
+            "url": "https://apexweb3.com"
         }
     };
 }

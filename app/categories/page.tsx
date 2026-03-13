@@ -7,6 +7,9 @@ import { Folder, ArrowRight } from 'lucide-react';
 export const metadata: Metadata = {
     title: 'Browse Articles by Category | ApexWeb3',
     description: 'Explore ApexWeb3 intelligence, tokenomics, and guides by category.',
+    alternates: {
+        canonical: 'https://apexweb3.com/categories',
+    },
 };
 
 export default async function CategoriesIndexPage() {

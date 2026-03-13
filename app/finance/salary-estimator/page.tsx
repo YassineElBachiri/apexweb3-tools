@@ -11,6 +11,9 @@ export const metadata: Metadata = {
     title: SALARY_ESTIMATOR_SEO.title,
     description: SALARY_ESTIMATOR_SEO.description,
     keywords: SALARY_ESTIMATOR_SEO.keywords,
+    alternates: {
+        canonical: 'https://apexweb3.com/finance/salary-estimator',
+    },
     openGraph: {
         title: SALARY_ESTIMATOR_SEO.title,
         description: SALARY_ESTIMATOR_SEO.description,

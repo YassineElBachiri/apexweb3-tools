@@ -6,6 +6,9 @@ export const metadata: Metadata = {
     title: "Web3 Intelligence Tools — Market Signals & Tokenomics Analysis | ApexWeb3",
     description: "Track whale wallets, detect early meme coin liquidity events, and run deep tokenomics analysis. Professional-grade Web3 intelligence tools — free, no login required.",
     keywords: ["whale wallet tracker", "meme coin scanner", "tokenomics analyzer", "web3 intelligence", "crypto market signals"],
+    alternates: {
+        canonical: 'https://apexweb3.com/intelligence',
+    },
 };
 
 const tools = [

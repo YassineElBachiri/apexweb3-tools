@@ -1,7 +1,8 @@
 
 import Link from 'next/link';
 import { TOOLS, PILLAR_META, ToolPillar } from '@/lib/constants/tools';
-import { ChevronRight, Shield } from 'lucide-react';
+import { ChevronRight } from 'lucide-react';
+import Image from "next/image";
 
 interface MegaMenuProps {
     isOpen: boolean;
@@ -90,7 +91,13 @@ export function MegaMenu({ isOpen, onClose }: MegaMenuProps) {
                         <div className="bg-gradient-to-br from-brand-purple/20 to-brand-blue/20 rounded-xl p-6 border border-white/10 h-full flex flex-col justify-between">
                             <div>
                                 <div className="flex items-center gap-2 mb-3">
-                                    <Shield className="w-5 h-5 text-brand-purple" />
+                                    <Image 
+                                        src="/icon.png" 
+                                        alt="ApexWeb3 Trust Shield" 
+                                        width={20} 
+                                        height={20}
+                                        className="text-brand-purple"
+                                    />
                                     <span className="text-sm font-bold text-white">No Wallet Required</span>
                                 </div>
                                 <p className="text-sm text-gray-400 mb-4 leading-relaxed">

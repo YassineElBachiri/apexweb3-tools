@@ -27,10 +27,10 @@ export const FOOTER_LINKS = {
         { label: "Salary Estimator", href: "/finance/salary-estimator" },
     ],
     resources: [
-        { label: "Documentation", href: "/docs" },
+        { label: "Deals & Offers", href: "/deals" },
         { label: "Blog", href: "/blog" },
-        { label: "Trading Guides", href: "/guides" },
-        { label: "API Access", href: "/api" },
+        { label: "Insights", href: "/insights" },
+        { label: "Dashboard", href: "/dashboard" },
     ],
     company: [
         { label: "About Us", href: "/about" },
