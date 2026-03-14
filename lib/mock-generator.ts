@@ -47,7 +47,8 @@ export function generateMockWhaleTransactions(count: number = 10, targetNetwork?
             timestamp: Date.now() - rng.nextInt(0, 3600000), // Last hour
             type: type,
             network: net,
-            explorerUrl: undefined // Will be set in API route
+            explorerUrl: undefined, // Will be set in API route
+            isMock: true
         });
     }
 

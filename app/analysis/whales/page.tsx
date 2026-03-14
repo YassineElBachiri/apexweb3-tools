@@ -4,7 +4,7 @@ import { useState, useEffect, useCallback, useMemo } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { TransactionCard } from "@/components/whales/transaction-card";
-import { Eye, RefreshCw, Activity, Zap, Layers, Globe, Shield, Info } from "lucide-react";
+import { Eye, RefreshCw, Activity, Zap, Layers, Globe, Shield, Info, LayoutGrid, Waves, Bitcoin, Box, Filter } from "lucide-react";
 import type { ApiResponse, WhaleWatchData } from "@/types";
 import { Badge } from "@/components/ui/badge";
 import { formatUSD } from "@/lib/utils";
@@ -16,11 +16,11 @@ const FILTER_OPTIONS = [
 ];
 
 const NETWORKS = [
-    { label: "All Networks", value: "all" },
-    { label: "Ethereum", value: "ethereum" },
-    { label: "Solana", value: "solana" },
-    { label: "Bitcoin", value: "bitcoin" },
-    { label: "Base", value: "base" },
+    { label: "All Networks", value: "all", icon: LayoutGrid },
+    { label: "Ethereum", value: "ethereum", icon: Waves, color: "text-blue-400" },
+    { label: "Solana", value: "solana", icon: Zap, color: "text-purple-400" },
+    { label: "Bitcoin", value: "bitcoin", icon: Bitcoin, color: "text-orange-400" },
+    { label: "Base", value: "base", icon: Box, color: "text-blue-500" },
 ];
 
 export default function WhalesPage() {
@@ -115,40 +115,48 @@ export default function WhalesPage() {
                 {/* Stats Dashboard */}
                 {stats && (
                     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-10">
-                        <Card className="bg-slate-900/40 border-slate-800 backdrop-blur-md">
+                        <Card className="bg-slate-900/60 border-white/5 backdrop-blur-md shadow-[0_8px_32px_rgba(0,0,0,0.3)] hover:border-primary/30 transition-all duration-300">
                             <CardContent className="pt-6">
                                 <div className="flex items-center gap-3 mb-2">
-                                    <Activity className="h-4 w-4 text-primary" />
-                                    <span className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Total Vol (Feed)</span>
+                                    <div className="p-1.5 rounded-lg bg-primary/10">
+                                        <Activity className="h-4 w-4 text-primary" />
+                                    </div>
+                                    <span className="text-[10px] font-bold uppercase tracking-widest text-slate-400">Total Vol (Feed)</span>
                                 </div>
-                                <div className="text-2xl font-bold">{formatUSD(stats.totalVolume, 0)}</div>
+                                <div className="text-2xl font-bold tracking-tight">{formatUSD(stats.totalVolume, 0)}</div>
                             </CardContent>
                         </Card>
-                        <Card className="bg-slate-900/40 border-slate-800 backdrop-blur-md">
+                        <Card className="bg-slate-900/60 border-white/5 backdrop-blur-md shadow-[0_8px_32px_rgba(0,0,0,0.3)] hover:border-yellow-500/30 transition-all duration-300">
                             <CardContent className="pt-6">
                                 <div className="flex items-center gap-3 mb-2">
-                                    <Zap className="h-4 w-4 text-yellow-500" />
-                                    <span className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Largest Movement</span>
+                                    <div className="p-1.5 rounded-lg bg-yellow-500/10">
+                                        <Zap className="h-4 w-4 text-yellow-500" />
+                                    </div>
+                                    <span className="text-[10px] font-bold uppercase tracking-widest text-slate-400">Largest Movement</span>
                                 </div>
-                                <div className="text-2xl font-bold">{formatUSD(stats.largestTx, 0)}</div>
+                                <div className="text-2xl font-bold tracking-tight">{formatUSD(stats.largestTx, 0)}</div>
                             </CardContent>
                         </Card>
-                        <Card className="bg-slate-900/40 border-slate-800 backdrop-blur-md">
+                        <Card className="bg-slate-900/60 border-white/5 backdrop-blur-md shadow-[0_8px_32px_rgba(0,0,0,0.3)] hover:border-emerald-500/30 transition-all duration-300">
                             <CardContent className="pt-6">
                                 <div className="flex items-center gap-3 mb-2">
-                                    <Globe className="h-4 w-4 text-emerald-500" />
-                                    <span className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Active Networks</span>
+                                    <div className="p-1.5 rounded-lg bg-emerald-500/10">
+                                        <Globe className="h-4 w-4 text-emerald-500" />
+                                    </div>
+                                    <span className="text-[10px] font-bold uppercase tracking-widest text-slate-400">Active Networks</span>
                                 </div>
-                                <div className="text-2xl font-bold">{stats.activeNetworks} Chains</div>
+                                <div className="text-2xl font-bold tracking-tight">{stats.activeNetworks} Chains</div>
                             </CardContent>
                         </Card>
-                        <Card className="bg-slate-900/40 border-slate-800 backdrop-blur-md">
+                        <Card className="bg-slate-900/60 border-white/5 backdrop-blur-md shadow-[0_8px_32px_rgba(0,0,0,0.3)] hover:border-purple-500/30 transition-all duration-300">
                             <CardContent className="pt-6">
                                 <div className="flex items-center gap-3 mb-2">
-                                    <Layers className="h-4 w-4 text-purple-500" />
-                                    <span className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Sample Size</span>
+                                    <div className="p-1.5 rounded-lg bg-purple-500/10">
+                                        <Layers className="h-4 w-4 text-purple-500" />
+                                    </div>
+                                    <span className="text-[10px] font-bold uppercase tracking-widest text-slate-400">Sample Size</span>
                                 </div>
-                                <div className="text-2xl font-bold">{stats.count} Transactions</div>
+                                <div className="text-2xl font-bold tracking-tight">{stats.count} Transfers</div>
                             </CardContent>
                         </Card>
                     </div>
@@ -156,36 +164,55 @@ export default function WhalesPage() {
 
                 <div className="flex flex-col lg:flex-row gap-8">
                     {/* Filters Sidebar */}
-                    <aside className="w-full lg:w-64 space-y-8">
+                    <aside className="w-full lg:w-72 space-y-8">
+                        {/* Threshold Filter */}
                         <div className="space-y-4">
-                            <h3 className="text-sm font-bold uppercase tracking-widest text-muted-foreground px-2">Threshold</h3>
-                            <div className="flex flex-col gap-2">
+                            <div className="flex items-center gap-2 px-2">
+                                <Filter className="h-4 w-4 text-primary" />
+                                <h3 className="text-xs font-bold uppercase tracking-wider text-slate-400">Movement Threshold</h3>
+                            </div>
+                            <div className="p-1.5 bg-slate-900/60 rounded-2xl border border-white/5 backdrop-blur-sm space-y-1">
                                 {FILTER_OPTIONS.map((option) => (
-                                    <Button
+                                    <button
                                         key={option.value}
                                         onClick={() => setSelectedFilter(option.value)}
-                                        variant={selectedFilter === option.value ? "default" : "ghost"}
-                                        className={`justify-start text-sm ${selectedFilter === option.value ? "bg-primary/20 text-primary border border-primary/30" : "hover:bg-slate-800/50"}`}
+                                        className={`w-full flex items-center justify-between px-4 py-3 rounded-xl text-sm font-medium transition-all duration-300 ${
+                                            selectedFilter === option.value
+                                                ? "bg-primary/20 text-primary border border-primary/30 shadow-[0_0_20px_-5px_rgba(59,130,246,0.4)]"
+                                                : "text-slate-400 hover:text-slate-200 hover:bg-white/5 border border-transparent"
+                                        }`}
                                     >
-                                        {option.label}
-                                    </Button>
+                                        <span>{option.label}</span>
+                                        {selectedFilter === option.value && <div className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse" />}
+                                    </button>
                                 ))}
                             </div>
                         </div>
 
+                        {/* Network Filter */}
                         <div className="space-y-4">
-                            <h3 className="text-sm font-bold uppercase tracking-widest text-muted-foreground px-2">Network</h3>
-                            <div className="flex flex-col gap-2">
-                                {NETWORKS.map((net) => (
-                                    <Button
-                                        key={net.value}
-                                        onClick={() => setSelectedNetwork(net.value)}
-                                        variant={selectedNetwork === net.value ? "default" : "ghost"}
-                                        className={`justify-start text-sm ${selectedNetwork === net.value ? "bg-primary/20 text-primary border border-primary/30" : "hover:bg-slate-800/50"}`}
-                                    >
-                                        <span className="capitalize">{net.label}</span>
-                                    </Button>
-                                ))}
+                            <div className="flex items-center gap-2 px-2">
+                                <Globe className="h-4 w-4 text-primary" />
+                                <h3 className="text-xs font-bold uppercase tracking-wider text-slate-400">Target Network</h3>
+                            </div>
+                            <div className="p-1.5 bg-slate-900/60 rounded-2xl border border-white/5 backdrop-blur-sm space-y-1">
+                                {NETWORKS.map((net) => {
+                                    const Icon = net.icon;
+                                    return (
+                                        <button
+                                            key={net.value}
+                                            onClick={() => setSelectedNetwork(net.value)}
+                                            className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all duration-300 ${
+                                                selectedNetwork === net.value
+                                                    ? "bg-primary/20 text-primary border border-primary/30 shadow-[0_0_20px_-5px_rgba(59,130,246,0.4)]"
+                                                    : "text-slate-400 hover:text-slate-200 hover:bg-white/5 border border-transparent"
+                                            }`}
+                                        >
+                                            <Icon className={`h-4 w-4 ${selectedNetwork === net.value ? "text-primary" : "text-slate-500"}`} />
+                                            <span className="capitalize">{net.label}</span>
+                                        </button>
+                                    );
+                                })}
                             </div>
                         </div>
                     </aside>

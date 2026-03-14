@@ -45,7 +45,7 @@ export async function GET(request: Request) {
                                     timestamp: (parseInt(tx.timeStamp) * 1000) || Date.now(),
                                     type: "transfer",
                                     network: "ethereum",
-                                    explorerUrl: getExplorerUrl("ethereum", tx.hash)
+                                    explorerUrl: getExplorerUrl("ethereum", tx.from)
                                 });
                             }
                         }
@@ -60,7 +60,7 @@ export async function GET(request: Request) {
                 const countNeeded = 10 - whaleTransactions.length;
                 const fallbackTxs = generateMockWhaleTransactions(countNeeded, "ethereum").map(tx => ({
                     ...tx,
-                    explorerUrl: getExplorerUrl("ethereum", tx.hash)
+                    explorerUrl: getExplorerUrl("ethereum", tx.type === "buy" ? tx.to : tx.from)
                 })).filter(tx => (tx.valueUsd ?? 0) >= minValue);
                 whaleTransactions = [...whaleTransactions, ...fallbackTxs];
             }
@@ -75,7 +75,7 @@ export async function GET(request: Request) {
         for (const chain of filterToChains) {
             const chainTxs = generateMockWhaleTransactions(8, chain).map(tx => ({
                 ...tx,
-                explorerUrl: getExplorerUrl(chain, tx.hash)
+                explorerUrl: getExplorerUrl(chain, tx.type === "buy" ? tx.to : tx.from)
             })).filter(tx => (tx.valueUsd ?? 0) >= minValue);
 
             whaleTransactions = [...whaleTransactions, ...chainTxs];
@@ -95,12 +95,12 @@ export async function GET(request: Request) {
     }
 }
 
-function getExplorerUrl(network: string, hash: string): string {
+function getExplorerUrl(network: string, address: string): string {
     switch (network) {
-        case "ethereum": return `https://etherscan.io/tx/${hash}`;
-        case "bitcoin": return `https://blockchain.com/btc/tx/${hash}`;
-        case "solana": return `https://solscan.io/tx/${hash}`;
-        case "base": return `https://basescan.org/tx/${hash}`;
-        default: return `https://etherscan.io/tx/${hash}`;
+        case "ethereum": return `https://etherscan.io/address/${address}`;
+        case "bitcoin": return `https://www.blockchain.com/explorer/addresses/btc/${address}`;
+        case "solana": return `https://solscan.io/account/${address}`;
+        case "base": return `https://basescan.org/address/${address}`;
+        default: return `https://etherscan.io/address/${address}`;
     }
 }

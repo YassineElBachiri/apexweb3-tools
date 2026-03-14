@@ -5,6 +5,12 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { formatUSD, formatTimeAgo, shortenAddress } from "@/lib/utils";
 import { ExternalLink, TrendingUp, TrendingDown, ArrowRight, Share2 } from "lucide-react";
+import {
+    DropdownMenu,
+    DropdownMenuContent,
+    DropdownMenuItem,
+    DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 interface TransactionCardProps {
     transaction: WhaleTransaction;
@@ -43,7 +49,7 @@ export function TransactionCard({ transaction }: TransactionCardProps) {
         }
     };
 
-    const explorerUrl = transaction.explorerUrl || `https://etherscan.io/tx/${transaction.hash}`;
+    const explorerUrl = transaction.explorerUrl || `https://etherscan.io/address/${transaction.type === "buy" ? transaction.to : transaction.from}`;
 
     return (
         <Card className="group hover:border-primary/50 transition-all duration-300 hover:shadow-2xl hover:shadow-primary/5 bg-slate-900/40 backdrop-blur-sm border-white/5">
@@ -113,9 +119,29 @@ export function TransactionCard({ transaction }: TransactionCardProps) {
                         >
                             <ExternalLink className="h-4 w-4" />
                         </a>
-                        <button className="p-2 rounded-lg bg-white/5 hover:bg-white/10 text-muted-foreground transition-all border border-white/5">
-                            <Share2 className="h-4 w-4" />
-                        </button>
+                        <DropdownMenu>
+                            <DropdownMenuTrigger asChild>
+                                <button className="p-2 rounded-lg bg-white/5 hover:bg-white/10 text-muted-foreground transition-all border border-white/5">
+                                    <Share2 className="h-4 w-4" />
+                                </button>
+                            </DropdownMenuTrigger>
+                            <DropdownMenuContent align="end" className="w-48 bg-slate-900 border-white/10">
+                                <DropdownMenuItem onClick={() => {
+                                    const text = `🚨 Whale Alert! 🚨\n\n${formatUSD(transaction.valueUsd || 0, 0)} of ${transaction.token} moved on ${transaction.network}!\n\nView details on ApexWeb3:`;
+                                    const url = typeof window !== 'undefined' ? window.location.href : 'https://apexweb3.com/analysis/whales';
+                                    window.open(`https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}&url=${encodeURIComponent(url)}`, '_blank');
+                                }} className="cursor-pointer hover:bg-white/5 focus:bg-white/5">
+                                    Share on X
+                                </DropdownMenuItem>
+                                <DropdownMenuItem onClick={() => {
+                                    const text = `🚨 Whale Alert! 🚨\n\n${formatUSD(transaction.valueUsd || 0, 0)} of ${transaction.token} moved on ${transaction.network}!\n\nView details on ApexWeb3:`;
+                                    const url = typeof window !== 'undefined' ? window.location.href : 'https://apexweb3.com/analysis/whales';
+                                    window.open(`https://t.me/share/url?url=${encodeURIComponent(url)}&text=${encodeURIComponent(text)}`, '_blank');
+                                }} className="cursor-pointer hover:bg-white/5 focus:bg-white/5">
+                                    Share on Telegram
+                                </DropdownMenuItem>
+                            </DropdownMenuContent>
+                        </DropdownMenu>
                     </div>
                 </div>
             </CardContent>

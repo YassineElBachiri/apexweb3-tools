@@ -144,6 +144,7 @@ export interface WhaleTransaction {
     type: "buy" | "sell" | "transfer";
     network: string; // ethereum, bitcoin, solana, etc.
     explorerUrl?: string;
+    isMock?: boolean;
 }
 
 export interface WhaleWatchData {
