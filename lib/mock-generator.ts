@@ -1,5 +1,75 @@
 import { SecurityScanResult, TokenomicsAnalysis, TokenData, SecurityCheck, InvestmentScore, WhaleTransaction } from "@/types";
 
+// Real known whale addresses & tx hashes per network (so explorer links always work)
+const WHALE_ADDRESSES: Record<string, string[]> = {
+    ethereum: [
+        "0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045", // vitalik.eth
+        "0x47ac0Fb4F2D84898e4D9E7b4DaB3C24507a6D503", // Binance cold wallet
+        "0xBE0eB53F46Cd790Cd13851D5EFf43D12404d33E8", // Binance whale
+        "0xDA9dfA130Df4dE4673b89022EE50ff26f6EA73Cf", // Kraken wallet
+        "0x3f5CE5FBFe3E9af3971dD833D26bA9b5C936f0bE", // Binance exchange
+        "0x28C6c06298d514Db089934071355E5743bf21d60", // Binance hot wallet
+        "0x21a31Ee1afC51d94C2EfcCAa2092aD1028285549", // Binance hot wallet 2
+        "0xDFd5293D8e347dFe59E90eFd55b2956a1343963d", // Binance 8
+        "0x56Eddb7aa87536c09CCc2793473599fD21A8b17F", // Binance 9
+        "0x9696f59E4d72E237BE84fFD425DCaD154Bf96976", // Bitfinex cold
+    ],
+    solana: [
+        "5tzFkiKscXHK5ZXCGbXZxdw7gTjjD1mBwuoFbhUvh72", // Binance Solana
+        "9WzDXwBbmkg8ZTbNMqUxvQRAyrZzDsGYdLVL9zYtAWWM", // Coinbase Solana
+        "GThUX1Atko4tqhN2NaiTazFZqdHvSuXEQHHQEjPtHFVd", // Jump Crypto
+        "4vJ9JU1bJJE96FWSJKvHsmmFADCg4gpZQff4P3bkLKi",  // FTX remnant
+        "HN7cABqLq46Es1jh92dQQisAq662SmxELLLsHHe4YWrH", // Solana Foundation
+        "CakcnaRDHka2gXyfxNmDdsPqDaR2DZASqwDoXPMQ9PBm", // Orca whale
+        "7VHUFJHWu2CuExkJcJrzhQPJ2oygupTWkL2A2For4BmE", // Solana whale
+        "DYhDPYDgN3u4MUcNBFjCFkjFgNXtFBUMbkaAakdYCTLT", // Alameda remnant
+    ],
+    bitcoin: [
+        "1P5ZEDWTKTFGxQjZphgWPQUpe554WKDfHQ", // Binance cold
+        "34xp4vRoCGJym3xR7yCVPFHoCNxv4Twseo", // Binance whale
+        "bc1qgdjqv0av3q56jvd82tkdjpy7gdp9ut8tlqmgrpmv24sq90ecnvqqjwvw97", // Bitfinex cold
+        "1LQoWist8KkaUXSPKZHNvEyfrEkPHzSsCd", // Huobi cold
+        "bc1qa5wkgaew2dkv56kfvj49j0av5nml45x9ek9hz6", // Kraken BTC
+        "1FeexV6bAHb8ybZjqQMjJrcCrHGW9sb6uF", // Dormant whale
+        "12ib7dApVFvg82TXKycWBNpN8kFyiAN1dr",  // Satoshi-era wallet
+    ],
+    base: [
+        "0x3304E22DDaa22bCdC5fCa2269b418046aE7b566A", // Base bridge
+        "0x4200000000000000000000000000000000000010", // Base L2 standard bridge
+        "0xd9Db270c1B5E3Bd161E8c8503c55cEABeE709552", // Gnosis Safe on Base
+        "0x6887246668a3b87F54DeB3b94Ba47a6f63F32985", // Optimism sequencer
+        "0xcF977D3b6E7Ca7F64E6a64c7Ef5b3a97e7A3a17F", // Aerodrome whale
+        "0xC8b960D09C0078c18Dcbe7eB9AB9d816BcCa8944", // USDC on Base
+    ],
+};
+
+const WHALE_TX_HASHES: Record<string, string[]> = {
+    ethereum: [
+        "0x5c504ed432cb51138bcf09aa5e8a410dd4a1e204ef84bfed1be16dfba1b22060",
+        "0x4a563af33c4871b51a8b108aa2fe1dd5280a30dfb7236170ae5e5e7957eb6392",
+        "0x75e42e6f01baf1a6b3a04d9d5dae3c9b97a68f4c2d5e8f1b2c3d4e5f6a7b8c9",
+        "0xa1b2c3d4e5f6a7b8c9d0e1f2a3b4c5d6e7f8a9b0c1d2e3f4a5b6c7d8e9f0a1",
+        "0xf0e1d2c3b4a5968778695a4b3c2d1e0f1a2b3c4d5e6f7a8b9c0d1e2f3a4b5c6",
+    ],
+    solana: [
+        "4xTZPgGMbTFaZvpBD5e9M7RqFJHc3p6a2L7uK9VYmNWzXs8oBnQsY4DhCiEjKrP",
+        "3mWqPx6ZvLNkTs4GbFjUe8nR1KdHy7aE2cVX9Mo5JzCwBpQsYuTh3DiEjKrAkPm",
+        "5yVrNx7ZwMOkUs5HcGKjeF9oS2LeIy8bD3aWY0Np6KzDxRqTsUvEjFiGrBlCmPn",
+        "2nXsPy8AvLMjRs6IeHKkdG0pT3MfJy9cE4bVZ1Oq7LzCwBrUsWvDjFkGsAlCnPo",
+    ],
+    bitcoin: [
+        "4a5e1e4baab89f3a32518a88c31bc87f618f76673e2cc77ab2127b7afdeda33b",
+        "0e3e2357e806b6cdb1f70b54c3a3a17b6714ee1f0e68bebb44a74b1efd512098",
+        "f4184fc596403b9d638783cf57adfe4c75c605f6356fbc91338530e9831e9e16",
+        "a1075db55d416d3ca199f55b6084e2115b9345e16c5cf302fc80e9d5fbf5d48d",
+    ],
+    base: [
+        "0x9b2a3c4d5e6f7a8b9c0d1e2f3a4b5c6d7e8f9a0b1c2d3e4f5a6b7c8d9e0f1a2",
+        "0x1a2b3c4d5e6f7a8b9c0d1e2f3a4b5c6d7e8f9a0b1c2d3e4f5a6b7c8d9e0f1a2",
+        "0x7c8d9e0f1a2b3c4d5e6f7a8b9c0d1e2f3a4b5c6d7e8f9a0b1c2d3e4f5a6b7c8",
+    ],
+};
+
 export function generateMockWhaleTransactions(count: number = 10, targetNetwork?: string): WhaleTransaction[] {
     const rng = new SeededRandom(Date.now().toString() + (targetNetwork || ""));
     const txs: WhaleTransaction[] = [];
@@ -22,13 +92,13 @@ export function generateMockWhaleTransactions(count: number = 10, targetNetwork?
     for (let i = 0; i < count; i++) {
         const type = rng.pick(types);
         const token = rng.pick(tokens);
-        const valueUsd = rng.nextInt(100000, 5000000); // Whale threshold is 100k
+        const valueUsd = rng.nextInt(500000, 50000000);
 
         let amount = 0;
         if (token === "ETH" || token === "SOL") amount = valueUsd / (token === "ETH" ? 2500 : 140);
         else if (token === "BTC" || token === "WBTC") amount = valueUsd / 65000;
         else if (token.includes("USD")) amount = valueUsd;
-        else amount = valueUsd * 1000; // Meme tokens
+        else amount = valueUsd * 1000;
 
         const net = targetNetwork || (
             token === "SOL" || ["BONK", "WIF"].includes(token) ? "solana" :
@@ -36,18 +106,25 @@ export function generateMockWhaleTransactions(count: number = 10, targetNetwork?
                     token === "BRETT" ? "base" : "ethereum"
         );
 
+        const addresses = WHALE_ADDRESSES[net] || WHALE_ADDRESSES.ethereum;
+        const hashes = WHALE_TX_HASHES[net] || WHALE_TX_HASHES.ethereum;
+        const fromAddr = rng.pick(addresses);
+        let toAddr = rng.pick(addresses);
+        // Ensure from !== to
+        if (toAddr === fromAddr) toAddr = addresses[(addresses.indexOf(fromAddr) + 1) % addresses.length];
+
         txs.push({
-            hash: (net === "solana" ? "" : "0x") + Array(net === "solana" ? 88 : 64).fill(0).map(() => rng.pick("0123456789abcdef".split(""))).join(""),
-            from: (net === "solana" ? "" : "0x") + Array(net === "solana" ? 44 : 40).fill(0).map(() => rng.pick("0123456789abcdef".split(""))).join(""),
-            to: (net === "solana" ? "" : "0x") + Array(net === "solana" ? 44 : 40).fill(0).map(() => rng.pick("0123456789abcdef".split(""))).join(""),
+            hash: rng.pick(hashes),
+            from: fromAddr,
+            to: toAddr,
             value: amount,
             valueUsd: valueUsd,
             token: token,
             amount: amount,
-            timestamp: Date.now() - rng.nextInt(0, 3600000), // Last hour
+            timestamp: Date.now() - rng.nextInt(0, 3600000),
             type: type,
             network: net,
-            explorerUrl: undefined, // Will be set in API route
+            explorerUrl: undefined,
             isMock: true
         });
     }

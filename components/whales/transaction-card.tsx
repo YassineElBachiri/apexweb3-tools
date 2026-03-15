@@ -49,7 +49,35 @@ export function TransactionCard({ transaction }: TransactionCardProps) {
         }
     };
 
-    const explorerUrl = transaction.explorerUrl || `https://etherscan.io/address/${transaction.type === "buy" ? transaction.to : transaction.from}`;
+    const getAddressExplorerUrl = (address: string, network: string) => {
+        switch (network.toLowerCase()) {
+            case "solana":
+                return `https://solscan.io/account/${address}`;
+            case "bitcoin":
+                return `https://blockchair.com/bitcoin/address/${address}`;
+            case "base":
+                return `https://basescan.org/address/${address}`;
+            case "ethereum":
+            default:
+                return `https://etherscan.io/address/${address}`;
+        }
+    };
+
+    const getTxExplorerUrl = (hash: string, network: string) => {
+        switch (network.toLowerCase()) {
+            case "solana":
+                return `https://solscan.io/tx/${hash}`;
+            case "bitcoin":
+                return `https://blockchair.com/bitcoin/transaction/${hash}`;
+            case "base":
+                return `https://basescan.org/tx/${hash}`;
+            case "ethereum":
+            default:
+                return `https://etherscan.io/tx/${hash}`;
+        }
+    };
+
+    const explorerUrl = transaction.explorerUrl || getTxExplorerUrl(transaction.hash, transaction.network);
 
     return (
         <Card className="group hover:border-primary/50 transition-all duration-300 hover:shadow-2xl hover:shadow-primary/5 bg-slate-900/40 backdrop-blur-sm border-white/5">
@@ -84,15 +112,29 @@ export function TransactionCard({ transaction }: TransactionCardProps) {
                 <div className="grid grid-cols-2 gap-4 mb-6 pt-4 border-t border-white/5">
                     <div className="space-y-1">
                         <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider">Origin</span>
-                        <div className="font-mono text-sm truncate bg-black/20 p-1.5 rounded border border-white/5">
-                            {shortenAddress(transaction.from)}
-                        </div>
+                        <a
+                            href={getAddressExplorerUrl(transaction.from, transaction.network)}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="font-mono text-sm truncate bg-black/20 p-1.5 rounded border border-white/5 flex items-center gap-1 hover:border-primary/40 hover:bg-primary/5 hover:text-primary transition-all duration-200 group/addr"
+                            title={transaction.from}
+                        >
+                            <span className="truncate">{shortenAddress(transaction.from)}</span>
+                            <ExternalLink className="h-3 w-3 shrink-0 opacity-0 group-hover/addr:opacity-100 transition-opacity" />
+                        </a>
                     </div>
                     <div className="space-y-1">
                         <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider">Destination</span>
-                        <div className="font-mono text-sm truncate bg-black/20 p-1.5 rounded border border-white/5">
-                            {shortenAddress(transaction.to)}
-                        </div>
+                        <a
+                            href={getAddressExplorerUrl(transaction.to, transaction.network)}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="font-mono text-sm truncate bg-black/20 p-1.5 rounded border border-white/5 flex items-center gap-1 hover:border-primary/40 hover:bg-primary/5 hover:text-primary transition-all duration-200 group/addr"
+                            title={transaction.to}
+                        >
+                            <span className="truncate">{shortenAddress(transaction.to)}</span>
+                            <ExternalLink className="h-3 w-3 shrink-0 opacity-0 group-hover/addr:opacity-100 transition-opacity" />
+                        </a>
                     </div>
                 </div>
 
@@ -125,7 +167,7 @@ export function TransactionCard({ transaction }: TransactionCardProps) {
                                     <Share2 className="h-4 w-4" />
                                 </button>
                             </DropdownMenuTrigger>
-                            <DropdownMenuContent align="end" className="w-48 bg-slate-900 border-white/10">
+                            <DropdownMenuContent align="end" className="w-48 bg-slate-900 border-white/10 z-50">
                                 <DropdownMenuItem onClick={() => {
                                     const text = `🚨 Whale Alert! 🚨\n\n${formatUSD(transaction.valueUsd || 0, 0)} of ${transaction.token} moved on ${transaction.network}!\n\nView details on ApexWeb3:`;
                                     const url = typeof window !== 'undefined' ? window.location.href : 'https://apexweb3.com/analysis/whales';
