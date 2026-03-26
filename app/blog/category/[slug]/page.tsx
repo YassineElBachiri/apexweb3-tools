@@ -16,7 +16,7 @@ export async function generateMetadata({ params }: CategoryParams): Promise<Meta
         title: `${slug.toUpperCase()} Blog Category | ApexWeb3`,
         description: `Browse all articles related to the ${slug} category from the ApexWeb3 blog.`,
         alternates: {
-            canonical: `https://apexweb3.com/blog/category/${slug}`,
+            canonical: `https://www.apexweb3.com/blog/category/${slug}`,
         }
     };
 }

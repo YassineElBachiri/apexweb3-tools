@@ -6,7 +6,7 @@ import { getCategories } from "@/lib/api/wordpress";
 import { GoogleAnalytics } from '@next/third-parties/google';
 
 export const metadata: Metadata = {
-    metadataBase: new URL('https://apexweb3.com'),
+    metadataBase: new URL('https://www.apexweb3.com'),
     title: "ApexWeb3 Tools - Web3 Analytics & Token Analysis",
     description: "Real-time Web3 analytics for smart traders. Analyze tokens, track portfolios, detect rug pulls, and monitor whale transactions.",
     keywords: ["web3", "crypto", "token analysis", "portfolio tracker", "rug pull detector", "whale watch"],

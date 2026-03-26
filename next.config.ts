@@ -9,7 +9,7 @@ const nextConfig: NextConfig = {
         remotePatterns: [
             {
                 protocol: 'https',
-                hostname: 'apexweb3.com',
+                hostname: 'www.apexweb3.com',
                 pathname: '/wp-content/uploads/**',
             },
             {
@@ -33,6 +33,29 @@ const nextConfig: NextConfig = {
     },
     async headers() {
         return [
+            // ── Static asset caching ─────────────────────────────────────────
+            // Next.js static chunks are content-hashed — safe to cache forever.
+            // Fixes: "390 uncached JS/CSS files" SEO warning.
+            {
+                source: "/_next/static/(.*)",
+                headers: [
+                    {
+                        key: "Cache-Control",
+                        value: "public, max-age=31536000, immutable",
+                    },
+                ],
+            },
+            // Public images (.png/.ico/.svg) — 24h cache
+            {
+                source: "/(.*\.(?:png|jpg|jpeg|svg|ico|webp))",
+                headers: [
+                    {
+                        key: "Cache-Control",
+                        value: "public, max-age=86400, stale-while-revalidate=3600",
+                    },
+                ],
+            },
+            // ── Security & performance headers (all routes) ──────────────────
             {
                 source: "/:path*",
                 headers: [
@@ -69,6 +92,17 @@ const nextConfig: NextConfig = {
     },
     async redirects() {
         return [
+            {
+                source: '/:path*',
+                has: [
+                    {
+                        type: 'host',
+                        value: 'apexweb3.com',
+                    },
+                ],
+                destination: 'https://www.apexweb3.com/:path*',
+                permanent: true,
+            },
             {
                 source: '/:category(news|defi|guide|blockchain-basics|web3-and-ai|reviews-and-analysis|blockchain-dev-hub|nfts-and-metaverse|security-and-audits)',
                 destination: '/blog/category/:category',

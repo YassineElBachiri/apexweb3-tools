@@ -125,12 +125,12 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
         title,
         description: description.substring(0, 160), // Hard limit for safety
         alternates: {
-            canonical: `https://apexweb3.com/jobs/${slug}`,
+            canonical: `https://www.apexweb3.com/jobs/${slug}`,
         },
         openGraph: {
             title,
             description,
-            url: `https://apexweb3.com/jobs/${slug}`,
+            url: `https://www.apexweb3.com/jobs/${slug}`,
             siteName: "ApexWeb3 Tools",
             locale: "en_US",
             type: "website",

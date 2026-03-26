@@ -6,9 +6,9 @@ import { Folder, ArrowRight } from 'lucide-react';
 
 export const metadata: Metadata = {
     title: 'Browse Articles by Category | ApexWeb3',
-    description: 'Explore ApexWeb3 intelligence, tokenomics, and guides by category.',
+    description: 'Explore ApexWeb3 articles organized by topic — DeFi, NFTs, security, tokenomics, blockchain basics, Web3 AI, and more. Find in-depth guides and crypto research by category.',
     alternates: {
-        canonical: 'https://apexweb3.com/categories',
+        canonical: 'https://www.apexweb3.com/categories',
     },
 };
 

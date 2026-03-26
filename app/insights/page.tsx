@@ -8,7 +8,8 @@ export const metadata: Metadata = {
     title: 'Web3 Intelligence & Insights | ApexWeb3',
     description: 'Deep dives, tokenomics analysis, and technical Web3 insights from the ApexWeb3 research team.',
     alternates: {
-        canonical: 'https://apexweb3.com/insights',
+        // Canonical points to /blog — this page is a legacy near-duplicate
+        canonical: 'https://apexweb3.com/blog',
     },
 };
 
@@ -44,7 +45,7 @@ export default async function InsightsPage() {
                 ) : (
                     <div className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3">
                         {posts.map((post) => (
-                            <Link key={post.slug} href={`/${post.slug}`} className="group relative rounded-2xl border border-slate-800 bg-slate-900/40 p-1 transition-all hover:-translate-y-1 hover:border-brand-primary/50 hover:shadow-2xl hover:shadow-brand-primary/10">
+                            <Link key={post.slug} href={`/blog/${post.slug}`} className="group relative rounded-2xl border border-slate-800 bg-slate-900/40 p-1 transition-all hover:-translate-y-1 hover:border-brand-primary/50 hover:shadow-2xl hover:shadow-brand-primary/10">
                                 <article className="flex h-full flex-col overflow-hidden rounded-xl bg-slate-900">
                                     {/* Featured Image placeholder/handler */}
                                     <div className="relative aspect-[16/9] w-full overflow-hidden bg-slate-800">

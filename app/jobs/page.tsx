@@ -9,7 +9,7 @@ export const metadata: Metadata = {
     description: "Browse thousands of live Web3, Crypto, and Blockchain jobs. Filter by role, tech stack, and remote-readiness. Your gateway to the decentralized workforce.",
     keywords: ["web3 jobs", "blockchain jobs", "crypto careers", "solidity jobs", "remote web3 jobs"],
     alternates: {
-        canonical: "https://apexweb3.com/jobs",
+        canonical: "https://www.apexweb3.com/jobs",
     },
 };
 

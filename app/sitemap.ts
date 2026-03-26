@@ -2,16 +2,16 @@ import { MetadataRoute } from 'next'
 import { getLatestPosts, getCategories } from '@/lib/api/wordpress'
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-    const baseUrl = 'https://apexweb3.com'
+    const baseUrl = 'https://www.apexweb3.com'
     const currentDate = new Date()
 
     const staticRoutes: MetadataRoute.Sitemap = [
         // Root
         { url: baseUrl, lastModified: currentDate, changeFrequency: 'weekly', priority: 1 },
 
-        // Blog / Insights
+        // Blog
         { url: `${baseUrl}/blog`, lastModified: currentDate, changeFrequency: 'daily', priority: 0.95 },
-        { url: `${baseUrl}/insights`, lastModified: currentDate, changeFrequency: 'weekly', priority: 0.8 }, // Keeping for backwards compatibility if still used
+        // Note: /insights is a legacy page with canonical → /blog; intentionally excluded from sitemap
 
         // Finance Tools
         { url: `${baseUrl}/finance/calculator`, lastModified: currentDate, changeFrequency: 'weekly', priority: 0.8 },

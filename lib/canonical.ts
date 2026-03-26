@@ -1,6 +1,6 @@
 import { Metadata } from 'next';
 
-const SITE_URL = 'https://apexweb3.com';
+const SITE_URL = 'https://www.apexweb3.com';
 
 /**
  * Generate canonical metadata for a page.

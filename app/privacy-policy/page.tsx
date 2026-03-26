@@ -4,7 +4,7 @@ export const metadata: Metadata = {
     title: "Privacy Policy | ApexWeb3",
     description: "Our commitment to protecting and respecting your privacy. Learn how we collect and use your data.",
     alternates: {
-        canonical: 'https://apexweb3.com/privacy-policy',
+        canonical: 'https://www.apexweb3.com/privacy-policy',
     },
 };
 

@@ -5,7 +5,7 @@ export const metadata: Metadata = {
     title: "Terms of Service | ApexWeb3",
     description: "Read our Terms of Service to understand your rights and responsibilities when using the ApexWeb3 platform.",
     alternates: {
-        canonical: 'https://apexweb3.com/terms-of-service',
+        canonical: 'https://www.apexweb3.com/terms-of-service',
     },
 };
 

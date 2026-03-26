@@ -9,7 +9,7 @@ interface SEOConfig {
 }
 
 export function generateMetadata(config: SEOConfig): Metadata {
-    const baseUrl = "https://apexweb3.com";
+    const baseUrl = "https://www.apexweb3.com";
 
     return {
         title: config.title,
@@ -62,7 +62,7 @@ export function generateWebApplicationSchema() {
         "@type": "WebApplication",
         "name": "ApexWeb3 Tools",
         "description": "Professional cryptocurrency analysis tools for traders and investors. Track portfolios, analyze tokenomics, detect scams, and more.",
-        "url": "https://apexweb3.com",
+        "url": "https://www.apexweb3.com",
         "applicationCategory": "FinanceApplication",
         "offers": {
             "@type": "Offer",
@@ -81,15 +81,23 @@ export function generateOrganizationSchema() {
         "@context": "https://schema.org",
         "@type": "Organization",
         "name": "ApexWeb3",
-        "url": "https://apexweb3.com",
-        "logo": "https://apexweb3.com/logo.png",
+        "url": "https://www.apexweb3.com",
+        "logo": {
+            "@type": "ImageObject",
+            "url": "https://www.apexweb3.com/ApexWeb3-logo.png",
+            "width": 200,
+            "height": 200
+        },
         "sameAs": [
-            // Add social media links when available
+            "https://x.com/apexweb3_",
+            "https://www.linkedin.com/company/apexweb3/",
+            "https://www.instagram.com/apexweb3_/",
+            "https://apexweb3.medium.com/"
         ],
         "subOrganization": {
             "@type": "WebApplication",
             "name": "ApexWeb3 Tools",
-            "url": "https://apexweb3.com"
+            "url": "https://www.apexweb3.com"
         }
     };
 }

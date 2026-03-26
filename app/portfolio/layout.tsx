@@ -2,7 +2,7 @@ import { Metadata } from "next";
 import { generateMetadata } from "@/lib/seo";
 
 export const metadata: Metadata = generateMetadata({
-    title: "Crypto Portfolio Tracker - Free Multi-Chain Portfolio Manager | ApexWeb3",
+    title: "Free Multi-Chain Crypto Portfolio Tracker | ApexWeb3",
     description: "Track your cryptocurrency portfolio privately across all blockchains. Real-time P&L calculations, asset allocation, performance analytics. No wallet connection required. Your data stays on your device.",
     keywords: [
         "crypto portfolio tracker",

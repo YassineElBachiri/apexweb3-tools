@@ -1,6 +1,6 @@
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { ChevronDown } from "lucide-react";
+import { CoinSelect } from "./CoinSelect";
 
 interface CurrencyInputProps {
     label: string;
@@ -8,7 +8,7 @@ interface CurrencyInputProps {
     selectedCurrency: string;
     onAmountChange: (value: number) => void;
     onCurrencyChange: (currency: string) => void;
-    currencies: string[];
+    currencies?: string[]; // Kept for backwards compatibility but unused
     readOnly?: boolean;
 }
 
@@ -25,21 +25,12 @@ export function CurrencyInput({
         <div className="space-y-2">
             <Label className="text-zinc-400 font-mono text-xs uppercase tracking-wider">{label}</Label>
             <div className="relative flex items-center">
-                <div className="absolute left-3 z-10">
-                    <div className="relative">
-                        <select
-                            value={selectedCurrency}
-                            onChange={(e) => onCurrencyChange(e.target.value)}
-                            className="appearance-none bg-zinc-900 border border-zinc-700 text-white pl-3 pr-8 py-1.5 rounded-md focus:ring-2 focus:ring-primary focus:border-transparent outline-none cursor-pointer hover:bg-zinc-800 transition-colors uppercase font-bold text-sm"
-                        >
-                            {currencies.map((curr) => (
-                                <option key={curr} value={curr}>
-                                    {curr.toUpperCase()}
-                                </option>
-                            ))}
-                        </select>
-                        <ChevronDown className="absolute right-2 top-1/2 -translate-y-1/2 h-4 w-4 text-zinc-400 pointer-events-none" />
-                    </div>
+                <div className="absolute left-3 z-10 w-24">
+                    <CoinSelect
+                        value={selectedCurrency}
+                        onChange={onCurrencyChange}
+                        className="w-full"
+                    />
                 </div>
                 <Input
                     type="number"

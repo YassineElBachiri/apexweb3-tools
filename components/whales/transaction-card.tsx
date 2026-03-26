@@ -170,14 +170,14 @@ export function TransactionCard({ transaction }: TransactionCardProps) {
                             <DropdownMenuContent align="end" className="w-48 bg-slate-900 border-white/10 z-50">
                                 <DropdownMenuItem onClick={() => {
                                     const text = `🚨 Whale Alert! 🚨\n\n${formatUSD(transaction.valueUsd || 0, 0)} of ${transaction.token} moved on ${transaction.network}!\n\nView details on ApexWeb3:`;
-                                    const url = typeof window !== 'undefined' ? window.location.href : 'https://apexweb3.com/analysis/whales';
+                                    const url = typeof window !== 'undefined' ? window.location.href : 'https://www.apexweb3.com/analysis/whales';
                                     window.open(`https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}&url=${encodeURIComponent(url)}`, '_blank');
                                 }} className="cursor-pointer hover:bg-white/5 focus:bg-white/5">
                                     Share on X
                                 </DropdownMenuItem>
                                 <DropdownMenuItem onClick={() => {
                                     const text = `🚨 Whale Alert! 🚨\n\n${formatUSD(transaction.valueUsd || 0, 0)} of ${transaction.token} moved on ${transaction.network}!\n\nView details on ApexWeb3:`;
-                                    const url = typeof window !== 'undefined' ? window.location.href : 'https://apexweb3.com/analysis/whales';
+                                    const url = typeof window !== 'undefined' ? window.location.href : 'https://www.apexweb3.com/analysis/whales';
                                     window.open(`https://t.me/share/url?url=${encodeURIComponent(url)}&text=${encodeURIComponent(text)}`, '_blank');
                                 }} className="cursor-pointer hover:bg-white/5 focus:bg-white/5">
                                     Share on Telegram

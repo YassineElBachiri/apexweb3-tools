@@ -7,6 +7,7 @@ import { AssetPicker } from '@/components/calculator/AssetPicker';
 import { PurchaseTable } from '@/components/calculator/PurchaseTable';
 import { ResultsCard } from '@/components/calculator/ResultsCard';
 import { DCASimulator } from '@/components/calculator/DCASimulator';
+import { ExitStrategyPlanner } from '@/components/calculator/ExitStrategyPlanner';
 import { PositionChart } from '@/components/calculator/PositionChart';
 import { Asset, Purchase, CalculationResult, PnLResult } from '@/lib/types/calculator';
 import { calculateAverageCost, calculatePnL } from '@/lib/calculator';
@@ -30,6 +31,7 @@ export default function CalculatorPage() {
         profitLossPercent: 0,
         isProfit: false
     });
+    const [exitPlanInfo, setExitPlanInfo] = useState<any>(null);
 
     // Load from local storage
     useEffect(() => {
@@ -104,9 +106,18 @@ export default function CalculatorPage() {
     };
 
     const handleExport = () => {
-        const csvContent = "data:text/csv;charset=utf-8,"
+        let csvContent = "data:text/csv;charset=utf-8,"
             + "Asset,Price,Quantity,Date\n"
             + purchases.map(p => `${selectedAsset?.symbol || 'Unknown'},${p.price},${p.quantity},${p.date}`).join("\n");
+
+        if (exitPlanInfo?.targets && exitPlanInfo.targets.length > 0) {
+            csvContent += "\n\nExit Strategy Plan\n";
+            csvContent += "Stage,Target Price,Sell %,Estimated Value\n";
+            exitPlanInfo.targets.forEach((t: any, idx: number) => {
+                const estVal = (t.percentage / 100) * exitPlanInfo.totalQuantity * t.price;
+                csvContent += `${idx + 1},${t.price},${t.percentage},${estVal}\n`;
+            });
+        }
 
         const encodedUri = encodeURI(csvContent);
         const link = document.createElement("a");
@@ -189,7 +200,13 @@ export default function CalculatorPage() {
                             currentPrice={currentPrice}
                         />
 
-                        <DCASimulator />
+                        <DCASimulator
+                            currentQuantity={calculation.totalQuantity}
+                            currentInvested={calculation.totalCost}
+                            currentPrice={currentPrice}
+                        />
+
+
 
                         <div className="grid grid-cols-2 gap-3">
                             <Button variant="outline" className="border-[#2a1b4e] hover:bg-[#2a1b4e]/50 text-gray-300" onClick={handleReset}>
@@ -207,6 +224,16 @@ export default function CalculatorPage() {
                         </div>
                     </div>
 
+                </div>
+
+                <div className="w-full">
+                    <ExitStrategyPlanner
+                        avgCost={calculation.avgPrice}
+                        totalQuantity={calculation.totalQuantity}
+                        totalInvested={calculation.totalCost}
+                        currentPrice={currentPrice}
+                        onPlanChange={setExitPlanInfo}
+                    />
                 </div>
             </div>
         </div>

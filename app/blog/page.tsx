@@ -5,15 +5,15 @@ import { Calendar, ArrowRight, User } from 'lucide-react';
 import Image from 'next/image';
 
 export const metadata: Metadata = {
-    title: 'Blog | ApexWeb3',
-    description: 'Latest news, insights, and research from ApexWeb3.',
+    title: 'Web3 Blog — Crypto News, DeFi & Blockchain Research | ApexWeb3',
+    description: 'Stay ahead in crypto with ApexWeb3 blog. Covering DeFi, NFTs, tokenomics analysis, blockchain security, Web3 news, and on-chain research. Updated daily.',
     alternates: {
-        canonical: 'https://apexweb3.com/blog',
+        canonical: 'https://www.apexweb3.com/blog',
     },
     openGraph: {
-        title: 'Blog | ApexWeb3',
-        description: 'Latest news, insights, and research from ApexWeb3.',
-        url: 'https://apexweb3.com/blog',
+        title: 'Web3 Blog — Crypto News, DeFi & Blockchain Research | ApexWeb3',
+        description: 'Stay ahead in crypto with ApexWeb3 blog. Covering DeFi, NFTs, tokenomics analysis, blockchain security, Web3 news, and on-chain research. Updated daily.',
+        url: 'https://www.apexweb3.com/blog',
         type: 'website',
     }
 };

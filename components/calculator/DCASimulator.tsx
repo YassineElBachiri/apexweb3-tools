@@ -4,10 +4,36 @@ import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 
-export function DCASimulator() {
+export interface DCASimulatorProps {
+    currentQuantity?: number;
+    currentInvested?: number;
+    currentPrice?: number;
+}
+
+export function DCASimulator({
+    currentQuantity = 0,
+    currentInvested = 0,
+    currentPrice = 0,
+}: DCASimulatorProps) {
     const [amount, setAmount] = useState(100);
     const [frequency, setFrequency] = useState('weekly');
     const [duration, setDuration] = useState(12); // months
+
+    // Frequency multiplier per month
+    const getMultiplier = () => {
+        if (frequency === 'daily') return 30;
+        if (frequency === 'weekly') return 4.33; // ~4.33 weeks in a month
+        return 1;
+    };
+
+    const totalPeriods = getMultiplier() * duration;
+    const projectedNewInvestmentUsd = amount * totalPeriods;
+    
+    // Simulations assuming purchase at currentPrice
+    const projectedCoinsAcquired = currentPrice > 0 ? projectedNewInvestmentUsd / currentPrice : 0;
+    const newTotalQuantity = currentQuantity + projectedCoinsAcquired;
+    const newTotalInvested = currentInvested + projectedNewInvestmentUsd;
+    const newAverageCost = newTotalQuantity > 0 ? newTotalInvested / newTotalQuantity : 0;
 
     return (
         <div className="bg-[#13082a] border border-[#2a1b4e] rounded-xl p-6 mt-6">
@@ -48,21 +74,47 @@ export function DCASimulator() {
                 </div>
             </div>
 
-            <div className="p-4 bg-[#0a0118] rounded-lg border border-[#2a1b4e]/50 text-center">
-                <p className="text-gray-400 text-sm mb-2">Projected Investment</p>
-                <p className="text-2xl font-bold text-white">
-                    ${(amount * (frequency === 'weekly' ? 4 : frequency === 'daily' ? 30 : 1) * duration).toLocaleString()}
-                </p>
-                <p className="text-xs text-gray-500 mt-2">
-                    *Estimation based on stable prices. Past performance does not guarantee future results.
-                </p>
+            <div className="bg-[#0a0118] border border-[#2a1b4e]/50 rounded-lg p-4 mb-4">
+                <div className="grid grid-cols-2 gap-4 gap-y-6">
+                    <div>
+                        <p className="text-gray-400 text-[10px] uppercase font-bold mb-1">New Investment</p>
+                        <p className="text-lg font-bold text-white">
+                            ${projectedNewInvestmentUsd.toLocaleString(undefined, { maximumFractionDigits: 2 })}
+                        </p>
+                    </div>
+                    <div>
+                        <p className="text-gray-400 text-[10px] uppercase font-bold mb-1">Added Coins</p>
+                        <p className="text-lg font-bold text-[#C77DFF]">
+                            {currentPrice > 0 
+                                ? `+${projectedCoinsAcquired.toLocaleString(undefined, { maximumFractionDigits: 4 })}` 
+                                : 'Need Price'}
+                        </p>
+                    </div>
+                    <div>
+                        <p className="text-gray-400 text-[10px] uppercase font-bold mb-1">Projected Total Holdings</p>
+                        <p className="text-lg font-bold text-white">
+                            {newTotalQuantity.toLocaleString(undefined, { maximumFractionDigits: 4 })}
+                        </p>
+                        {newTotalQuantity > 0 && currentInvested > 0 && (
+                            <span className="text-xs text-gray-500">
+                                (${newTotalInvested.toLocaleString(undefined, { maximumFractionDigits: 2 })} total)
+                            </span>
+                        )}
+                    </div>
+                    <div>
+                        <p className="text-gray-400 text-[10px] uppercase font-bold mb-1">Projected New Average</p>
+                        <p className="text-lg font-bold text-[#00D4FF]">
+                            {newAverageCost > 0 
+                                ? `$${newAverageCost.toLocaleString(undefined, { maximumFractionDigits: 4 })}` 
+                                : '---'}
+                        </p>
+                    </div>
+                </div>
             </div>
 
-            <div className="mt-4 flex justify-end">
-                <Button variant="outline" className="border-[#C77DFF] text-[#C77DFF] hover:bg-[#C77DFF]/10">
-                    Run Detailed Simulation
-                </Button>
-            </div>
+            <p className="text-[10px] text-gray-500 text-center">
+                *Simulates adding to your existing position at the current market price (${currentPrice.toFixed(2)}).
+            </p>
         </div>
     );
 }

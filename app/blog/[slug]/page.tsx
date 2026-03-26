@@ -24,12 +24,12 @@ export async function generateMetadata({ params }: PostParams): Promise<Metadata
         title: `${post.title} | ApexWeb3 Intelligence`,
         description: post.excerpt.replace(/<[^>]+>/g, '').trim(), // Strip HTML for meta desc
         alternates: {
-            canonical: `https://apexweb3.com/blog/${slug}`,
+            canonical: `https://www.apexweb3.com/blog/${slug}`,
         },
         openGraph: {
             title: post.title,
             description: post.excerpt.replace(/<[^>]+>/g, '').trim(),
-            url: `https://apexweb3.com/blog/${slug}`,
+            url: `https://www.apexweb3.com/blog/${slug}`,
             images: post.featuredImage?.node.sourceUrl ? [post.featuredImage.node.sourceUrl] : [],
             type: 'article',
             publishedTime: post.date,

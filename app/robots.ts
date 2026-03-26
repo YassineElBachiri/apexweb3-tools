@@ -1,7 +1,7 @@
 import { MetadataRoute } from 'next'
 
 export default function robots(): MetadataRoute.Robots {
-    const baseUrl = 'https://apexweb3.com'
+    const baseUrl = 'https://www.apexweb3.com'
 
     return {
         rules: [
