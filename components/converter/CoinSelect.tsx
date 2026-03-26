@@ -38,6 +38,7 @@ export function CoinSelect({ value, onChange, className }: CoinSelectProps) {
                 <div 
                     role="combobox"
                     aria-expanded={open}
+                    aria-controls="coin-select-command"
                     className={cn(
                         "flex items-center justify-between cursor-pointer appearance-none bg-zinc-900 border border-zinc-700 text-white pl-3 pr-2 py-1.5 rounded-md hover:bg-zinc-800 transition-colors uppercase font-bold text-sm",
                         className

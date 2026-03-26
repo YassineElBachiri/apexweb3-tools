@@ -10,13 +10,13 @@ import { FeePanel } from './FeePanel';
 import { CoinSelect } from './CoinSelect';
 import { useCoinsList } from '@/hooks/useCoinsList';
 
+const defaultBasket: BasketItem[] = [
+    { id: '1', coinId: 'bitcoin', amount: 0.5 }
+];
+
 export function BasketConverter() {
     const { coins } = useCoinsList();
     
-    const defaultBasket: BasketItem[] = [
-        { id: '1', coinId: 'bitcoin', amount: 0.5 }
-    ];
-
     const [basket, setBasket] = useState<BasketItem[]>([]);
     const [targetCoin, setTargetCoin] = useState('tether');
     const [prices, setPrices] = useState<Record<string, number>>({});

@@ -187,7 +187,7 @@ export function SalaryCalculator({ className = '' }: SalaryCalculatorProps) {
             </p>
             {calc.monthsIf20Drop < calc.monthsNeeded && (
               <p className="text-xs text-zinc-400">
-                📉 If {result?.crypto} drops 20%, you'd reach your goal{' '}
+                📉 If {result?.crypto} drops 20%, you&apos;d reach your goal{' '}
                 <span className="text-amber-400 font-medium">
                   {(calc.monthsNeeded - calc.monthsIf20Drop).toFixed(1)} months sooner
                 </span>

@@ -77,6 +77,7 @@ export function HistoricalConverter() {
     useEffect(() => {
         const timeout = setTimeout(fetchHistoricalDetails, 500); 
         return () => clearTimeout(timeout);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [fromCurrency, toCurrency, amount, selectedDate]);
 
     const fromSymbol = coins.find(c => c.id === fromCurrency)?.symbol.toUpperCase() || POPULAR_COINS.find(c => c.id === fromCurrency)?.symbol.toUpperCase() || fromCurrency;

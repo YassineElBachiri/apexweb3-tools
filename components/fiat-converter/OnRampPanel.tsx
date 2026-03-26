@@ -128,7 +128,7 @@ export function OnRampPanel({ className = '' }: OnRampPanelProps) {
           {savings > 0 && bestMethod && worstMethod && bestMethod.method !== worstMethod.method && (
             <div className="mt-4 rounded-lg bg-green-900/20 border border-green-900/50 px-4 py-3">
               <p className="text-xs text-green-300">
-                💡 You'd save{' '}
+                💡 You&apos;d save{' '}
                 <span className="font-bold">{formatCurrency(savings, homeCurrency)}</span>{' '}
                 by using <span className="font-bold">{bestMethod.method}</span> instead of{' '}
                 <span className="font-bold">{worstMethod.method}</span>

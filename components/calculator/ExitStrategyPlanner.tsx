@@ -126,7 +126,7 @@ export function ExitStrategyPlanner({
                     <AccordionTrigger className="hover:no-underline py-4">
                         <div className="flex items-center gap-2 font-semibold">
                             <SlidersHorizontal className="h-4 w-4 text-[#00D4FF]" />
-                            Real-Time "What If" Simulator
+                            Real-Time &quot;What If&quot; Simulator
                         </div>
                     </AccordionTrigger>
                     <AccordionContent className="pt-2 pb-6">

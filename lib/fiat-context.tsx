@@ -65,6 +65,7 @@ export function FiatProvider({ children }: { children: React.ReactNode }) {
     } catch {}
     // Geolocation (cached 24h)
     detectGeo();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   async function detectGeo() {
