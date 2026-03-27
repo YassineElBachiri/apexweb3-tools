@@ -245,7 +245,7 @@ export default function CalculatorPage() {
                                 The ApexWeb3 Average Cost Calculator is an advanced position tracker designed to help crypto investors map out precise entry and exit strategies over multiple trades. Instead of relying on opaque exchange dashboards, our tool lets you model exactly what your break-even point is after weeks or months of Dollar Cost Averaging (DCA).
                             </p>
                             <p>
-                                Unique features like the <strong>DCA Down Simulator</strong> allow you to predict how much capital you need to deploy at lower prices to drag your average cost down to a specific target. The fully integrated <strong>Exit Strategy Planner</strong> allows you to stage incremental sell targets, automatically calculating exactly how much profit you'll secure at each price tier while keeping track of your remaining 'moon bag'.
+                                Unique features like the <strong>DCA Down Simulator</strong> allow you to predict how much capital you need to deploy at lower prices to drag your average cost down to a specific target. The fully integrated <strong>Exit Strategy Planner</strong> allows you to stage incremental sell targets, automatically calculating exactly how much profit you&apos;ll secure at each price tier while keeping track of your remaining &apos;moon bag&apos;.
                             </p>
                         </>
                     }

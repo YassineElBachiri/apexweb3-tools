@@ -33,7 +33,7 @@ export default function FiatConverterPage() {
                 description={
                     <>
                         <p>
-                            Traditional crypto portals heavily index against the US Dollar (USD). The ApexWeb3 Fiat Exchange solves this discrepancy by aggressively translating cryptocurrency valuations directly into over 60 of the world's most utilized local currencies—from the Moroccan Dirham to the Nigerian Naira.
+                            Traditional crypto portals heavily index against the US Dollar (USD). The ApexWeb3 Fiat Exchange solves this discrepancy by aggressively translating cryptocurrency valuations directly into over 60 of the world&apos;s most utilized local currencies—from the Moroccan Dirham to the Nigerian Naira.
                         </p>
                         <p>
                             Beyond raw conversion, this tool calculates exactly how your digital asset positions translate into real-world purchasing power within your specific geography. We also monitor regional on-ramp spreads, highlighting the cheapest, most efficient avenues for transforming your fiat savings into crypto.
@@ -47,7 +47,7 @@ export default function FiatConverterPage() {
                     },
                     {
                         question: "How are the Purchasing Power averages calculated?",
-                        answer: "We source macroeconomic data benchmarks combining national average salaries, median rental rates, and standardized local goods pricing to contextualize exactly what an amount of cryptocurrency is tangibly worth within your countrys borders."
+                        answer: "We source macroeconomic data benchmarks combining national average salaries, median rental rates, and standardized local goods pricing to contextualize exactly what an amount of cryptocurrency is tangibly worth within your country's borders."
                     },
                     {
                         question: "What are on-ramp spreads?",
