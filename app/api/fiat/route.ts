@@ -1,5 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { ALL_VS_CURRENCIES } from '@/lib/country-config';
+import { ALL_VS_CURRENCIES, ALL_CURRENCIES } from '@/lib/country-config';
+import { getForexRates } from '@/lib/forex';
+
+export const dynamic = 'force-dynamic';
 
 // ─── In-memory cache (survives hot-reload in dev) ─────────────────────────────
 
@@ -30,9 +33,37 @@ export async function GET(req: NextRequest) {
         const currencies = searchParams.get('currencies') ?? ALL_VS_CURRENCIES;
         const data = await cached(`prices:${coinId}:${currencies}`, 60_000, async () => {
           const url = `${COINGECKO_BASE}/simple/price?ids=${coinId}&vs_currencies=${currencies}&include_24hr_change=true`;
-          const res = await fetch(url, { headers: HEADERS, next: { revalidate: 60 } });
+          
+          const [res, forexData] = await Promise.all([
+            fetch(url, { headers: HEADERS, next: { revalidate: 60 } }),
+            getForexRates()
+          ]);
+          
           if (!res.ok) throw new Error(`CoinGecko prices failed: ${res.status}`);
-          return res.json();
+          const cgData = await res.json();
+          const coinData = cgData[coinId];
+
+          // If CoinGecko is missing some currencies (like MAD, KES, GHS, etc.), calculate using Forex rates
+          if (coinData && forexData && forexData.rates) {
+            const usdPrice = coinData.usd;
+            const usdChange = coinData.usd_24h_change || 0;
+            
+            if (usdPrice) {
+               for (const currency of ALL_CURRENCIES) {
+                 const codeLower = currency.code.toLowerCase();
+                 // Only set it if CoinGecko failed to return it
+                 if (typeof coinData[codeLower] === 'undefined') {
+                   const fxRate = forexData.rates[currency.code];
+                   if (fxRate) {
+                     coinData[codeLower] = usdPrice * fxRate;
+                     coinData[`${codeLower}_24h_change`] = usdChange;
+                   }
+                 }
+               }
+            }
+          }
+
+          return cgData;
         });
         return NextResponse.json(data);
       }

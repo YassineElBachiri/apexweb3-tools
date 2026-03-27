@@ -1,5 +1,6 @@
 import { MetadataRoute } from 'next'
 import { getLatestPosts, getCategories } from '@/lib/api/wordpress'
+import { SEO_CRYPTOS, SEO_COUNTRIES, SEO_PAIRS } from '@/lib/seo-params';
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     const baseUrl = 'https://www.apexweb3.com'
@@ -55,7 +56,23 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
             priority: 0.7
         }));
 
-        return [...staticRoutes, ...categoryRoutes, ...postRoutes];
+        const dynamicFiatRoutes: MetadataRoute.Sitemap = SEO_CRYPTOS.flatMap(crypto => 
+            SEO_COUNTRIES.map(country => ({
+                url: `${baseUrl}/finance/fiat-converter/${crypto}/${country}`,
+                lastModified: currentDate,
+                changeFrequency: 'hourly',
+                priority: 0.9,
+            }))
+        );
+
+        const dynamicConverterRoutes: MetadataRoute.Sitemap = SEO_PAIRS.map(pair => ({
+            url: `${baseUrl}/finance/converter/${pair.from}/${pair.to}`,
+            lastModified: currentDate,
+            changeFrequency: 'hourly',
+            priority: 0.8,
+        }));
+
+        return [...staticRoutes, ...categoryRoutes, ...postRoutes, ...dynamicFiatRoutes, ...dynamicConverterRoutes];
     } catch (error) {
         console.error('Error generating dynamic sitemap properties:', error);
         return staticRoutes;

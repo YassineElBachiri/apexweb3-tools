@@ -13,6 +13,7 @@ import { Asset, Purchase, CalculationResult, PnLResult } from '@/lib/types/calcu
 import { calculateAverageCost, calculatePnL } from '@/lib/calculator';
 import { fetchCoinPrice } from '@/lib/api/coingecko';
 import { cn } from '@/lib/utils';
+import { ToolFAQ } from '@/components/seo/ToolFAQ';
 
 export default function CalculatorPage() {
     // State
@@ -235,6 +236,34 @@ export default function CalculatorPage() {
                         onPlanChange={setExitPlanInfo}
                     />
                 </div>
+
+                <ToolFAQ 
+                    toolName="Average Cost Calculator" 
+                    description={
+                        <>
+                            <p>
+                                The ApexWeb3 Average Cost Calculator is an advanced position tracker designed to help crypto investors map out precise entry and exit strategies over multiple trades. Instead of relying on opaque exchange dashboards, our tool lets you model exactly what your break-even point is after weeks or months of Dollar Cost Averaging (DCA).
+                            </p>
+                            <p>
+                                Unique features like the <strong>DCA Down Simulator</strong> allow you to predict how much capital you need to deploy at lower prices to drag your average cost down to a specific target. The fully integrated <strong>Exit Strategy Planner</strong> allows you to stage incremental sell targets, automatically calculating exactly how much profit you'll secure at each price tier while keeping track of your remaining 'moon bag'.
+                            </p>
+                        </>
+                    }
+                    faqs={[
+                        {
+                            question: "How is the Average Cost calculated?",
+                            answer: "Your average cost is determined by dividing the total amount of money you've invested (Total Capital) by the total number of coins or tokens you currently hold. Our tool automatically recalculates this every time you add a new purchase tier."
+                        },
+                        {
+                            question: "What is Dollar Cost Averaging (DCA)?",
+                            answer: "DCA is an investment strategy where you buy a fixed dollar amount of an asset at regular intervals, regardless of its price. Over time, this mitigates volatility and lowers your risk compared to investing a lump sum right before a market crash."
+                        },
+                        {
+                            question: "Does the Exit Planner account for trading fees?",
+                            answer: "Yes, our Exit Strategy Planner allows you to input custom simulated exchange fees, ensuring the break-even markers and profit margins you set actually represent your net take-home profit, rather than just raw gross revenue."
+                        }
+                    ]}
+                />
             </div>
         </div>
     );

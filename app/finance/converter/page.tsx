@@ -1,5 +1,6 @@
 import { ConverterCard } from "@/components/converter/ConverterCard";
 import { HistoricalRateChart } from "@/components/converter/HistoricalRateChart";
+import { ToolFAQ } from "@/components/seo/ToolFAQ";
 import { LiveConversionTable } from "@/components/converter/LiveConversionTable";
 
 export default function ConverterPage() {
@@ -49,6 +50,34 @@ export default function ConverterPage() {
                     </div>
                 </div>
             </div>
+
+            <ToolFAQ 
+                toolName="Crypto Converter" 
+                description={
+                    <>
+                        <p>
+                            The ApexWeb3 Crypto Converter is a professional-grade simulation tool designed for cryptocurrency investors, researchers, and traders. Our infrastructure taps into real-time global index rates to aggregate the exact conversion pathways between any two digital assets.
+                        </p>
+                        <p>
+                            Unlike traditional converters, our engine provides a multi-dimensional analysis including live slippage estimations, spread differentials across major exchanges (like Binance, Kraken, and Bybit), and fully functional historical and portfolio basket modelling tools to help you simulate past missed opportunities and future rebalancings.
+                        </p>
+                    </>
+                }
+                faqs={[
+                    {
+                        question: "How accurate are the conversion rates?",
+                        answer: "Our engine synchronizes tightly with top-tier crypto indexing APIs (like CoinGecko) to ensure maximum precision. Rates are refreshed automatically every 30 seconds."
+                    },
+                    {
+                        question: "Does this Converter account for exchange fees?",
+                        answer: "Yes. Our unique 'Fee Reality Check' panel analyzes your proposed swap against the live maker/taker fee structures of five major global centralized exchanges, calculating exactly how much of your capital would be lost to hidden spreads during execution."
+                    },
+                    {
+                        question: "Can I simulate past crypto conversions?",
+                        answer: "Absolutely. By switching the tool into 'Historical Mode,' you can select any date dating back to 2015 to see exactly what a specific asset swap was valued at then, compared to its exact valuation today."
+                    }
+                ]}
+            />
         </div>
     );
 }

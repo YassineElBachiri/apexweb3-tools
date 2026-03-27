@@ -99,7 +99,7 @@ export function SalaryCalculator({ className = '' }: SalaryCalculatorProps) {
     return new Intl.NumberFormat('en', {
       style: 'currency',
       currency: homeCurrency,
-      maximumFractionDigits: 0,
+      maximumFractionDigits: n >= 1000 ? 0 : 2,
     }).format(n);
   }
 
@@ -144,11 +144,11 @@ export function SalaryCalculator({ className = '' }: SalaryCalculatorProps) {
           {/* Hero output */}
           <div className="text-center">
             <div className="text-5xl font-bold text-white">
-              {calc.monthsNeeded < 0.1
-                ? `${(calc.monthsNeeded * 30).toFixed(0)} days`
-                : calc.monthsNeeded < 1
-                ? `${(calc.monthsNeeded * 30).toFixed(0)} days`
-                : `${calc.monthsNeeded.toFixed(1)}`}
+              {calc.monthsNeeded < 1 ? (
+                (calc.monthsNeeded * 30) < 1 ? '< 1 day' : `${(calc.monthsNeeded * 30).toFixed(0)} days`
+              ) : (
+                `${calc.monthsNeeded.toFixed(1)}`
+              )}
               {calc.monthsNeeded >= 1 && (
                 <span className="text-2xl text-zinc-400 ml-2">months</span>
               )}
@@ -185,7 +185,7 @@ export function SalaryCalculator({ className = '' }: SalaryCalculatorProps) {
               </span>
               /month
             </p>
-            {calc.monthsIf20Drop < calc.monthsNeeded && (
+            {calc.monthsNeeded >= 1 && calc.monthsIf20Drop < calc.monthsNeeded && (
               <p className="text-xs text-zinc-400">
                 📉 If {result?.crypto} drops 20%, you&apos;d reach your goal{' '}
                 <span className="text-amber-400 font-medium">
