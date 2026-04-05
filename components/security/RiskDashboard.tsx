@@ -127,7 +127,7 @@ export function RiskDashboard({ profile, marketData }: RiskDashboardProps) {
                     <SmallStat label="24h Volume" value={formatUSD(marketData.volume24h, 0)} sub="Total Trading" accent="blue" icon={<BarChart3 className="w-3 h-3" />} />
                     <SmallStat label="Market Cap" value={formatUSD(marketData.marketCap || 0, 0)} accent="blue" icon={<Globe className="w-3 h-3" />} />
                     <SmallStat label="Pair Age" value={marketData.pairCreatedAt || 'New'} sub="Since Deployment" accent="amber" icon={<Calendar className="w-3 h-3" />} />
-                    <SmallStat label="Network" value={profile.network.toUpperCase()} sub="Smart Contract" accent="purple" icon={<Shield className="w-3 h-3" />} />
+                    <SmallStat label="Network" value={profile.network.toUpperCase()} sub="Smart Contract" accent="purple" icon={<ShieldCheck className="w-3 h-3" />} />
                  </div>
             )}
 

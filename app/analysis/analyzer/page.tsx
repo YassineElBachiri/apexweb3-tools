@@ -220,7 +220,7 @@ function AnalyzerContent() {
                         </h1>
 
                         <p className="text-lg text-slate-400 max-w-2xl mx-auto leading-relaxed">
-                            X-ray any token's economy.{" "}
+                            X-ray any token&apos;s economy.{" "}
                             <span className="font-semibold text-slate-200">
                                 Inflation risk, supply distribution, unlock schedules
                             </span>{" "}

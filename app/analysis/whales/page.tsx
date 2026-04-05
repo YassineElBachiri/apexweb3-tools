@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { WhaleTransaction } from "@/types/whale";
 import { getTxUrl } from "@/lib/whales/explorerLinks";
 import { shortAddress } from "@/lib/whales/utils";
@@ -56,7 +56,7 @@ export default function WhaleWatchPage() {
     const [liveCount, setLiveCount] = useState(0);
     const [errorMsg, setErrorMsg] = useState('');
 
-    const fetchWhales = async () => {
+    const fetchWhales = useCallback(async () => {
         try {
             const params = new URLSearchParams({ min: filter.min.toString(), chain: filter.chain });
             const res = await fetch(`/api/whales?${params}`);
@@ -69,15 +69,15 @@ export default function WhaleWatchPage() {
             });
             setErrorMsg(''); setLoading(false); setCountdown(30);
         } catch (e: any) { setErrorMsg(e.message || "Feed paused"); setLoading(false); }
-    };
+    }, [filter]);
 
-    useEffect(() => { setLoading(true); setTransactions([]); fetchWhales(); }, [filter]);
+    useEffect(() => { setLoading(true); setTransactions([]); fetchWhales(); }, [fetchWhales]);
     useEffect(() => {
         const timer = setInterval(() => {
             setCountdown(c => { if (c <= 1) { fetchWhales(); return 30; } return c - 1; });
         }, 1000);
         return () => clearInterval(timer);
-    }, [filter]);
+    }, [fetchWhales]);
 
     const activeChainsCount = new Set(transactions.map(t => t.chain)).size;
 

@@ -136,7 +136,7 @@ export default function WalletTracePage() {
                         <div className="py-32 text-center space-y-4 bg-slate-900/20 border border-slate-800 rounded-3xl opacity-50">
                              <Search className="w-12 h-12 mx-auto text-slate-700" />
                              <h3 className="text-lg font-black text-white uppercase tracking-widest">No Recent Movements Detect</h3>
-                             <p className="text-sm text-slate-500 max-w-sm mx-auto">This address hasn't moved large volumes of stablecoins in the last {isSolana ? 'block' : '50 transactions'}.</p>
+                             <p className="text-sm text-slate-500 max-w-sm mx-auto">This address hasn&apos;t moved large volumes of stablecoins in the last {isSolana ? 'block' : '50 transactions'}.</p>
                         </div>
                     ) : (
                         <div className="space-y-4">

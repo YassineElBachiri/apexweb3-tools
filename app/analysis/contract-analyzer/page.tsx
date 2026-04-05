@@ -199,7 +199,7 @@ export default function ContractAnalyzerPage() {
                             </span>
                         </h1>
 
-                        <p className="text-lg text-slate-400 max-w-2xl mx-auto leading-relaxed mb-10">
+                        <p className="text-lg text-slate-400 max-w-2xl mx-auto leading-relaxed mb-10 text-center">
                             Scan Ethereum, Base, or Solana contracts in seconds.
                             Detect honeypots and rug pulls <span className="text-white font-semibold">before you trade.</span>
                         </p>
@@ -303,7 +303,7 @@ export default function ContractAnalyzerPage() {
                         {TESTIMONIALS.map((t, i) => (
                             <div key={i} className="p-6 rounded-2xl bg-slate-900/40 border border-slate-800/60 backdrop-blur-sm space-y-4">
                                 <div className="flex gap-1"> {Array(5).fill(0).map((_, j) => <Star key={j} className="w-3.5 h-3.5 fill-amber-500 text-amber-500" />)} </div>
-                                <p className="text-sm text-slate-400 italic">"{t.text}"</p>
+                                <p className="text-sm text-slate-400 italic">&quot;{t.text}&quot;</p>
                                 <p className="text-xs font-bold text-blue-400">{t.handle}</p>
                             </div>
                         ))}
