@@ -13,9 +13,12 @@ export async function processScanAction(formData: FormData): Promise<void> {
     let network: string;
     try {
         network = await determineNetwork(address);
-    } catch (error) {
+    } catch {
         throw new Error("Invalid address format. Please provide a valid ETH or Solana address.");
     }
 
-    redirect(`/analysis/security-scanner/${network}/${address}`);
+    // Redirect to the new public SEO token result page.
+    // /token/[chain]/[address] handles ISR caching, SEO metadata,
+    // share card, FAQ, and IndexNow ping automatically.
+    redirect(`/token/${network}/${address}`);
 }

@@ -1,6 +1,7 @@
 import { MetadataRoute } from 'next'
 import { getLatestPosts, getCategories } from '@/lib/api/wordpress'
 import { SEO_CRYPTOS, SEO_COUNTRIES, SEO_PAIRS } from '@/lib/seo-params';
+import { getRecentScans } from '@/lib/scan-store';
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     const baseUrl = 'https://www.apexweb3.com'
@@ -12,7 +13,6 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 
         // Blog
         { url: `${baseUrl}/blog`, lastModified: currentDate, changeFrequency: 'daily', priority: 0.95 },
-        // Note: /insights is a legacy page with canonical → /blog; intentionally excluded from sitemap
 
         // Finance Tools
         { url: `${baseUrl}/finance/calculator`, lastModified: currentDate, changeFrequency: 'weekly', priority: 0.8 },
@@ -22,8 +22,9 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 
         // Discovery Tools
         { url: `${baseUrl}/discovery/spike-detector`, lastModified: currentDate, changeFrequency: 'hourly', priority: 0.9 },
-        { url: `${baseUrl}/analysis/contract-analyzer`, lastModified: currentDate, changeFrequency: 'weekly', priority: 0.8 },
-        { url: `${baseUrl}/discovery/tracker`, lastModified: currentDate, changeFrequency: 'weekly', priority: 0.8 },
+
+        // Security Scanner (landing + old URL for backward compat)
+        { url: `${baseUrl}/analysis/contract-analyzer`, lastModified: currentDate, changeFrequency: 'weekly', priority: 0.9 },
 
         // Analysis Tools
         { url: `${baseUrl}/analysis/analyzer`, lastModified: currentDate, changeFrequency: 'weekly', priority: 0.9 },
@@ -38,43 +39,70 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
         { url: `${baseUrl}/dashboard`, lastModified: currentDate, changeFrequency: 'daily', priority: 0.75 },
     ];
 
+    // Collect all dynamic routes
+    const dynamicRoutes: MetadataRoute.Sitemap[] = [];
+
     try {
-        // Fetch up to 100 recent posts for the sitemap
-        const posts = await getLatestPosts(100);
-        const postRoutes: MetadataRoute.Sitemap = posts.map(post => ({
-            url: `${baseUrl}/blog/${post.slug}`,
-            lastModified: new Date(post.date),
-            changeFrequency: 'weekly',
-            priority: 0.8
-        }));
+        // Blog posts + categories
+        const [posts, categories] = await Promise.all([
+            getLatestPosts(100),
+            getCategories(),
+        ]);
 
-        const categories = await getCategories();
-        const categoryRoutes: MetadataRoute.Sitemap = categories.map(cat => ({
-            url: `${baseUrl}/blog/category/${cat.slug}`,
-            lastModified: currentDate,
-            changeFrequency: 'weekly',
-            priority: 0.7
-        }));
+        dynamicRoutes.push(
+            posts.map(post => ({
+                url: `${baseUrl}/blog/${post.slug}`,
+                lastModified: new Date(post.date),
+                changeFrequency: 'weekly' as const,
+                priority: 0.8,
+            })),
+            categories.map(cat => ({
+                url: `${baseUrl}/blog/category/${cat.slug}`,
+                lastModified: currentDate,
+                changeFrequency: 'weekly' as const,
+                priority: 0.7,
+            })),
+        );
+    } catch (error) {
+        console.error('Error fetching blog routes for sitemap:', error);
+    }
 
-        const dynamicFiatRoutes: MetadataRoute.Sitemap = SEO_CRYPTOS.flatMap(crypto => 
+    // Fiat converter programmatic routes
+    dynamicRoutes.push(
+        SEO_CRYPTOS.flatMap(crypto =>
             SEO_COUNTRIES.map(country => ({
                 url: `${baseUrl}/finance/fiat-converter/${crypto}/${country}`,
                 lastModified: currentDate,
-                changeFrequency: 'hourly',
+                changeFrequency: 'hourly' as const,
                 priority: 0.9,
             }))
-        );
+        ),
+    );
 
-        const dynamicConverterRoutes: MetadataRoute.Sitemap = SEO_PAIRS.map(pair => ({
+    // Converter pairs
+    dynamicRoutes.push(
+        SEO_PAIRS.map(pair => ({
             url: `${baseUrl}/finance/converter/${pair.from}/${pair.to}`,
             lastModified: currentDate,
-            changeFrequency: 'hourly',
+            changeFrequency: 'hourly' as const,
             priority: 0.8,
-        }));
+        })),
+    );
 
-        return [...staticRoutes, ...categoryRoutes, ...postRoutes, ...dynamicFiatRoutes, ...dynamicConverterRoutes];
-    } catch (error) {
-        console.error('Error generating dynamic sitemap properties:', error);
-        return staticRoutes;
-    }
+    // ── Token security pages (programmatic SEO) ──────────────────────────────
+    // Pull the in-memory recent scans so every scanned token gets a sitemap entry.
+    // In production with a DB, replace getRecentScans() with a DB query.
+    try {
+        const recentScans = getRecentScans(200);
+        dynamicRoutes.push(
+            recentScans.map(scan => ({
+                url: `${baseUrl}/token/${scan.chain}/${scan.address}`,
+                lastModified: new Date(scan.scannedAt),
+                changeFrequency: 'hourly' as const,
+                priority: 0.85,
+            })),
+        );
+    } catch {/* non-critical */}
+
+    return [...staticRoutes, ...dynamicRoutes.flat()];
 }

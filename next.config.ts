@@ -34,8 +34,6 @@ const nextConfig: NextConfig = {
     async headers() {
         return [
             // ── Static asset caching ─────────────────────────────────────────
-            // Next.js static chunks are content-hashed — safe to cache forever.
-            // Fixes: "390 uncached JS/CSS files" SEO warning.
             {
                 source: "/_next/static/(.*)",
                 headers: [
@@ -45,7 +43,7 @@ const nextConfig: NextConfig = {
                     },
                 ],
             },
-            // Public images (.png/.ico/.svg) — 24h cache
+            // Public images — 24h cache
             {
                 source: "/(.*\.(?:png|jpg|jpeg|svg|ico|webp))",
                 headers: [
@@ -55,34 +53,28 @@ const nextConfig: NextConfig = {
                     },
                 ],
             },
-            // ── Security & performance headers (all routes) ──────────────────
+            // ── Widget pages: allow embedding in any iframe ───────────────────
+            // Must come BEFORE the catch-all /:path* rule.
+            {
+                source: "/widget/:path*",
+                headers: [
+                    { key: "X-Frame-Options", value: "ALLOWALL" },
+                    { key: "Content-Security-Policy", value: "frame-ancestors *" },
+                    { key: "X-Content-Type-Options", value: "nosniff" },
+                    { key: "Referrer-Policy", value: "strict-origin-when-cross-origin" },
+                    { key: "Cache-Control", value: "public, max-age=3600, stale-while-revalidate=300" },
+                ],
+            },
+            // ── Security & performance headers (all other routes) ─────────────
             {
                 source: "/:path*",
                 headers: [
-                    {
-                        key: "X-DNS-Prefetch-Control",
-                        value: "on",
-                    },
-                    {
-                        key: "X-Frame-Options",
-                        value: "SAMEORIGIN",
-                    },
-                    {
-                        key: "X-Content-Type-Options",
-                        value: "nosniff",
-                    },
-                    {
-                        key: "Referrer-Policy",
-                        value: "strict-origin-when-cross-origin",
-                    },
-                    {
-                        key: "Permissions-Policy",
-                        value: "camera=(), microphone=(), geolocation=()",
-                    },
-                    {
-                        key: "Cross-Origin-Opener-Policy",
-                        value: "same-origin",
-                    },
+                    { key: "X-DNS-Prefetch-Control", value: "on" },
+                    { key: "X-Frame-Options", value: "SAMEORIGIN" },
+                    { key: "X-Content-Type-Options", value: "nosniff" },
+                    { key: "Referrer-Policy", value: "strict-origin-when-cross-origin" },
+                    { key: "Permissions-Policy", value: "camera=(), microphone=(), geolocation=()" },
+                    { key: "Cross-Origin-Opener-Policy", value: "same-origin" },
                 ],
             },
         ];
