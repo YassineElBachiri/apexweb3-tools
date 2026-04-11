@@ -4,6 +4,7 @@ import { Metadata, ResolvingMetadata } from "next";
 import { notFound } from "next/navigation";
 import { Shield } from "lucide-react";
 import { Breadcrumbs } from "@/components/seo/breadcrumbs";
+import AffiliateBanner from "@/components/affiliates/AffiliateBanner";
 
 interface PageProps {
     params: Promise<{ network: string; address: string }>;
@@ -73,6 +74,10 @@ export default async function SecurityResultPage({ params }: PageProps) {
                     </div>
 
                     <RiskDashboard profile={profile} marketData={marketData} />
+
+                    <div className={(profile.riskLevel === 'HIGH' || profile.riskLevel === 'CRITICAL') ? "ring-1 ring-red-500/30 rounded-xl mt-8" : "mt-8"}>
+                        <AffiliateBanner pageId="security-scanner" variant="inline" />
+                    </div>
 
                 </div>
             </div>

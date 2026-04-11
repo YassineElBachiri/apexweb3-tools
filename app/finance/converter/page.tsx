@@ -2,6 +2,7 @@ import { ConverterCard } from "@/components/converter/ConverterCard";
 import { HistoricalRateChart } from "@/components/converter/HistoricalRateChart";
 import { ToolFAQ } from "@/components/seo/ToolFAQ";
 import { LiveConversionTable } from "@/components/converter/LiveConversionTable";
+import AffiliateBanner from "@/components/affiliates/AffiliateBanner";
 
 export default function ConverterPage() {
     return (
@@ -49,6 +50,10 @@ export default function ConverterPage() {
                         </div>
                     </div>
                 </div>
+            </div>
+
+            <div className="my-8">
+                <AffiliateBanner pageId="converter" variant="inline" />
             </div>
 
             <ToolFAQ 

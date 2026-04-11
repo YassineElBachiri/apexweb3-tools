@@ -1,5 +1,9 @@
 import type { Metadata } from "next";
+import { Syne, DM_Mono } from "next/font/google";
 import "./globals.css";
+
+const syne = Syne({ subsets: ["latin"], weight: ["400", "500", "700"], variable: "--font-syne", display: "swap" });
+const dmMono = DM_Mono({ subsets: ["latin"], weight: ["400", "500"], variable: "--font-dm-mono", display: "swap" });
 import { Navigation } from "@/components/navigation";
 import { Footer } from "@/components/home/Footer";
 import { getCategories } from "@/lib/api/wordpress";
@@ -35,7 +39,7 @@ export default async function RootLayout({
 
     return (
         <html lang="en" className="dark scroll-smooth">
-            <body className="font-sans antialiased bg-brand-dark">
+            <body className={`${syne.variable} ${dmMono.variable} font-sans antialiased bg-brand-dark`}>
                 <div className="min-h-screen flex flex-col">
                     <Navigation categories={categories} />
                     <main className="flex-1 pt-20">

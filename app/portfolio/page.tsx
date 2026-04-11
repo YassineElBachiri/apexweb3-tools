@@ -11,6 +11,7 @@ import { PortfolioSummary } from "@/components/portfolio/PortfolioSummary";
 import { PortfolioChart } from "@/components/portfolio/PortfolioChart";
 import { AddAssetDialog } from "@/components/portfolio/AddAssetDialog";
 import { RelatedTools } from "@/components/gas/RelatedTools"; // Reusing existing RelatedTools
+import AffiliateBanner from "@/components/affiliates/AffiliateBanner";
 
 export default function PortfolioPage() {
     // State
@@ -124,6 +125,7 @@ export default function PortfolioPage() {
 
     const selectedAsset = assets.find(a => a.id === selectedAssetId);
     const selectedScore = selectedAssetId ? scores.get(selectedAssetId) : undefined;
+    const totalPortfolioUSD = assets.reduce((sum, item) => sum + (item.quantity * item.price), 0);
 
     return (
         <div className="min-h-screen bg-background text-foreground">
@@ -160,6 +162,10 @@ export default function PortfolioPage() {
                 {assets.length > 0 ? (
                     <div className="space-y-8 animate-in fade-in duration-700">
                         <PortfolioSummary assets={assets} />
+                        
+                        <div className="w-full">
+                            <AffiliateBanner pageId="portfolio" variant="inline" portfolioVal={totalPortfolioUSD} />
+                        </div>
 
                         <div className="w-full mb-8">
                             <div className="bg-card/40 border border-white/10 rounded-xl p-6 shadow-xl backdrop-blur-sm">

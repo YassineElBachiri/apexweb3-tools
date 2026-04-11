@@ -11,6 +11,7 @@ import {
 import Link from "next/link";
 import { Badge } from "@/components/ui/badge";
 import { FAQSection } from "@/components/seo/faq-section";
+import AffiliateBanner from "@/components/affiliates/AffiliateBanner";
 
 const CHAIN_ICONS: Record<string, string> = {
     ethereum: '⟠', bsc: '⬡', base: '🔵', arbitrum: '🔷',
@@ -251,6 +252,18 @@ export default function WhaleWatchPage() {
                             </div>
                         )}
                     </main>
+                    
+                    {/* ── AFFILIATES RIGHT SIDEBAR (Desktop) ── */}
+                    <aside className="hidden xl:block xl:w-[240px] xl:shrink-0">
+                        <div className="sticky top-24 space-y-4">
+                            <AffiliateBanner pageId="whale-watch" variant="sidebar" limit={2} />
+                        </div>
+                    </aside>
+                </div>
+
+                {/* ── AFFILIATES BELOW FEED (Mobile) ── */}
+                <div className="mt-8 flex justify-center xl:hidden w-full">
+                    <AffiliateBanner pageId="whale-watch" variant="sidebar" limit={2} />
                 </div>
 
                 <div className="mt-24">

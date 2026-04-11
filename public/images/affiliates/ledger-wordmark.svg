@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 50">
+  <rect width="40" height="40" y="5" fill="#000" rx="4"/>
+  <path fill="#fff" d="M10 15h6v12h14v6H10z"/>
+  <text x="55" y="32" font-family="Arial" font-size="24" font-weight="bold" fill="#fff">LEDGER</text>
+</svg>

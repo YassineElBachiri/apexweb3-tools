@@ -10,6 +10,7 @@ import {
 } from "lucide-react";
 import { useState } from "react";
 import type { TokenomicsAnalysis } from "@/types";
+import AffiliateBanner from "@/components/affiliates/AffiliateBanner";
 
 interface TokenomicsViewProps {
     data: TokenomicsAnalysis;
@@ -296,6 +297,9 @@ export function TokenomicsView({ data, address, hideAddress = false }: Tokenomic
                         sustainabilityScore={data.sustainabilityScore}
                         riskLevel={data.riskLevel}
                     />
+                    <div className="mt-6">
+                        <AffiliateBanner pageId="tokenomics-analyzer" variant="inline" />
+                    </div>
                 </div>
 
                 {/* Supply Distribution */}

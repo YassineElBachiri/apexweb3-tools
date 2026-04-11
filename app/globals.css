@@ -35,6 +35,17 @@
   body {
     @apply bg-background text-foreground;
     font-feature-settings: "rlig" 1, "calt" 1;
+    font-family: var(--font-syne), sans-serif;
+  }
+
+  /* Globally Enforce Monospace constraints automatically */
+  input, textarea, code, pre, kbd, samp {
+    font-family: var(--font-dm-mono), monospace;
+  }
+
+  /* Protect select dropdowns enforcing Syne display */
+  select, option, button {
+    font-family: var(--font-syne), sans-serif;
   }
 }
 
