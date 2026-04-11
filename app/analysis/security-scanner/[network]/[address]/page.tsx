@@ -75,7 +75,7 @@ export default async function SecurityResultPage({ params }: PageProps) {
 
                     <RiskDashboard profile={profile} marketData={marketData} />
 
-                    <div className={(profile.riskLevel === 'HIGH' || profile.riskLevel === 'CRITICAL') ? "ring-1 ring-red-500/30 rounded-xl mt-8" : "mt-8"}>
+                    <div className={profile.status === 'CRITICAL' ? "ring-1 ring-red-500/30 rounded-xl mt-8" : "mt-8"}>
                         <AffiliateBanner pageId="security-scanner" variant="inline" />
                     </div>
 
