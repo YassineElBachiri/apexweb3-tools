@@ -180,7 +180,7 @@ export const AFFILIATES: Record<string, Affiliate> = {
 // If no entry exists for a placement, falls back to affiliate defaults
 // ================================================================
 
-type PlacementCopy = {
+export type PlacementCopy = {
   headline: string;
   subline: string;
   urgency: boolean;
