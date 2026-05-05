@@ -42,46 +42,50 @@ export async function GET(req: Request) {
   Recent Whale Activity (Solana): ${recentSol || 'Normal levels'}
   `;
 
-  // 2. Call OpenAI API
-  const openAiKey = process.env.OPENAI_API_KEY;
+  // 2. Call Groq API (free tier, OpenAI-compatible)
+  const groqApiKey = process.env.GROQ_API_KEY;
 
-  if (!openAiKey) {
-    return NextResponse.json({ error: "Missing OPENAI_API_KEY environment variable" }, { status: 500 });
+  if (!groqApiKey) {
+    return NextResponse.json({ error: "Missing GROQ_API_KEY environment variable" }, { status: 500 });
   }
 
   try {
-    const response = await fetch("https://api.openai.com/v1/chat/completions", {
+    const response = await fetch("https://api.groq.com/openai/v1/chat/completions", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${openAiKey}`,
+        Authorization: `Bearer ${groqApiKey}`,
       },
       body: JSON.stringify({
-        model: "gpt-4o", // or gpt-4-turbo
+        model: "llama-3.3-70b-versatile",
         messages: [
           { role: "system", content: SYSTEM_PROMPT },
-          { role: "user", content: `Generate 2 daily tweets based on this data context: \n${marketContext}` }
+          { role: "user", content: `Generate 2 daily tweets based on this data context:\n${marketContext}` }
         ],
         temperature: 0.7,
+        response_format: { type: "json_object" }
       }),
     });
 
     if (!response.ok) {
       const errorData = await response.json();
-      throw new Error(errorData.error?.message || "OpenAI API error");
+      throw new Error(errorData.error?.message || "Groq API error");
     }
 
     const data = await response.json();
-    const rawContent = data.choices[0].message.content;
+    const rawContent = data.choices?.[0]?.message?.content;
 
-    // Clean up potential markdown formatting (e.g. ```json ... ```)
-    const cleanedContent = rawContent.replace(/```json/g, '').replace(/```/g, '').trim();
-    
+    if (!rawContent) {
+      throw new Error("No content returned from Groq API");
+    }
+
     let tweets: string[] = [];
     try {
-      tweets = JSON.parse(cleanedContent);
+      const parsed = JSON.parse(rawContent);
+      // Groq returns JSON object, extract the array from it
+      tweets = Array.isArray(parsed) ? parsed : parsed.tweets ?? Object.values(parsed);
     } catch (parseError) {
-      console.error("Failed to parse AI output:", cleanedContent);
+      console.error("Failed to parse AI output:", rawContent);
       return NextResponse.json({ error: "Invalid JSON format from AI" }, { status: 500 });
     }
 
