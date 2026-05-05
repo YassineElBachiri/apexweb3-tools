@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import { scrapeEVMWhales } from '@/lib/whales/scrapers/evmScraper';
 import { scrapeSolanaWhales } from '@/lib/whales/scrapers/solanaScraper';
+import { getSpikingTokens } from '@/lib/actions/spike-detector';
 
 // This endpoint can be triggered by a cron job (e.g., Vercel Cron)
 // It generates tweets based on recent market data and the ApexWeb3 persona.
@@ -8,7 +9,7 @@ import { scrapeSolanaWhales } from '@/lib/whales/scrapers/solanaScraper';
 export const revalidate = 0; // Disable cache
 
 const SYSTEM_PROMPT = `
-You are ApexWeb3's automated market intelligence bot. Your job is to write 2 high-impact crypto tweet per day based on the provided data context.
+You are ApexWeb3's automated market intelligence bot. Your job is to write 2 high-impact crypto tweets per day based on the provided data context.
 
 TONE: Data-driven, confident, no hype. Like a sharp analyst, not an influencer.
 
@@ -19,28 +20,64 @@ RULES:
 - No emojis except max 1 if it adds clarity.
 - No financial advice language ("buy", "sell", "guaranteed").
 - No hashtag spam — max 2 relevant hashtags.
-- Return ONLY a JSON array of 2 strings, representing the tweets.
+- Return ONLY a valid JSON object with key "tweets" containing an array of exactly 2 strings.
 
-FORMATS TO ROTATE:
+FORMATS TO ROTATE (use different formats for each tweet):
 1. Whale Alert — "Whale just moved $X of [token]..."
-2. Meme Coin Signal — "Our scanner flagged [token]: [key metric]..."
+2. Meme Coin Signal — "Our scanner flagged $[TOKEN]: velocity [X]%, MCAP $[Y]..."
 3. Market Insight — "When BTC does X, historically Y happens..."
 4. Warning/Risk — "3 red flags we're seeing in [sector] right now..."
 5. Data Drop — "This week's on-chain data shows..."
 `;
 
 export async function GET(req: Request) {
-  // 1. Gather context data using real scrapers
-  const ethWhales = await scrapeEVMWhales(1, 1000000); // 1M+ transfers on ETH
-  const solWhales = await scrapeSolanaWhales(1000000); // 1M+ transfers on Solana
+  // 1. Gather all context data in parallel
+  const [ethWhalesResult, solWhalesResult, spikeData] = await Promise.allSettled([
+    scrapeEVMWhales(1, 1000000),   // 1M+ transfers on ETH
+    scrapeSolanaWhales(1000000),   // 1M+ transfers on Solana
+    getSpikingTokens(),            // Live memecoin spike detector
+  ]);
 
-  const recentEth = ethWhales.slice(0, 3).map(w => `$${(w.amountUSD / 1e6).toFixed(1)}M ${w.symbol} from ${w.from.label || 'Unknown'} to ${w.to.label || 'Unknown'}`).join(', ');
-  const recentSol = solWhales.slice(0, 3).map(w => `$${(w.amountUSD / 1e6).toFixed(1)}M ${w.symbol} from ${w.from.label || 'Unknown'} to ${w.to.label || 'Unknown'}`).join(', ');
+  // Whale data
+  const ethWhales = ethWhalesResult.status === 'fulfilled' ? ethWhalesResult.value : [];
+  const solWhales = solWhalesResult.status === 'fulfilled' ? solWhalesResult.value : [];
+
+  const recentEth = ethWhales.slice(0, 3)
+    .map(w => `$${(w.amountUSD / 1e6).toFixed(1)}M ${w.symbol} from ${w.from.label || 'Unknown'} to ${w.to.label || 'Unknown'}`)
+    .join(', ');
+
+  const recentSol = solWhales.slice(0, 3)
+    .map(w => `$${(w.amountUSD / 1e6).toFixed(1)}M ${w.symbol} from ${w.from.label || 'Unknown'} to ${w.to.label || 'Unknown'}`)
+    .join(', ');
+
+  // Memecoin spike data
+  let memeContext = 'No significant spikes detected right now.';
+  if (spikeData.status === 'fulfilled' && 'pairs' in spikeData.value) {
+    const pairs = spikeData.value.pairs;
+    const spiking = pairs.filter(p => p.isSpiking).slice(0, 3);
+    const heating = pairs.filter(p => p.isHeatingUp).slice(0, 2);
+
+    if (spiking.length > 0) {
+      const spikingSummary = spiking
+        .map(p => `$${p.baseToken.symbol} (${p.chainId.toUpperCase()}, MCAP $${(p.marketCapUsd / 1000).toFixed(0)}K, velocity ${p.volumeVelocity.toFixed(1)}%, +${(p.priceChange?.m5 || 0).toFixed(1)}% in 5m, safety: ${p.safetyLabel})`)
+        .join(' | ');
+      memeContext = `SPIKING NOW: ${spikingSummary}`;
+    }
+
+    if (heating.length > 0) {
+      const heatingSummary = heating
+        .map(p => `$${p.baseToken.symbol} velocity ${p.volumeVelocity.toFixed(1)}%`)
+        .join(', ');
+      memeContext += ` | HEATING UP: ${heatingSummary}`;
+    }
+  }
 
   const marketContext = `
   Recent Whale Activity (Ethereum): ${recentEth || 'Normal levels'}
   Recent Whale Activity (Solana): ${recentSol || 'Normal levels'}
+  Live Memecoin Scanner: ${memeContext}
   `;
+
 
   // 2. Call Groq API (free tier, OpenAI-compatible)
   const groqApiKey = process.env.GROQ_API_KEY;

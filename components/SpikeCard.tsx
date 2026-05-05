@@ -232,13 +232,13 @@ export function SpikeCard({ pair }: SpikeCardProps) {
             {/* Action Buttons */}
             <div className="flex gap-2">
                 <a
-                    href={`https://neo.bullx.io/terminal?chain=${pair.chainId === "solana" ? "solana" : pair.chainId}&address=${pair.baseToken.address}&p=APEXWEB3`}
+                    href="https://t.me/bullxbatabot?start=ref_yubaX"
                     target="_blank"
                     rel="sponsored nofollow"
-                    className="flex flex-[2] items-center justify-center gap-1.5 rounded-lg border border-[#00E5FF]/50 bg-[#00E5FF]/10 px-3 py-2 text-xs font-bold text-[#00E5FF] transition-all duration-200 hover:bg-[#00E5FF]/20 shadow-[0_0_10px_rgba(0,229,255,0.1)]"
+                    className="flex flex-[2] items-center justify-center gap-1.5 rounded-lg border border-orange-500/50 bg-orange-500/10 px-3 py-2 text-xs font-bold text-orange-300 transition-all duration-200 hover:bg-orange-500/20 hover:text-orange-200 shadow-[0_0_10px_rgba(249,115,22,0.15)]"
                 >
                     <Zap className="h-3.5 w-3.5 fill-current" />
-                    Buy on BullX
+                    Trade on BullX
                 </a>
 
                 <button

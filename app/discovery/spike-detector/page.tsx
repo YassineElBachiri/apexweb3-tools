@@ -82,6 +82,20 @@ export default async function SpikeDetectorPage() {
                             <StatPill icon="⚡" label="5s Auto-Refresh" />
                             <StatPill icon="🎯" label="Velocity > 5% + Price > 2%" />
                         </div>
+
+                        {/* BullX Bot CTA */}
+                        <div className="mt-6">
+                            <a
+                                href="https://t.me/bullxbatabot?start=ref_yubaX"
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="group inline-flex items-center gap-2.5 rounded-xl border border-orange-500/40 bg-gradient-to-r from-orange-500/10 via-amber-500/10 to-yellow-500/10 px-5 py-3 text-sm font-semibold text-orange-300 shadow-lg shadow-orange-900/20 transition-all duration-200 hover:border-orange-400/70 hover:from-orange-500/20 hover:via-amber-500/20 hover:to-yellow-500/20 hover:text-orange-200 hover:shadow-orange-900/40"
+                            >
+                                <span className="text-base">🚀</span>
+                                <span>Trade detected spikes instantly with <strong className="text-orange-200">BullX Bot</strong></span>
+                                <span className="ml-1 rounded-full bg-orange-500/20 px-2 py-0.5 text-xs text-orange-400 transition-colors group-hover:bg-orange-500/30">Free →</span>
+                            </a>
+                        </div>
                     </div>
                 </div>
             </div>
