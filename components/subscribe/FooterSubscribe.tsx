@@ -35,7 +35,7 @@ export function FooterSubscribe() {
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 py-6 border-t border-gray-200 dark:border-gray-800">
         <div className="flex items-center text-green-600 dark:text-green-400 font-medium">
           <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>
-          You're subscribed. Check your inbox.
+          You&apos;re subscribed. Check your inbox.
         </div>
       </div>
     );

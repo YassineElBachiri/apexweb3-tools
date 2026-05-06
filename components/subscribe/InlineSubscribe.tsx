@@ -23,7 +23,7 @@ export function InlineSubscribe({ source }: InlineSubscribeProps) {
     return (
       <div className="w-full max-w-3xl mx-auto my-8 p-6 bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-xl flex items-center justify-center text-green-800 dark:text-green-300">
         <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>
-        <span className="font-medium">You're subscribed. Check your inbox.</span>
+        <span className="font-medium">You&apos;re subscribed. Check your inbox.</span>
       </div>
     );
   }

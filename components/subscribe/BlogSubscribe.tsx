@@ -36,7 +36,7 @@ export function BlogSubscribe({ category }: BlogSubscribeProps) {
         <div className="inline-flex items-center justify-center p-4 bg-green-100 dark:bg-green-900/30 rounded-full mb-4">
           <svg className="w-8 h-8 text-green-600 dark:text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>
         </div>
-        <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">You're subscribed!</h3>
+        <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">You&apos;re subscribed!</h3>
         <p className="text-gray-600 dark:text-gray-400 text-lg">Check your inbox for your first update.</p>
       </div>
     );
