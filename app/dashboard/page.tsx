@@ -4,7 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Search, Shield, Wallet, TrendingUp, Eye, ArrowRightLeft, DollarSign, Calculator, Activity } from "lucide-react";
 import Link from "next/link";
-import AffiliateBanner from "@/components/affiliates/AffiliateBanner";
+import { AiAffiliateBanner } from "@/components/affiliates/AiAffiliateBanner";
 
 export default function DashboardPage() {
     const [inputValue, setInputValue] = useState("");
@@ -219,7 +219,14 @@ export default function DashboardPage() {
                     </div>
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-[12px]">
                         {/* We use pageId deals to get all general affiliates onto the dashboard */}
-                        <AffiliateBanner pageId="deals" variant="card" limit={4} />
+                        <AiAffiliateBanner
+                            context={{
+                                type: 'tool',
+                                toolId: 'deals',
+                                userAction: 'Browsing top deals from dashboard'
+                            }}
+                            variant="card"
+                        />
                     </div>
                 </div>
 

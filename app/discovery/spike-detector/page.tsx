@@ -5,7 +5,7 @@ import { SEOContent } from "@/components/spike-detector/SEOContent";
 import { Badge } from "@/components/ui/badge";
 import { Zap, Info, Shield } from "lucide-react";
 import { JsonLd } from "@/components/seo/json-ld";
-import AffiliateBanner from "@/components/affiliates/AffiliateBanner";
+import { AiAffiliateBanner } from "@/components/affiliates/AiAffiliateBanner";
 
 export async function generateMetadata(): Promise<Metadata> {
     const data = await getSpikingTokens();
@@ -104,7 +104,13 @@ export default async function SpikeDetectorPage() {
             <div className="container mx-auto px-4 py-8 md:px-6">
                 <SpikeDetectorDashboard initialData={"pairs" in initialData ? initialData : undefined} />
                 <div className="mt-8">
-                    <AffiliateBanner pageId="meme-scanner" variant="inline" />
+                    <AiAffiliateBanner
+                        context={{
+                            type: 'tool',
+                            toolId: 'meme-scanner',
+                            userAction: 'Scanning live micro-cap memecoins for velocity spikes'
+                        }}
+                    />
                 </div>
             </div>
 

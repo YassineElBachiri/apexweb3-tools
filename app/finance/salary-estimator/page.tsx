@@ -6,6 +6,7 @@ import RiskDisclaimer from '@/components/global/RiskDisclaimer';
 import { SALARY_ESTIMATOR_CONTENT, SALARY_ESTIMATOR_SEO } from '@/lib/seo-content/salary-estimator';
 import { Shield, ArrowRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { AiAffiliateBanner } from '@/components/affiliates/AiAffiliateBanner';
 
 export const metadata: Metadata = {
     title: SALARY_ESTIMATOR_SEO.title,
@@ -68,6 +69,17 @@ export default function SalaryEstimatorPage() {
                     <div className="relative bg-brand-dark/50 backdrop-blur-xl border border-white/10 rounded-2xl p-6 md:p-8 lg:p-12 shadow-2xl">
                         <SalaryCalculatorClient />
                     </div>
+                </div>
+
+                <div className="mb-16 animate-in fade-in zoom-in-95 duration-700 delay-350 max-w-4xl mx-auto">
+                    <AiAffiliateBanner
+                        context={{
+                            type: 'tool',
+                            toolId: 'salary-estimator',
+                            userAction: 'Estimating Web3 salary and crypto compensation'
+                        }}
+                        variant="inline"
+                    />
                 </div>
 
                 {/* Risk Disclaimer */}

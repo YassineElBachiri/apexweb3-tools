@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import { FiatConverter } from "@/components/fiat-converter/FiatConverter";
 import { ToolFAQ } from "@/components/seo/ToolFAQ";
+import { AiAffiliateBanner } from "@/components/affiliates/AiAffiliateBanner";
 
 export const metadata: Metadata = {
     title: 'Global Fiat Converter — Crypto in Your Currency | ApexWeb3',
@@ -27,6 +28,17 @@ export default function FiatConverterPage() {
             </div>
 
             <FiatConverter />
+
+            <div className="my-12">
+                <AiAffiliateBanner
+                    context={{
+                        type: 'tool',
+                        toolId: 'fiat-converter',
+                        userAction: 'Converting crypto to local fiat currencies'
+                    }}
+                    variant="inline"
+                />
+            </div>
 
             <ToolFAQ 
                 toolName="Global Fiat Exchange" 

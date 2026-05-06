@@ -11,7 +11,7 @@ import { PortfolioSummary } from "@/components/portfolio/PortfolioSummary";
 import { PortfolioChart } from "@/components/portfolio/PortfolioChart";
 import { AddAssetDialog } from "@/components/portfolio/AddAssetDialog";
 import { RelatedTools } from "@/components/gas/RelatedTools"; // Reusing existing RelatedTools
-import AffiliateBanner from "@/components/affiliates/AffiliateBanner";
+import { AiAffiliateBanner } from "@/components/affiliates/AiAffiliateBanner";
 
 export default function PortfolioPage() {
     // State
@@ -164,7 +164,15 @@ export default function PortfolioPage() {
                         <PortfolioSummary assets={assets} />
                         
                         <div className="w-full">
-                            <AffiliateBanner pageId="portfolio" variant="inline" portfolioVal={totalPortfolioUSD} />
+                            <AiAffiliateBanner
+                                context={{
+                                    type: 'tool',
+                                    toolId: 'portfolio',
+                                    userAction: 'Viewing portfolio balance',
+                                    portfolioValue: totalPortfolioUSD
+                                }}
+                                variant="inline"
+                            />
                         </div>
 
                         <div className="w-full mb-8">

@@ -10,7 +10,7 @@ import {
 } from "lucide-react";
 import { useState } from "react";
 import type { TokenomicsAnalysis } from "@/types";
-import AffiliateBanner from "@/components/affiliates/AffiliateBanner";
+import { AiAffiliateBanner } from "@/components/affiliates/AiAffiliateBanner";
 
 interface TokenomicsViewProps {
     data: TokenomicsAnalysis;
@@ -298,7 +298,14 @@ export function TokenomicsView({ data, address, hideAddress = false }: Tokenomic
                         riskLevel={data.riskLevel}
                     />
                     <div className="mt-6">
-                        <AffiliateBanner pageId="tokenomics-analyzer" variant="inline" />
+                        <AiAffiliateBanner
+                            context={{
+                                type: 'tool',
+                                toolId: 'tokenomics-analyzer',
+                                userAction: `Analyzed ${data.token.symbol} tokenomics with risk score ${data.investmentScore?.totalScore || 0}/100`
+                            }}
+                            variant="inline"
+                        />
                     </div>
                 </div>
 

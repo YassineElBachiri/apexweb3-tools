@@ -5,6 +5,7 @@ import { Sidebar, parseHeadings } from '@/components/blog/Sidebar';
 import { Calendar, User, ArrowLeft, Clock } from 'lucide-react';
 import Link from 'next/link';
 import Image from 'next/image';
+import { AiAffiliateBanner } from '@/components/affiliates/AiAffiliateBanner';
 
 interface PostParams {
     params: Promise<{
@@ -176,9 +177,23 @@ export default async function BlogPostPage({ params }: PostParams) {
                         />
                     </main>
 
-                    {/* Sidebar / Table of Contents */}
+                    {/* Right Sidebar: Table of Contents + Affiliates */}
                     <div className="hidden lg:block lg:col-span-4 pl-4 pt-12">
-                        <Sidebar toc={toc} />
+                        <div className="sticky top-24 space-y-8">
+                            <Sidebar toc={toc} />
+                            
+                            {/* AI Affiliate Banner — context-aware per article category */}
+                            <AiAffiliateBanner
+                                context={{
+                                    type: 'blog',
+                                    category: post.categories?.nodes[0]?.slug ?? 'news',
+                                    title: post.title,
+                                    summary: post.excerpt?.replace(/<[^>]+>/g, '').trim().slice(0, 300),
+                                    keywords: post.categories?.nodes.map((c: any) => c.name).join(', ')
+                                }}
+                                variant="card"
+                            />
+                        </div>
                     </div>
                 </div>
             </div>

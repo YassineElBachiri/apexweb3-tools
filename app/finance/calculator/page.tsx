@@ -14,6 +14,7 @@ import { calculateAverageCost, calculatePnL } from '@/lib/calculator';
 import { fetchCoinPrice } from '@/lib/api/coingecko';
 import { cn } from '@/lib/utils';
 import { ToolFAQ } from '@/components/seo/ToolFAQ';
+import { AiAffiliateBanner } from '@/components/affiliates/AiAffiliateBanner';
 
 export default function CalculatorPage() {
     // State
@@ -205,6 +206,15 @@ export default function CalculatorPage() {
                             currentQuantity={calculation.totalQuantity}
                             currentInvested={calculation.totalCost}
                             currentPrice={currentPrice}
+                        />
+
+                        <AiAffiliateBanner
+                            context={{
+                                type: 'tool',
+                                toolId: 'calculator',
+                                userAction: 'Calculating average cost and DCA strategy'
+                            }}
+                            variant="inline"
                         />
 
 

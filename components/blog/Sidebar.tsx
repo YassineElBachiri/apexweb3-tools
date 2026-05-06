@@ -42,7 +42,7 @@ interface SidebarProps {
 
 export function Sidebar({ toc }: SidebarProps) {
     return (
-        <aside className="sticky top-24 w-full h-fit flex-shrink-0">
+        <div className="w-full h-fit flex-shrink-0">
             {/* Glassmorphism Container styling */}
             <div className="rounded-2xl border border-white/10 bg-brand-dark/40 backdrop-blur-md p-6 shadow-2xl">
                 <TableOfContents toc={toc} />
@@ -65,6 +65,6 @@ export function Sidebar({ toc }: SidebarProps) {
                     </button>
                 </div>
             </div>
-        </aside>
+        </div>
     );
 }

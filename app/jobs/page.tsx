@@ -3,6 +3,7 @@ import { JobsDashboard } from "@/components/jobs/JobsDashboard";
 import { SeoContent } from "@/components/jobs/SeoContent";
 import { Metadata } from "next";
 import { Suspense } from "react";
+import { AiAffiliateBanner } from "@/components/affiliates/AiAffiliateBanner";
 
 export const metadata: Metadata = {
     title: "Web3 Jobs Board — Blockchain & Crypto Careers | ApexWeb3",
@@ -21,6 +22,17 @@ export default async function JobsPage() {
             <Suspense fallback={<div className="container py-12 text-center text-muted-foreground">Loading the Web3 Jobs Board...</div>}>
                 <JobsDashboard initialJobs={jobs} error={error} />
             </Suspense>
+            
+            <div className="container mx-auto px-4 py-8 max-w-7xl">
+                <AiAffiliateBanner
+                    context={{
+                        type: 'tool',
+                        toolId: 'jobs',
+                        userAction: 'Browsing Web3 jobs and career opportunities'
+                    }}
+                    variant="inline"
+                />
+            </div>
             <SeoContent />
         </main>
     );
