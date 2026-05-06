@@ -92,7 +92,7 @@ export function MegaMenu({ isOpen, onClose }: MegaMenuProps) {
                             <div>
                                 <div className="flex items-center gap-2 mb-3">
                                     <Image 
-                                        src="/icon.png" 
+                                        src="/ApexWeb3-icon.png" 
                                         alt="ApexWeb3 Trust Shield" 
                                         width={20} 
                                         height={20}
