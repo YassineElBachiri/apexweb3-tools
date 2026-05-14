@@ -1,188 +1,283 @@
 "use client";
 
 import { useState, useMemo } from "react";
-import { Web3Job, JobFilter } from "@/types/job";
+import { Web3Job } from "@/types/job";
 import { JobCard } from "@/components/jobs/JobCard";
-import { JobFilters } from "@/components/jobs/JobFilters";
+import { JobIntelBanner } from "@/components/jobs/JobIntelBanner";
+import { AiAffiliateBanner } from "@/components/affiliates/AiAffiliateBanner";
+import Link from "next/link";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import { Search } from "lucide-react";
 import { AnimatePresence, motion } from "framer-motion";
 
-interface JobsDashboardProps {
-    initialJobs: Web3Job[];
-    error?: string;
-    initialFilters?: Partial<JobFilter>;
-}
+const CATEGORY_TABS = ["All", "Engineering", "AI × Web3", "Security", "Product", "Research", "Community"];
 
-export function JobsDashboard({ initialJobs, error, initialFilters = {} }: JobsDashboardProps) {
-    const [filters, setFilters] = useState<Partial<JobFilter>>({
-        remoteOnly: false,
-        tag: "",
-        ...initialFilters
-    });
+export function JobsDashboard({ initialJobs, error }: { initialJobs: Web3Job[], error: string | null }) {
+    const [searchTerm, setSearchTerm] = useState("");
+    const [chainFilter, setChainFilter] = useState("All chains");
+    const [activeCategory, setActiveCategory] = useState("All");
+    const [remoteOnly, setRemoteOnly] = useState(false);
+    const [aiOnly, setAiOnly] = useState(false);
 
-    // Client-side filtering for "Instant feedback"
     const filteredJobs = useMemo(() => {
-        return initialJobs.filter((job) => {
-            // Remote Filter
-            if (filters.remoteOnly && !job.remote) {
-                return false;
+        return initialJobs.filter(job => {
+            const searchString = `${job.title} ${job.company} ${job.tags.join(" ")}`.toLowerCase();
+            if (searchTerm && !searchString.includes(searchTerm.toLowerCase())) return false;
+            
+            const jobCat = getCategoryForJob(job);
+            if (activeCategory !== "All" && jobCat !== activeCategory) return false;
+            
+            if (chainFilter !== "All chains") {
+                const jobChain = getChainForJob(job);
+                if (jobChain !== chainFilter) return false;
             }
-
-            // Tag/Search Filter (Merged concept for simplicity or split if needed)
-            if (filters.tag && filters.tag !== "all") {
-                const searchLower = filters.tag.toLowerCase();
-                const matchesTag = job.tags.some(t => t.toLowerCase().includes(searchLower));
-                const matchesTitle = job.title.toLowerCase().includes(searchLower);
-                const matchesCompany = job.company.toLowerCase().includes(searchLower);
-
-                if (!matchesTag && !matchesTitle && !matchesCompany) {
-                    return false;
-                }
-            }
-
+            
+            if (remoteOnly && !job.remote) return false;
+            if (aiOnly && jobCat !== "AI × Web3") return false;
+            
             return true;
         });
-    }, [initialJobs, filters]);
+    }, [initialJobs, searchTerm, activeCategory, chainFilter, remoteOnly, aiOnly]);
 
-    const handleFilterChange = (newFilters: Partial<JobFilter>) => {
-        setFilters((prev) => ({ ...prev, ...newFilters }));
-    };
+    const categoryCounts = useMemo(() => {
+        const baseJobs = initialJobs.filter(job => {
+            const searchString = `${job.title} ${job.company} ${job.tags.join(" ")}`.toLowerCase();
+            if (searchTerm && !searchString.includes(searchTerm.toLowerCase())) return false;
+            if (chainFilter !== "All chains" && getChainForJob(job) !== chainFilter) return false;
+            if (remoteOnly && !job.remote) return false;
+            if (aiOnly && getCategoryForJob(job) !== "AI × Web3") return false;
+            return true;
+        });
+        
+        const counts: Record<string, number> = { "All": baseJobs.length };
+        baseJobs.forEach(job => {
+            const cat = getCategoryForJob(job);
+            counts[cat] = (counts[cat] || 0) + 1;
+        });
+        return counts;
+    }, [initialJobs, searchTerm, chainFilter, remoteOnly, aiOnly]);
 
-    if (error === "MISSING_TOKEN") {
-        return (
-            <div className="container py-20 max-w-4xl mx-auto px-4 text-center">
-                <div className="bg-card/40 backdrop-blur-xl border border-white/10 rounded-2xl p-8 shadow-xl">
-                    <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-6">
-                        <span className="text-3xl text-primary">⚙️</span>
-                    </div>
-                    <h2 className="text-2xl font-bold mb-4">API Configuration Required</h2>
-                    <p className="text-muted-foreground mb-6 max-w-lg mx-auto">
-                        The <code className="bg-primary/10 px-1.5 py-0.5 rounded text-primary">WEB3_CAREER_TOKEN</code> is missing from your environment.
-                    </p>
-
-                    <div className="space-y-4 text-left max-w-md mx-auto">
-                        <div className="bg-background/50 p-4 rounded-xl border border-white/5 space-y-3">
-                            <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Option 1: Add API Token</p>
-                            <p className="text-sm">Get a token from <a href="https://web3.career/api" target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">web3.career/api</a> and add it to your <code className="text-primary">.env.local</code>:</p>
-                            <div className="bg-black/40 p-3 rounded-lg font-mono text-xs overflow-x-auto">
-                                WEB3_CAREER_TOKEN=your_token_here
-                            </div>
-                        </div>
-
-                        <div className="bg-background/50 p-4 rounded-xl border border-white/5 space-y-3">
-                            <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Option 2: Enable Mock Data</p>
-                            <p className="text-sm">Use sample listings for development by updating <code className="text-primary">.env.local</code>:</p>
-                            <div className="bg-black/40 p-3 rounded-lg font-mono text-xs overflow-x-auto">
-                                NEXT_PUBLIC_USE_MOCK_DATA=true
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        );
-    }
+    const featuredJobs = filteredJobs.filter(j => j.featured || false).slice(0, 3);
+    const regularJobs = filteredJobs.filter(j => !featuredJobs.includes(j));
 
     return (
-        <div className="relative min-h-screen">
-            {/* Background Gradients */}
-            <div className="fixed inset-0 pointer-events-none z-[-1]">
-                {/* Top Center Glow */}
-                <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[600px] h-[600px] bg-primary/20 rounded-full blur-[120px] opacity-40" />
-                {/* Bottom Left Splash */}
-                <div className="absolute bottom-0 left-0 w-[500px] h-[500px] bg-blue-500/10 rounded-full blur-[100px] opacity-30" />
+        <div className="min-h-screen bg-background pb-16">
+            {/* TICKER */}
+            <div className="bg-card/50 border-b border-white/5 h-10 flex items-center overflow-hidden">
+                <div className="bg-primary text-primary-foreground text-xs font-bold px-4 h-full flex items-center whitespace-nowrap shrink-0 tracking-widest z-10 shadow-lg shadow-primary/20">
+                    LIVE SIGNAL
+                </div>
+                <div className="overflow-hidden flex-1">
+                    <div className="flex animate-[ticker_30s_linear_infinite] whitespace-nowrap">
+                        <span className="flex">
+                            <span className="text-xs text-muted-foreground px-8 font-mono">Solidity Engineer @ Uniswap <span className="text-primary ml-2">$180K</span></span>
+                            <span className="text-xs text-muted-foreground px-8 font-mono">ZK Engineer @ StarkWare <span className="text-primary ml-2">$240K</span></span>
+                            <span className="text-xs text-muted-foreground px-8 font-mono">AI Agent Dev @ Fetch.ai <span className="text-primary ml-2">$160K</span></span>
+                            <span className="text-xs text-muted-foreground px-8 font-mono">ML Engineer @ Dune <span className="text-primary ml-2">$170K</span></span>
+                        </span>
+                        <span className="flex">
+                            <span className="text-xs text-muted-foreground px-8 font-mono">Solidity Engineer @ Uniswap <span className="text-primary ml-2">$180K</span></span>
+                            <span className="text-xs text-muted-foreground px-8 font-mono">ZK Engineer @ StarkWare <span className="text-primary ml-2">$240K</span></span>
+                            <span className="text-xs text-muted-foreground px-8 font-mono">AI Agent Dev @ Fetch.ai <span className="text-primary ml-2">$160K</span></span>
+                            <span className="text-xs text-muted-foreground px-8 font-mono">ML Engineer @ Dune <span className="text-primary ml-2">$170K</span></span>
+                        </span>
+                    </div>
+                </div>
             </div>
 
-            <div className="container py-12 max-w-7xl mx-auto px-4 sm:px-6 relative z-10">
-                {error === "MISSING_TOKEN_DEV" && (
-                    <motion.div
-                        initial={{ opacity: 0, y: -20 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        className="mb-8 p-4 bg-yellow-500/10 border border-yellow-500/20 rounded-xl flex items-center justify-between gap-4"
-                    >
-                        <div className="flex items-center gap-3">
-                            <span className="text-xl">⚠️</span>
-                            <div className="text-sm">
-                                <span className="font-bold text-yellow-500">Development Mode:</span>
-                                <span className="text-muted-foreground"> WEB3_CAREER_TOKEN is not detected in .env.local. Showing sample listings.</span>
+            <div className="container max-w-5xl mx-auto space-y-8 mt-8">
+                {/* HERO */}
+                <div className="pb-8 border-b border-white/5">
+                    <div className="grid grid-cols-1 md:grid-cols-[1fr_auto] gap-8 items-end">
+                        <div>
+                            <div className="text-xs text-primary tracking-widest uppercase mb-4 flex items-center gap-2 font-mono font-bold">
+                                <div className="w-6 h-0.5 bg-primary" />
+                                Web3 + AI Careers
                             </div>
+                            <h1 className="text-5xl md:text-6xl font-extrabold text-foreground tracking-tight mb-4">
+                                Find your role<br />in the <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-purple-400">on-chain</span><br />economy.
+                            </h1>
+                            <p className="text-lg text-muted-foreground max-w-md">
+                                Live listings from top Web3 protocols, DeFi teams, and AI × blockchain companies.
+                            </p>
                         </div>
-                        <button
-                            onClick={() => window.location.reload()}
-                            className="text-xs font-bold uppercase tracking-widest text-yellow-500 hover:text-yellow-400 transition-colors"
-                        >
-                            Refresh env
-                        </button>
-                    </motion.div>
-                )}
-                {/* Hero Section */}
-                <div className="mb-12 text-center space-y-4">
-                    <motion.div
-                        initial={{ opacity: 0, y: 20 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ duration: 0.5 }}
-                    >
-                        <h1 className="text-4xl md:text-6xl font-extrabold tracking-tight mb-4">
-                            <span className="bg-gradient-to-r from-foreground to-foreground/70 bg-clip-text text-transparent">
-                                {filters.tag && filters.tag !== "all" ? `${filters.tag} Jobs` : "Web3 Jobs"}
-                            </span>{" "}
-                            <span className="bg-gradient-to-r from-primary via-blue-500 to-purple-600 bg-clip-text text-transparent">
-                                & Careers
-                            </span>
-                        </h1>
-                    </motion.div>
-
-                    <motion.p
-                        initial={{ opacity: 0, y: 20 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ duration: 0.5, delay: 0.1 }}
-                        className="text-muted-foreground text-lg md:text-xl max-w-2xl mx-auto leading-relaxed"
-                    >
-                        Discover the future of work. Browse <span className="text-foreground font-semibold">{initialJobs.length}</span> active listings in Blockchain, DeFi, and Crypto.
-                    </motion.p>
+                        <div className="flex flex-row md:flex-col gap-6 text-left md:text-right">
+                            <div><span className="text-3xl md:text-4xl font-extrabold text-foreground block leading-none">{initialJobs.length}+</span><span className="text-xs text-muted-foreground tracking-widest uppercase font-mono mt-1 block">live roles</span></div>
+                            <div><span className="text-3xl md:text-4xl font-extrabold text-foreground block leading-none">91%</span><span className="text-xs text-muted-foreground tracking-widest uppercase font-mono mt-1 block">remote</span></div>
+                        </div>
+                    </div>
                 </div>
 
-                <motion.div
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.5, delay: 0.2 }}
-                >
-                    <JobFilters onFilterChange={handleFilterChange} />
-                </motion.div>
+                {/* INTEL BANNER */}
+                {initialJobs.length > 0 && <JobIntelBanner jobs={initialJobs} />}
 
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                    <AnimatePresence mode="popLayout">
-                        {filteredJobs.map((job) => (
-                            <motion.div
-                                key={job.id}
-                                layout
-                                initial={{ opacity: 0, scale: 0.95 }}
-                                animate={{ opacity: 1, scale: 1 }}
-                                exit={{ opacity: 0, scale: 0.95 }}
-                                transition={{ duration: 0.2 }}
+                {/* CONTROLS */}
+                <div className="flex flex-col gap-4 py-2">
+                    <div className="relative">
+                        <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
+                        <Input 
+                            className="pl-12 h-14 bg-card/20 border-white/10 text-base font-mono focus:border-primary transition-colors backdrop-blur-sm rounded-xl"
+                            placeholder="search roles, skills, companies..."
+                            value={searchTerm}
+                            onChange={(e) => setSearchTerm(e.target.value)}
+                        />
+                    </div>
+                    <div className="flex gap-2 flex-wrap items-center">
+                        <select 
+                            className="bg-card/20 border border-white/10 text-muted-foreground font-mono text-sm px-4 h-10 rounded-lg outline-none cursor-pointer appearance-none hover:bg-card/40 transition-colors"
+                            value={chainFilter}
+                            onChange={(e) => setChainFilter(e.target.value)}
+                        >
+                            <option>All chains</option>
+                            <option>Ethereum</option>
+                            <option>Solana</option>
+                            <option>Polygon</option>
+                            <option>Starknet</option>
+                            <option>Multi-chain</option>
+                        </select>
+                        <Button 
+                            variant={remoteOnly ? "default" : "outline"}
+                            size="sm"
+                            className="h-10 font-mono text-xs rounded-lg"
+                            onClick={() => setRemoteOnly(!remoteOnly)}
+                        >
+                            ◉ Remote only
+                        </Button>
+                        <Button 
+                            variant={aiOnly ? "default" : "outline"}
+                            size="sm"
+                            className="h-10 font-mono text-xs rounded-lg"
+                            onClick={() => setAiOnly(!aiOnly)}
+                        >
+                            ◈ AI × Web3 only
+                        </Button>
+                        <span className="text-sm text-muted-foreground ml-auto font-mono"><strong className="text-foreground">{filteredJobs.length}</strong> roles found</span>
+                    </div>
+                </div>
+
+                {/* TABS */}
+                <div className="flex border-b border-white/10 mb-8 overflow-x-auto scrollbar-hide">
+                    {CATEGORY_TABS.map(cat => {
+                        const count = categoryCounts[cat] || 0;
+                        const isActive = activeCategory === cat;
+                        return (
+                            <button 
+                                key={cat}
+                                className={`px-5 py-3 font-mono text-sm font-medium tracking-wide whitespace-nowrap transition-all border-b-2 mb-[-1px] ${isActive ? 'text-primary border-primary' : 'text-muted-foreground border-transparent hover:text-foreground hover:border-white/20'}`}
+                                onClick={() => setActiveCategory(cat)}
                             >
-                                <JobCard job={job} />
-                            </motion.div>
+                                {cat}
+                                <span className={`ml-2 px-1.5 py-0.5 text-[10px] rounded border ${isActive ? 'bg-primary/10 border-primary text-primary' : 'bg-card border-white/10 text-muted-foreground'}`}>
+                                    {count}
+                                </span>
+                            </button>
+                        );
+                    })}
+                </div>
+
+                {/* LIST CONTAINER */}
+                <div className="flex flex-col rounded-2xl border border-white/5 overflow-hidden bg-card/20 backdrop-blur-xl shadow-2xl">
+                    
+                    {/* FEATURED */}
+                    {featuredJobs.length > 0 && (
+                        <div>
+                            <div className="bg-primary/5 px-5 py-2 border-b border-white/5 text-xs font-mono font-bold tracking-widest text-primary uppercase">
+                                Featured roles
+                            </div>
+                            <AnimatePresence mode="popLayout">
+                                {featuredJobs.map(job => (
+                                    <motion.div key={job.id} layout initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
+                                        <JobCard job={job} featured={true} />
+                                    </motion.div>
+                                ))}
+                            </AnimatePresence>
+                        </div>
+                    )}
+
+                    {/* ALL JOBS */}
+                    {regularJobs.length > 0 && (
+                        <div className="bg-card/40 px-5 py-2 border-b border-white/5 text-xs font-mono font-bold tracking-widest text-muted-foreground uppercase">
+                            {activeCategory === "All" ? "All roles" : activeCategory}
+                        </div>
+                    )}
+                    <AnimatePresence mode="popLayout">
+                        {regularJobs.map((job, index) => (
+                            <div key={job.id}>
+                                <motion.div layout initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
+                                    <JobCard job={job} />
+                                </motion.div>
+                                
+                                {/* Insert Affiliate Card every 6 jobs */}
+                                {(index + 1) % 6 === 0 && (
+                                    <div className="p-4 border-b border-white/5 bg-card/10">
+                                        <AiAffiliateBanner 
+                                            context={{ 
+                                                type: 'job', 
+                                                category: 'general',
+                                                tags: job.tags
+                                            }} 
+                                            variant="inline"
+                                        />
+                                    </div>
+                                )}
+                            </div>
                         ))}
+                        {filteredJobs.length === 0 && (
+                            <motion.div className="text-center py-16 text-muted-foreground text-sm font-mono" layout initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
+                                ◈ No roles match. Try adjusting filters.
+                            </motion.div>
+                        )}
                     </AnimatePresence>
                 </div>
 
-                {filteredJobs.length === 0 && (
-                    <motion.div
-                        initial={{ opacity: 0 }}
-                        animate={{ opacity: 1 }}
-                        className="text-center py-20"
-                    >
-                        <div className="bg-card/50 backdrop-blur-sm rounded-xl border border-dashed p-10 max-w-md mx-auto">
-                            <p className="text-xl font-semibold text-muted-foreground mb-4">No jobs match your search.</p>
-                            <button
-                                onClick={() => setFilters({ remoteOnly: false, tag: "" })}
-                                className="text-primary font-medium hover:underline underline-offset-4"
-                            >
-                                Clear all filters
-                            </button>
-                        </div>
-                    </motion.div>
-                )}
+                {/* AI BANNER */}
+                <div className="my-12 p-8 bg-gradient-to-br from-card/40 to-background border border-primary/20 rounded-2xl relative overflow-hidden shadow-2xl shadow-primary/5">
+                    <div className="absolute right-[-10%] top-1/2 -translate-y-1/2 font-sans text-9xl font-extrabold text-primary opacity-[0.03] pointer-events-none">
+                        AI × WEB3
+                    </div>
+                    <div className="text-xs font-mono font-bold tracking-widest uppercase text-primary mb-3">New section</div>
+                    <div className="text-3xl font-extrabold text-foreground mb-3 tracking-tight">AI × Web3 Jobs</div>
+                    <div className="text-base text-muted-foreground leading-relaxed max-w-xl mb-6">
+                        Roles at the intersection of artificial intelligence and blockchain. AI agents, decentralized ML, on-chain data science, and more.
+                    </div>
+                    <div className="flex gap-2 flex-wrap mb-8">
+                        {["AI Agents", "Decentralized AI", "On-chain ML", "Bittensor", "Fetch.ai"].map(tag => (
+                            <span key={tag} className="text-xs font-mono px-3 py-1 bg-primary/10 border border-primary/20 text-primary rounded-md">
+                                {tag}
+                            </span>
+                        ))}
+                    </div>
+                    <Link href="/jobs/ai">
+                        <Button size="lg" className="font-mono tracking-widest text-xs h-12 px-6">
+                            EXPLORE AI × WEB3 JOBS →
+                        </Button>
+                    </Link>
+                </div>
+
             </div>
         </div>
-    );
+    )
+}
+
+// Helpers
+function getCategoryForJob(job: Web3Job) {
+    const tagsStr = job.tags ? job.tags.join(' ') : '';
+    const text = `${job.title} ${tagsStr}`.toLowerCase();
+    if (text.includes("ai") || text.includes("machine learning")) return "AI × Web3";
+    if (text.includes("security") || text.includes("auditor")) return "Security";
+    if (text.includes("product") || text.includes("pm")) return "Product";
+    if (text.includes("research") || text.includes("quant") || text.includes("tokenomics")) return "Research";
+    if (text.includes("community") || text.includes("marketing") || text.includes("devrel")) return "Community";
+    return "Engineering"; // fallback
+}
+
+function getChainForJob(job: Web3Job) {
+    const tagsStr = job.tags ? job.tags.join(' ') : '';
+    const textLower = `${job.title} ${job.description || ''} ${tagsStr}`.toLowerCase();
+    if (textLower.includes("solana")) return "Solana";
+    if (textLower.includes("ethereum") || textLower.includes("evm")) return "Ethereum";
+    if (textLower.includes("polygon")) return "Polygon";
+    if (textLower.includes("starknet")) return "Starknet";
+    return "Multi-chain";
 }

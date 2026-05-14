@@ -1,41 +1,28 @@
-import { fetchWeb3Jobs } from "@/lib/web3Career";
+import { fetchUnifiedJobs } from "@/lib/ai-web3-jobs";
 import { JobsDashboard } from "@/components/jobs/JobsDashboard";
 import { SeoContent } from "@/components/jobs/SeoContent";
 import { Metadata } from "next";
 import { Suspense } from "react";
-import { AiAffiliateBanner } from "@/components/affiliates/AiAffiliateBanner";
 
 export const metadata: Metadata = {
     title: "Web3 Jobs Board — Blockchain & Crypto Careers | ApexWeb3",
-    description: "Browse thousands of live Web3, Crypto, and Blockchain jobs. Filter by role, tech stack, and remote-readiness. Your gateway to the decentralized workforce.",
-    keywords: ["web3 jobs", "blockchain jobs", "crypto careers", "solidity jobs", "remote web3 jobs"],
-    alternates: {
-        canonical: "https://www.apexweb3.com/jobs",
-    },
+    description: "Discover thousands of Web3 jobs. Remote crypto jobs, blockchain engineering, DeFi, NFT, and smart contract roles.",
+    openGraph: {
+        title: "Web3 Jobs Board | ApexWeb3",
+        description: "Discover thousands of Web3 jobs.",
+    }
 };
 
 export default async function JobsPage() {
-    const { jobs, error } = await fetchWeb3Jobs();
+    const { jobs, error } = await fetchUnifiedJobs();
 
     return (
-        <main className="min-h-screen bg-background bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-primary/10 via-background to-background">
-            <Suspense fallback={<div className="container py-12 text-center text-muted-foreground">Loading the Web3 Jobs Board...</div>}>
+        <main className="min-h-screen bg-[#080C10]">
+            <Suspense fallback={<div className="container py-12 text-center text-[#4A6A8A] font-mono">Loading the Web3 Jobs Board...</div>}>
                 <JobsDashboard initialJobs={jobs} error={error} />
             </Suspense>
             
-            <div className="container mx-auto px-4 py-8 max-w-7xl">
-                <AiAffiliateBanner
-                    context={{
-                        type: 'tool',
-                        toolId: 'jobs',
-                        userAction: 'Browsing Web3 jobs and career opportunities'
-                    }}
-                    variant="inline"
-                />
-            </div>
             <SeoContent />
         </main>
     );
 }
-
-export const revalidate = 3600; // Revalidate every hour

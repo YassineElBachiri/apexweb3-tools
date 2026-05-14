@@ -1,8 +1,11 @@
-import { Web3Job } from "@/types/job";
+"use client";
+
+import { NormalizedAIJob } from "@/lib/remotive";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import Link from "next/link";
 import { MapPin, Globe, Clock, ChevronRight } from "lucide-react";
+
+import Link from "next/link";
 
 const CHAIN_COLORS: Record<string, string> = {
     Ethereum: "#627EEA", Solana: "#9945FF", Polygon: "#8247E5",
@@ -10,8 +13,8 @@ const CHAIN_COLORS: Record<string, string> = {
     Bittensor: "#E6007A"
 };
 
-interface JobCardProps {
-    job: Web3Job;
+interface AIJobCardProps {
+    job: NormalizedAIJob;
     featured?: boolean;
 }
 
@@ -28,19 +31,27 @@ function timeAgoShort(dateString: string) {
     return "just now";
 }
 
-export function JobCard({ job, featured = false }: JobCardProps) {
-    const textLower = `${job.title} ${job.description || ''} ${job.tags.join(' ')}`.toLowerCase();
+export function AIJobCard({ job, featured = false }: AIJobCardProps) {
+    const eval_ = job.aiEvaluation;
+    const isAI = eval_?.relevant || job.source === 'remotive';
+    const displayTitle = eval_?.rewrittenTitle || job.title;
+    const displayTags = eval_?.tags?.length ? eval_.tags : job.tags;
+    
+    const textLower = `${job.title} ${job.description} ${displayTags.join(' ')}`.toLowerCase();
     let chain = "Multi-chain";
     if (textLower.includes("solana")) chain = "Solana";
     else if (textLower.includes("ethereum") || textLower.includes("evm")) chain = "Ethereum";
     else if (textLower.includes("polygon")) chain = "Polygon";
     else if (textLower.includes("starknet")) chain = "Starknet";
+    else if (textLower.includes("bittensor")) chain = "Bittensor";
 
     const c = CHAIN_COLORS[chain] || "#4A6A8A";
-    const isAI = textLower.includes("ai") || textLower.includes("machine learning");
 
     return (
-        <Link href={`/jobs/${job.slug}`} className="block group">
+        <Link 
+            href={`/jobs/${job.slug}`}
+            className="block group"
+        >
             <div className={`flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 p-4 md:p-5 border-b border-white/5 transition-all duration-200 relative overflow-hidden bg-card/20 hover:bg-card/40 backdrop-blur-sm ${
                 featured ? "border-l-[3px] border-l-primary bg-gradient-to-r from-primary/5 to-transparent" : "border-l-[3px] border-l-transparent hover:border-l-primary/50"
             }`}>
@@ -67,7 +78,7 @@ export function JobCard({ job, featured = false }: JobCardProps) {
                     <div className="space-y-1.5 min-w-0 flex-1">
                         <div className="flex items-center gap-2 flex-wrap">
                             <h3 className="text-base md:text-lg font-bold text-foreground group-hover:text-primary transition-colors truncate">
-                                {job.title}
+                                {displayTitle}
                             </h3>
                             {job.salary && (
                                 <Badge variant="secondary" className="hidden lg:inline-flex bg-green-500/10 text-green-400 hover:bg-green-500/20 text-[10px] font-semibold tracking-wider border-green-500/20">
@@ -86,7 +97,7 @@ export function JobCard({ job, featured = false }: JobCardProps) {
                             <span style={{ color: c, fontSize: '12px' }} className="font-mono">{chain}</span>
                         </div>
                         <div className="flex flex-wrap gap-2 pt-1.5">
-                            {job.tags.slice(0, 4).map(tag => (
+                            {displayTags.slice(0, 4).map((tag) => (
                                 <Badge key={tag} variant="outline" className="bg-background/50 hover:bg-white/[0.08] text-xs font-medium border-white/5 text-muted-foreground transition-colors">
                                     {tag}
                                 </Badge>

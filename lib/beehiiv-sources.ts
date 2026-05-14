@@ -74,6 +74,13 @@ export const SUBSCRIBE_SOURCES: Record<string, SubscribeSource> = {
     placeholder: 'your@email.com',
     cta: 'Get the job list',
   },
+  'ai-web3-jobs': {
+    utm_source: 'ai-web3-jobs',
+    headline: 'Get AI × Web3 jobs in your inbox',
+    subline: 'Roles at the intersection of AI and blockchain, weekly.',
+    placeholder: 'your@email.com',
+    cta: 'Subscribe free',
+  },
   'salary-estimator': {
     utm_source: 'salary-estimator',
     headline: 'Web3 salary trends, monthly',

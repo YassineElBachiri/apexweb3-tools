@@ -53,6 +53,7 @@ export const AFFILIATES: Record<string, Affiliate> = {
       "converter",
       "fiat-converter",
       "sidebar-global",
+      "jobs",
     ],
   },
 
@@ -76,6 +77,7 @@ export const AFFILIATES: Record<string, Affiliate> = {
       "deals",
       "security-scanner",
       "portfolio",
+      "jobs",
     ],
   },
 
@@ -124,6 +126,7 @@ export const AFFILIATES: Record<string, Affiliate> = {
       "meme-scanner",
       "calculator",
       "sidebar-global",
+      "jobs",
     ],
   },
 
@@ -271,8 +274,22 @@ export const PLACEMENT_COPY: Record<string, Record<string, PlacementCopy>> = {
     },
   },
 
-  "deals": {
-    // Deals page uses full affiliate descriptions — no override needed
+  "jobs": {
+    binance: {
+      headline: "Got the job? Now grow your bags.",
+      subline: "New roles deserve new strategies. Trade on Binance with the lowest fees in crypto.",
+      urgency: false,
+    },
+    ledger: {
+      headline: "Starting a new crypto role? Secure your bonus.",
+      subline: "Don't leave your hard-earned tokens on exchanges. Protect them with Ledger.",
+      urgency: false,
+    },
+    tradingview: {
+      headline: "Level up your technical skills.",
+      subline: "The world's best developers use the world's best charts. Get TradingView.",
+      urgency: false,
+    },
   },
 
 };

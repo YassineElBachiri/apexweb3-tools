@@ -151,7 +151,13 @@ type BlogContext = {
   keywords?: string;
 };
 
-export type AffiliateContext = ToolContext | BlogContext;
+type JobContext = {
+  type: 'job';
+  category: string;
+  tags: string[];
+};
+
+export type AffiliateContext = ToolContext | BlogContext | JobContext;
 
 export function buildUserPrompt(context: AffiliateContext): string {
   if (context.type === 'tool') {
@@ -161,6 +167,14 @@ User action: ${context.userAction ?? 'User visited the page'}
 ${context.portfolioValue !== undefined ? `Portfolio value: ${context.portfolioValue}` : ''}
 
 Generate the affiliate recommendation for this context.`;
+  }
+
+  if (context.type === 'job') {
+    return `Page type: job
+Category: ${context.category}
+Job tags: ${context.tags.join(', ')}
+
+Generate the affiliate recommendation for this job board context.`;
   }
 
   return `Page type: blog
