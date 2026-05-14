@@ -19,7 +19,7 @@ export default async function JobsPage() {
     return (
         <main className="min-h-screen bg-[#080C10]">
             <Suspense fallback={<div className="container py-12 text-center text-[#4A6A8A] font-mono">Loading the Web3 Jobs Board...</div>}>
-                <JobsDashboard initialJobs={jobs} error={error} />
+                <JobsDashboard initialJobs={jobs} error={error ?? null} />
             </Suspense>
             
             <SeoContent />
