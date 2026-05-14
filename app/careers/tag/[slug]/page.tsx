@@ -97,7 +97,7 @@ export default async function TagJobsPage({ params }: PageProps) {
                 dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
             />
             <Suspense fallback={<div className="container py-12 text-center text-muted-foreground">Loading jobs...</div>}>
-                <JobsDashboard initialJobs={jobs} error={error ?? null} initialFilters={initialFilters} />
+                <JobsDashboard initialJobs={filteredJobs} error={error ?? null} />
             </Suspense>
             <SeoContent />
         </main>
