@@ -190,7 +190,7 @@ async function _fetchAIWeb3Jobs(): Promise<FetchAIJobsResult> {
             company: j.company,
             location: j.location,
             remote: j.remote,
-            salary: j.salary || null,
+            salary: j.salary || undefined,
             description: j.description || '',
             tags: j.tags || [],
             url: j.url,
