@@ -13,6 +13,7 @@ export interface Web3Job {
     salary?: string;
     logo?: string; // Company logo URL
     employmentType?: string; // FULL_TIME, PART_TIME, CONTRACT, etc.
+    source?: string; // Source of the job listing (e.g., 'remotive', 'web3career')
 }
 
 export interface JobFilter {
