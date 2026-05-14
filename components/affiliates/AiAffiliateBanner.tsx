@@ -1,3 +1,5 @@
+"use client";
+
 import { useEffect, useState } from "react";
 import { AffiliateRecommendation, AffiliateContext } from "@/lib/affiliate-prompt";
 import { AFFILIATES, getAffiliatesForPage, getPrimaryCopy } from "@/lib/config/affiliates.config";
