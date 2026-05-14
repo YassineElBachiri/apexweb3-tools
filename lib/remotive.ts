@@ -74,7 +74,7 @@ export interface NormalizedAIJob {
     company: string
     location: string
     remote: boolean
-    salary: string | null
+    salary?: string
     description: string
     tags: string[]
     url: string
@@ -110,7 +110,7 @@ export function normalizeRemotiveJob(job: RemotiveJob): NormalizedAIJob {
         company: job.company_name,
         location: job.candidate_required_location || 'Remote',
         remote: true, // Remotive is remote-only platform
-        salary: job.salary || null,
+        salary: job.salary || undefined,
         description: job.description || '',
         tags: job.tags || [],
         url: job.url,
