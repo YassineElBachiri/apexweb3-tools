@@ -4,8 +4,27 @@ import { getLatestPosts } from '@/lib/api/wordpress';
 import { ArrowRight, Calendar, User, AlertCircle } from 'lucide-react';
 
 export async function LatestBlogPosts() {
-    // Requirements specified 5-10 posts, updating to 6 to fit neatly into the 3-column grid
-    const posts = await getLatestPosts(6);
+    const allPosts = await getLatestPosts(20);
+
+    const HOMEPAGE_ALLOWED_CATEGORIES = [
+        'AI & Web3',
+        'Security & Audits',
+        'Reviews & Analysis',
+        'DeFi',
+        'Guide',
+    ];
+
+    const HOMEPAGE_BLOCKED_SLUGS = [
+        'iran-israel-war-crypto-impact-alpha-plays',
+        'decentralized-ai-alpha-plays-destroy-big-tech',
+    ];
+
+    const posts = allPosts
+        .filter(post => {
+            const categoryName = post.categories?.nodes?.[0]?.name;
+            return categoryName && HOMEPAGE_ALLOWED_CATEGORIES.includes(categoryName) && !HOMEPAGE_BLOCKED_SLUGS.includes(post.slug);
+        })
+        .slice(0, 3);
 
     if (!posts || posts.length === 0) {
         return (
@@ -14,7 +33,7 @@ export async function LatestBlogPosts() {
                     <div className="mb-12 flex flex-col items-center justify-between gap-4 md:flex-row md:items-end">
                         <div className="max-w-2xl">
                             <h2 className="mb-4 text-3xl font-extrabold tracking-tight text-white md:text-4xl">
-                                Latest Web3 <span className="text-brand-primary">Insights</span>
+                                Web3 & AI <span className="text-brand-primary">Intelligence</span>
                             </h2>
                             <p className="text-lg text-slate-400">
                                 Research, market updates, and tokenomic analysis straight from the ApexWeb3 team.
@@ -41,7 +60,7 @@ export async function LatestBlogPosts() {
                 <div className="mb-12 flex flex-col items-center justify-between gap-4 md:flex-row md:items-end">
                     <div className="max-w-2xl">
                         <h2 className="mb-4 text-3xl font-extrabold tracking-tight text-white md:text-4xl">
-                            Latest Web3 <span className="text-brand-primary">Insights</span>
+                            Web3 & AI <span className="text-brand-primary">Intelligence</span>
                         </h2>
                         <p className="text-lg text-slate-400">
                             Research, market updates, and tokenomic analysis straight from the ApexWeb3 team.

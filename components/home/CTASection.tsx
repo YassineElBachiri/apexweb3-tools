@@ -1,50 +1,107 @@
+"use client";
 
 import Link from "next/link";
-import { Button } from "@/components/ui/button";
+import { useState } from "react";
 
 export function CTASection() {
+    const [email, setEmail] = useState('');
+    const [status, setStatus] = useState<'idle' | 'loading' | 'done' | 'error'>('idle');
+
+    async function handleSubscribe(e: React.FormEvent) {
+        e.preventDefault();
+        if (!email || !email.includes('@')) return;
+        setStatus('loading');
+        try {
+            const res = await fetch('/api/subscribe', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ email, tag: 'homepage-final-cta' })
+            });
+            setStatus(res.ok ? 'done' : 'error');
+        } catch {
+            setStatus('error');
+        }
+    }
+
     return (
-        <section className="py-24 bg-brand-dark">
+        <section style={{ textAlign: 'center', padding: '80px 0' }} className="bg-brand-dark">
             <div className="container mx-auto px-4">
-                <div className="relative rounded-3xl overflow-hidden">
-                    {/* Background Effects */}
-                    <div className="absolute inset-0 bg-gradient-to-r from-brand-purple/20 to-brand-blue/20" />
-                    <div className="absolute inset-0 backdrop-blur-3xl" />
+                <div style={{ fontSize: '11px', color: '#00D2FF', letterSpacing: '0.15em', textTransform: 'uppercase', fontFamily: 'var(--font-dm-mono), monospace', marginBottom: '16px' }}>
+                    Start now — no account required
+                </div>
+                <h2 style={{ fontSize: '40px', fontWeight: 800, color: '#E8F0FA', marginBottom: '16px', fontFamily: 'var(--font-syne), sans-serif' }}>
+                    Your edge in Web3 starts here.
+                </h2>
+                <p style={{ fontSize: '14px', color: '#4A6A8A', fontFamily: 'var(--font-dm-mono), monospace', marginBottom: '32px' }}>
+                    Scan a token, track whales, or find your next role — all free, no wallet needed.
+                </p>
 
-                    {/* Content */}
-                    <div className="relative z-10 py-20 px-8 text-center max-w-4xl mx-auto">
-                        <h2 className="text-4xl md:text-6xl font-bold mb-6 text-white">
-                            Ready to Master Crypto?
-                        </h2>
-                        <p className="text-xl text-gray-300 mb-10 max-w-2xl mx-auto">
-                            Join thousands of traders using ApexWeb3 tools to make smarter,
-                            data-driven investment decisions.
-                        </p>
+                {/* Primary CTA — most compelling tool */}
+                <div style={{ display: 'flex', gap: '12px', justifyContent: 'center', marginBottom: '24px', flexWrap: 'wrap' }}>
+                    <Link href="/discovery/spike-detector" style={{
+                    background: '#00D2FF', color: '#060D14',
+                    padding: '14px 28px', fontWeight: 700,
+                    fontSize: '14px', textDecoration: 'none',
+                    letterSpacing: '0.05em'
+                    }}>
+                    Scan a Meme Coin Free →
+                    </Link>
+                    <Link href="/jobs" style={{
+                    background: 'transparent',
+                    border: '1px solid rgba(255,255,255,0.15)',
+                    color: '#C8D6E8',
+                    padding: '14px 28px',
+                    fontSize: '14px', textDecoration: 'none'
+                    }}>
+                    Browse Web3 Jobs
+                    </Link>
+                </div>
 
-                        <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                            <Link href="/dashboard">
-                                <Button
-                                    size="lg"
-                                    className="bg-white text-brand-dark hover:bg-gray-100 px-8 py-6 text-lg rounded-full w-full sm:w-auto font-bold"
-                                >
-                                    Get Started Free
-                                </Button>
-                            </Link>
-                            <Link href="#tools">
-                                <Button
-                                    variant="outline"
-                                    size="lg"
-                                    className="border-white/20 text-white hover:bg-white/10 px-8 py-6 text-lg rounded-full w-full sm:w-auto"
-                                >
-                                    View All Tools
-                                </Button>
-                            </Link>
-                        </div>
-
-                        <p className="text-sm text-gray-500 mt-8 font-medium">
-                            No credit card required • No login needed • 100% Free forever
-                        </p>
+                {/* Email opt-in as secondary conversion */}
+                <div style={{ maxWidth: '420px', margin: '0 auto' }}>
+                    <div style={{ fontSize: '12px', color: '#3A5A7A', fontFamily: 'var(--font-dm-mono), monospace', marginBottom: '10px' }}>
+                    Or get weekly intelligence delivered to your inbox
                     </div>
+                    {status === 'done' ? (
+                        <div style={{ padding: '11px 0', fontSize: '13px', color: '#00D2FF', fontFamily: 'var(--font-dm-mono), monospace' }}>
+                            ✓ Subscribed successfully!
+                        </div>
+                    ) : (
+                        <form style={{ display: 'flex' }} onSubmit={handleSubscribe}>
+                        <input
+                            type="email"
+                            placeholder="your@email.com"
+                            value={email}
+                            onChange={(e) => setEmail(e.target.value)}
+                            required
+                            style={{
+                            flex: 1, background: 'rgba(255,255,255,0.04)',
+                            border: '1px solid rgba(255,255,255,0.08)',
+                            borderRight: 'none', padding: '11px 14px',
+                            fontSize: '13px', color: '#C8D6E8',
+                            outline: 'none', fontFamily: 'var(--font-dm-mono), monospace'
+                            }}
+                        />
+                        <button type="submit" disabled={status === 'loading'} style={{
+                            background: status === 'loading' ? '#006A80' : 'rgba(255,255,255,0.08)',
+                            border: '1px solid rgba(255,255,255,0.1)',
+                            color: '#C8D6E8', padding: '11px 16px',
+                            fontSize: '11px', cursor: 'pointer',
+                            fontFamily: 'var(--font-dm-mono), monospace', letterSpacing: '0.1em'
+                        }}>
+                            {status === 'loading' ? 'WAIT' : 'SUBSCRIBE'}
+                        </button>
+                        </form>
+                    )}
+                    {status === 'error' && (
+                        <div style={{ marginTop: '8px', fontSize: '11px', color: '#FF6B6B', fontFamily: 'var(--font-dm-mono), monospace' }}>
+                            Error subscribing. Please try again.
+                        </div>
+                    )}
+                </div>
+
+                <div style={{ fontSize: '11px', color: '#2A4A6A', fontFamily: 'var(--font-dm-mono), monospace', marginTop: '16px' }}>
+                    No credit card · No login · 100% free forever
                 </div>
             </div>
         </section>

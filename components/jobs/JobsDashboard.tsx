@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { Web3Job } from "@/types/job";
 import { JobCard } from "@/components/jobs/JobCard";
 import { JobIntelBanner } from "@/components/jobs/JobIntelBanner";
@@ -20,28 +20,31 @@ export function JobsDashboard({ initialJobs, error }: { initialJobs: Web3Job[], 
     const [remoteOnly, setRemoteOnly] = useState(false);
     const [aiOnly, setAiOnly] = useState(false);
 
+    // Apply all data-transform helpers once — title clean, salary normalize, classify
+    const jobs = useMemo(() => initialJobs.map(normalizeJob), [initialJobs]);
+
     const filteredJobs = useMemo(() => {
-        return initialJobs.filter(job => {
+        return jobs.filter(job => {
             const searchString = `${job.title} ${job.company} ${job.tags.join(" ")}`.toLowerCase();
             if (searchTerm && !searchString.includes(searchTerm.toLowerCase())) return false;
-            
+
             const jobCat = getCategoryForJob(job);
             if (activeCategory !== "All" && jobCat !== activeCategory) return false;
-            
+
             if (chainFilter !== "All chains") {
                 const jobChain = getChainForJob(job);
                 if (jobChain !== chainFilter) return false;
             }
-            
+
             if (remoteOnly && !job.remote) return false;
             if (aiOnly && jobCat !== "AI × Web3") return false;
-            
+
             return true;
         });
-    }, [initialJobs, searchTerm, activeCategory, chainFilter, remoteOnly, aiOnly]);
+    }, [jobs, searchTerm, activeCategory, chainFilter, remoteOnly, aiOnly]);
 
     const categoryCounts = useMemo(() => {
-        const baseJobs = initialJobs.filter(job => {
+        const baseJobs = jobs.filter(job => {
             const searchString = `${job.title} ${job.company} ${job.tags.join(" ")}`.toLowerCase();
             if (searchTerm && !searchString.includes(searchTerm.toLowerCase())) return false;
             if (chainFilter !== "All chains" && getChainForJob(job) !== chainFilter) return false;
@@ -49,14 +52,14 @@ export function JobsDashboard({ initialJobs, error }: { initialJobs: Web3Job[], 
             if (aiOnly && getCategoryForJob(job) !== "AI × Web3") return false;
             return true;
         });
-        
+
         const counts: Record<string, number> = { "All": baseJobs.length };
         baseJobs.forEach(job => {
             const cat = getCategoryForJob(job);
             counts[cat] = (counts[cat] || 0) + 1;
         });
         return counts;
-    }, [initialJobs, searchTerm, chainFilter, remoteOnly, aiOnly]);
+    }, [jobs, searchTerm, chainFilter, remoteOnly, aiOnly]);
 
     const featuredJobs = filteredJobs.filter(j => j.featured || false).slice(0, 3);
     const regularJobs = filteredJobs.filter(j => !featuredJobs.includes(j));
@@ -231,6 +234,9 @@ export function JobsDashboard({ initialJobs, error }: { initialJobs: Web3Job[], 
                     </AnimatePresence>
                 </div>
 
+                {/* EMAIL OPT-IN */}
+                <EmailOptIn />
+
                 {/* AI BANNER */}
                 <div className="my-12 p-8 bg-gradient-to-br from-card/40 to-background border border-primary/20 rounded-2xl relative overflow-hidden shadow-2xl shadow-primary/5">
                     <div className="absolute right-[-10%] top-1/2 -translate-y-1/2 font-sans text-9xl font-extrabold text-primary opacity-[0.03] pointer-events-none">
@@ -260,16 +266,113 @@ export function JobsDashboard({ initialJobs, error }: { initialJobs: Web3Job[], 
     )
 }
 
-// Helpers
-function getCategoryForJob(job: Web3Job) {
-    const tagsStr = job.tags ? job.tags.join(' ') : '';
-    const text = `${job.title} ${tagsStr}`.toLowerCase();
-    if (text.includes("ai") || text.includes("machine learning")) return "AI × Web3";
-    if (text.includes("security") || text.includes("auditor")) return "Security";
-    if (text.includes("product") || text.includes("pm")) return "Product";
-    if (text.includes("research") || text.includes("quant") || text.includes("tokenomics")) return "Research";
-    if (text.includes("community") || text.includes("marketing") || text.includes("devrel")) return "Community";
-    return "Engineering"; // fallback
+// ─── Classification helpers ────────────────────────────────────────────────
+
+const AI_WEB3_TITLE_KEYWORDS = [
+    'ai agent', 'ml engineer', 'machine learning', 'llm', 'artificial intelligence',
+    'nlp', 'deep learning', 'data scientist', 'ai engineer', 'langchain',
+    'on-chain ml', 'decentralized ai', 'ai researcher', 'prompt engineer',
+    'ai product', 'ai developer', 'computer vision', 'generative ai'
+]
+
+const AI_WEB3_COMPANY_KEYWORDS = [
+    'fetch.ai', 'bittensor', 'ocean protocol', 'akash', 'singularitynet',
+    'ritual', 'gensyn', 'modulus', 'inference labs'
+]
+
+const ENGINEERING_KEYWORDS = [
+    'solidity', 'smart contract', 'blockchain developer', 'rust developer',
+    'protocol engineer', 'zk engineer', 'zero-knowledge', 'evm', 'frontend engineer',
+    'backend engineer', 'full stack', 'devops', 'infrastructure engineer',
+    'release engineer', 'software engineer', 'web3 developer', 'dapp'
+]
+
+const SECURITY_KEYWORDS = [
+    'security engineer', 'auditor', 'penetration', 'vulnerability', 'security researcher',
+    'smart contract audit', 'security analyst', 'incident response'
+]
+
+const PRODUCT_KEYWORDS = [
+    'product manager', 'product designer', 'ux designer', 'ui designer',
+    'product lead', 'product owner', 'head of product'
+]
+
+const RESEARCH_KEYWORDS = [
+    'researcher', 'quantitative researcher', 'economist', 'tokenomics',
+    'quant trader', 'quant researcher', 'data analyst', 'research scientist'
+]
+
+const COMMUNITY_KEYWORDS = [
+    'community manager', 'community lead', 'social media', 'content manager',
+    'marketing manager', 'growth', 'community'
+]
+
+function classifyJob(job: { title: string; company: string; tags: string[] }): string {
+    const titleLower = job.title.toLowerCase()
+    const companyLower = job.company.toLowerCase()
+    const tagsLower = (job.tags || []).join(' ').toLowerCase()
+    const fullText = `${titleLower} ${tagsLower}`
+
+    const aiTitleMatch = AI_WEB3_TITLE_KEYWORDS.some(kw => titleLower.includes(kw))
+    const aiCompanyMatch = AI_WEB3_COMPANY_KEYWORDS.some(kw => companyLower.includes(kw))
+    if (aiTitleMatch || aiCompanyMatch) return 'AI × Web3'
+
+    if (SECURITY_KEYWORDS.some(kw => titleLower.includes(kw))) return 'Security'
+    if (PRODUCT_KEYWORDS.some(kw => titleLower.includes(kw))) return 'Product'
+    if (RESEARCH_KEYWORDS.some(kw => titleLower.includes(kw))) return 'Research'
+    if (COMMUNITY_KEYWORDS.some(kw => titleLower.includes(kw))) return 'Community'
+    if (ENGINEERING_KEYWORDS.some(kw => fullText.includes(kw))) return 'Engineering'
+
+    return 'Other'
+}
+
+function normalizeSalary(salary: string | null | undefined): string | null {
+    if (!salary || salary.trim() === '' || salary === '-') return null
+    let s = salary.trim()
+    s = s.replace(/^USD\s*/i, '$').replace(/\bUSD\b/gi, '')
+    s = s.replace(/\$(\d+),(\d)k/gi, (_, a) => `$${a}K`)
+    s = s.replace(/(\d)\s*k/gi, '$1K')
+    s = s.replace(/\s*[-\u2013\u2014]\s*/g, '\u2013')
+    s = s.replace(/\s*\(Est\.\)/gi, '')
+    s = s.replace(/\s+/g, ' ').trim()
+    if (!s || s === '\u2013' || s === '-') return null
+    return s
+}
+
+function cleanJobTitle(title: string): string {
+    if (!title) return title
+    let t = title.trim()
+    t = t.replace(/^[\u{1F300}-\u{1FAFF}\u{2600}-\u{26FF}\u{2700}-\u{27BF}\s]+/gu, '')
+    const prefixes = [
+        /^we'?re hiring[:\s]*/i,
+        /^\[hiring\][:\s]*/i,
+        /^now hiring[:\s]*/i,
+        /^job opening[:\s]*/i,
+        /^open role[:\s]*/i,
+        /^opportunity[:\s]*/i,
+    ]
+    for (const prefix of prefixes) {
+        t = t.replace(prefix, '')
+    }
+    t = t.replace(/\s*[-\u2013|]\s*(accelerator|program|internship program).*$/i, '')
+    t = t.replace(/\s+/g, ' ').trim()
+    if (t.length > 0) t = t.charAt(0).toUpperCase() + t.slice(1)
+    return t
+}
+
+// Apply transforms to a raw Web3Job
+function normalizeJob(job: Web3Job): Web3Job {
+    return {
+        ...job,
+        title: cleanJobTitle(job.title),
+        salary: normalizeSalary(job.salary),
+        category: classifyJob(job),
+    }
+}
+
+// Keep getCategoryForJob as thin wrapper using classifyJob
+function getCategoryForJob(job: Web3Job): string {
+    return job.category || classifyJob(job)
 }
 
 function getChainForJob(job: Web3Job) {
@@ -280,4 +383,98 @@ function getChainForJob(job: Web3Job) {
     if (textLower.includes("polygon")) return "Polygon";
     if (textLower.includes("starknet")) return "Starknet";
     return "Multi-chain";
+}
+
+// ─── EmailOptIn component ──────────────────────────────────────────────────
+
+function EmailOptIn() {
+    const [email, setEmail] = useState('')
+    const [status, setStatus] = useState<'idle' | 'loading' | 'done' | 'error'>('idle')
+
+    async function subscribe() {
+        if (!email || !email.includes('@')) return
+        setStatus('loading')
+        try {
+            const res = await fetch('/api/subscribe', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ email, tag: 'jobs-page' })
+            })
+            if (res.ok) setStatus('done')
+            else setStatus('error')
+        } catch {
+            setStatus('error')
+        }
+    }
+
+    return (
+        <div style={{
+            margin: '40px 0',
+            padding: '28px',
+            background: '#0A0F16',
+            border: '1px solid #1A2332',
+            display: 'grid',
+            gridTemplateColumns: '1fr auto',
+            gap: '24px',
+            alignItems: 'center'
+        }}>
+            <div>
+                <div style={{ fontFamily: 'Syne, sans-serif', fontSize: '18px', fontWeight: 700, color: '#D8E8F8', marginBottom: '6px' }}>
+                    Get new Web3 roles in your inbox
+                </div>
+                <div style={{ fontSize: '12px', color: '#4A6A8A', fontFamily: 'DM Mono, monospace' }}>
+                    Weekly digest. Web3 + AI × Web3 roles only. No spam. Unsubscribe anytime.
+                </div>
+            </div>
+            {status === 'done' ? (
+                <div style={{ fontFamily: 'DM Mono, monospace', fontSize: '13px', color: '#00D2FF' }}>
+                    ✓ You&apos;re on the list
+                </div>
+            ) : (
+                <div style={{ display: 'flex' }}>
+                    <input
+                        type="email"
+                        placeholder="your@email.com"
+                        value={email}
+                        onChange={e => setEmail(e.target.value)}
+                        onKeyDown={e => e.key === 'Enter' && subscribe()}
+                        style={{
+                            background: '#080C10',
+                            border: '1px solid #1A2332',
+                            borderRight: 'none',
+                            padding: '11px 14px',
+                            fontFamily: 'DM Mono, monospace',
+                            fontSize: '12px',
+                            color: '#C8D6E8',
+                            outline: 'none',
+                            width: '220px'
+                        }}
+                    />
+                    <button
+                        onClick={subscribe}
+                        disabled={status === 'loading'}
+                        style={{
+                            background: status === 'loading' ? '#006A80' : '#00D2FF',
+                            color: '#060D14',
+                            border: 'none',
+                            padding: '11px 18px',
+                            fontFamily: 'DM Mono, monospace',
+                            fontSize: '11px',
+                            fontWeight: 500,
+                            cursor: 'pointer',
+                            letterSpacing: '0.1em',
+                            whiteSpace: 'nowrap'
+                        }}
+                    >
+                        {status === 'loading' ? 'SENDING...' : 'SUBSCRIBE →'}
+                    </button>
+                </div>
+            )}
+            {status === 'error' && (
+                <div style={{ gridColumn: '1/-1', fontSize: '11px', color: '#FF6B6B', fontFamily: 'DM Mono, monospace' }}>
+                    Something went wrong. Please try again.
+                </div>
+            )}
+        </div>
+    )
 }

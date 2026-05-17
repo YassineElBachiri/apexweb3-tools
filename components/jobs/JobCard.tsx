@@ -37,7 +37,7 @@ export function JobCard({ job, featured = false }: JobCardProps) {
     else if (textLower.includes("starknet")) chain = "Starknet";
 
     const c = CHAIN_COLORS[chain] || "#4A6A8A";
-    const isAI = textLower.includes("ai") || textLower.includes("machine learning");
+    const isAI = job.category === "AI × Web3";
 
     return (
         <Link href={`/jobs/${job.slug}`} className="block group">

@@ -3,16 +3,15 @@
 import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Web3Job } from "@/types/job";
-import { Zap, TrendingUp } from "lucide-react";
 
 interface IntelData {
     headline: string | null;
-    topRoles: string[] | null;
+    topRoles?: string[] | null;
     topSkills: string[] | null;
     hotChains: string[] | null;
     salaryInsight: string | null;
     weeklyTrend: string | null;
-    remoteRatio: string | null;
+    remoteRatio: number | string | null;
 }
 
 interface JobIntelBannerProps {
@@ -22,46 +21,84 @@ interface JobIntelBannerProps {
 const CACHE_KEY = "apexweb3_job_intel";
 const CACHE_TTL = 24 * 60 * 60 * 1000;
 
-async function getJobIntelligence(jobs: Web3Job[]): Promise<IntelData> {
-    const cached = localStorage.getItem(CACHE_KEY);
-    if (cached) {
-        const { data, timestamp } = JSON.parse(cached);
-        if (Date.now() - timestamp < CACHE_TTL) return data;
-    }
-
-    const res = await fetch("/api/jobs/intelligence", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ jobs }),
-    });
-
-    if (!res.ok) throw new Error("Failed to fetch intelligence");
-    const data = await res.json();
-    localStorage.setItem(CACHE_KEY, JSON.stringify({ data, timestamp: Date.now() }));
-    return data;
-}
+const FALLBACK_INTEL: IntelData = {
+    headline: "Web3 hiring active across engineering and AI roles this week",
+    topSkills: ["Solidity", "Rust", "Python", "TypeScript"],
+    hotChains: ["Ethereum", "Solana", "Multi-chain"],
+    remoteRatio: 89,
+    salaryInsight: "Senior engineers averaging $160K–$220K across top protocols",
+    weeklyTrend: "Steady hiring across DeFi and infrastructure teams.",
+};
 
 export function JobIntelBanner({ jobs }: JobIntelBannerProps) {
     const [intel, setIntel] = useState<IntelData | null>(null);
+    const [intelLoading, setIntelLoading] = useState(true);
     const [expanded, setExpanded] = useState(true);
 
     useEffect(() => {
-        if (!jobs || jobs.length === 0) return;
-        getJobIntelligence(jobs).then(setIntel).catch(console.error);
-    }, [jobs]);
+        if (!jobs || jobs.length === 0) {
+            setIntelLoading(false);
+            return;
+        }
 
-    if (!intel) {
+        async function loadIntel() {
+            // Check localStorage cache first
+            try {
+                const cached = localStorage.getItem(CACHE_KEY);
+                if (cached) {
+                    const { data, timestamp } = JSON.parse(cached);
+                    if (Date.now() - timestamp < CACHE_TTL) {
+                        setIntel(data);
+                        setIntelLoading(false);
+                        return;
+                    }
+                }
+            } catch {
+                // ignore malformed cache
+            }
+
+            // Fetch fresh from API
+            try {
+                const res = await fetch("/api/jobs/intelligence", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ jobs: jobs.slice(0, 40) }),
+                });
+
+                if (!res.ok) throw new Error(`API error ${res.status}`);
+                const data = await res.json();
+                if (data.error) throw new Error(data.error);
+
+                // Cache the result
+                localStorage.setItem(CACHE_KEY, JSON.stringify({ data, timestamp: Date.now() }));
+                setIntel(data);
+            } catch (err) {
+                console.error("Intel fetch failed:", err);
+                // Show static fallback instead of broken loading state
+                setIntel(FALLBACK_INTEL);
+            } finally {
+                setIntelLoading(false);
+            }
+        }
+
+        loadIntel();
+    }, [jobs.length]); // eslint-disable-line react-hooks/exhaustive-deps
+
+    if (intelLoading) {
         return (
             <div className="my-8 border border-white/10 border-l-4 border-l-primary bg-card/20 backdrop-blur-sm rounded-r-xl overflow-hidden shadow-lg">
                 <div className="flex items-center justify-between px-6 py-4 border-b border-white/5">
                     <div className="flex items-center gap-3 text-xs tracking-widest uppercase text-primary font-mono font-bold">
                         <div className="w-2 h-2 bg-primary rounded-full animate-pulse shrink-0" />
-                        Analyzing Market Signal...
+                        Analyzing {jobs.length} live roles...
                     </div>
                 </div>
             </div>
         );
     }
+
+    if (!intel) return null;
+
 
     return (
         <div className="my-8 border border-white/10 border-l-4 border-l-primary bg-card/20 backdrop-blur-sm rounded-r-xl overflow-hidden shadow-lg transition-colors hover:border-white/20 hover:bg-card/30">

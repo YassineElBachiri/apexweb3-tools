@@ -3,6 +3,7 @@
 import { ArrowRight } from "lucide-react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
+import { HomeEmailCapture } from "./HomeEmailCapture";
 
 export function Hero() {
     const scrollToPillars = () => {
@@ -52,27 +53,10 @@ export function Hero() {
                         Professional-grade on-chain intelligence for active traders and Web3 developers. Track smart money, scan for vulnerabilities, and execute with an edge.
                     </p>
 
-                    {/* CTAs */}
-                    <div className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-4">
-                        <Button
-                            size="lg"
-                            className="bg-brand-purple hover:bg-brand-purple/80 text-white px-8 py-6 text-lg rounded-full shadow-[0_0_30px_rgba(199,125,255,0.4)] hover:shadow-[0_0_40px_rgba(199,125,255,0.6)] transition-all hover:scale-105"
-                            onClick={scrollToPillars}
-                        >
-                            Access Live Signals <ArrowRight className="ml-2 h-5 w-5" />
-                        </Button>
-                        <Button
-                            variant="outline"
-                            size="lg"
-                            className="border-white/20 text-white hover:bg-white/10 px-8 py-6 text-lg rounded-full backdrop-blur-sm"
-                            onClick={scrollToPillars}
-                        >
-                            Browse All Tools
-                        </Button>
-                    </div>
+                    <HomeEmailCapture />
 
                     {/* Trust Badges */}
-                    <div className="pt-12 flex flex-wrap justify-center gap-8 md:gap-12 text-sm font-medium text-gray-500 uppercase tracking-widest">
+                    <div className="pt-8 flex flex-wrap justify-center gap-8 md:gap-12 text-sm font-medium text-gray-500 uppercase tracking-widest">
                         <div className="flex items-center gap-2">
                             <div className="w-1.5 h-1.5 bg-green-400 rounded-full" />
                             No Wallet Required
@@ -89,6 +73,29 @@ export function Hero() {
                             <div className="w-1.5 h-1.5 bg-brand-pink rounded-full" />
                             100% Free
                         </div>
+                    </div>
+
+                    {/* CTAs */}
+                    <div className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-8">
+                        <Button
+                            asChild
+                            size="lg"
+                            className="bg-brand-purple hover:bg-brand-purple/80 text-white px-8 py-6 text-lg rounded-full shadow-[0_0_30px_rgba(199,125,255,0.4)] hover:shadow-[0_0_40px_rgba(199,125,255,0.6)] transition-all hover:scale-105"
+                        >
+                            <Link href="/discovery/spike-detector">
+                                Scan a Meme Coin Free <ArrowRight className="ml-2 h-5 w-5" />
+                            </Link>
+                        </Button>
+                        <Button
+                            asChild
+                            variant="outline"
+                            size="lg"
+                            className="border-white/20 text-white hover:bg-white/10 px-8 py-6 text-lg rounded-full backdrop-blur-sm"
+                        >
+                            <Link href="/jobs">
+                                Browse 247+ Web3 Jobs
+                            </Link>
+                        </Button>
                     </div>
                 </div>
             </div>

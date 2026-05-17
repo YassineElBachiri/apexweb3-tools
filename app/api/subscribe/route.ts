@@ -1,13 +1,13 @@
 import { NextResponse } from 'next/server';
-import { subscribeToBeehiiv } from '@/lib/beehiiv';
-import { getSource } from '@/lib/beehiiv-sources';
+import { subscribeToSubstack } from '@/lib/substack';
+import { getSource } from '@/lib/substack-sources';
 
 export const dynamic = 'force-dynamic';
 
 export async function POST(req: Request) {
   try {
     const body = await req.json();
-    const { email, source, referring_url } = body;
+    const { email, source } = body;
 
     if (!email) {
       return NextResponse.json({ success: false, error: 'Email is required' }, { status: 400, headers: { 'Cache-Control': 'no-store' } });
@@ -31,12 +31,9 @@ export async function POST(req: Request) {
 
     const sourceData = getSource(source || 'footer');
     
-    const result = await subscribeToBeehiiv({
+    const result = await subscribeToSubstack({
       email: trimmedEmail,
       utm_source: sourceData.utm_source,
-      utm_medium: 'website',
-      utm_campaign: sourceData.utm_source,
-      referring_site: referring_url || 'https://www.apexweb3.com',
     });
 
     if (result.success) {

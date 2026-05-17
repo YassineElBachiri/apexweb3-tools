@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { getSource } from '@/lib/beehiiv-sources';
+import { getSource } from '@/lib/substack-sources';
 import { useSubscribe } from '@/hooks/useSubscribe';
 
 export function FooterSubscribe() {

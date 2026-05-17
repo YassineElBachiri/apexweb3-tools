@@ -15,6 +15,7 @@ export interface Web3Job {
     employmentType?: string; // FULL_TIME, PART_TIME, CONTRACT, etc.
     source?: string; // Source of the job listing (e.g., 'remotive', 'web3career')
     featured?: boolean; // Whether the job is featured/sponsored
+    category?: string;  // Classified category: Engineering | AI × Web3 | Security | Product | Research | Community | Other
 }
 
 export interface JobFilter {
