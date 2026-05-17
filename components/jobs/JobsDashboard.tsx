@@ -326,8 +326,8 @@ function classifyJob(job: { title: string; company: string; tags: string[] }): s
     return 'Other'
 }
 
-function normalizeSalary(salary: string | null | undefined): string | null {
-    if (!salary || salary.trim() === '' || salary === '-') return null
+function normalizeSalary(salary: string | null | undefined): string | undefined {
+    if (!salary || salary.trim() === '' || salary === '-') return undefined
     let s = salary.trim()
     s = s.replace(/^USD\s*/i, '$').replace(/\bUSD\b/gi, '')
     s = s.replace(/\$(\d+),(\d)k/gi, (_, a) => `$${a}K`)
@@ -335,7 +335,7 @@ function normalizeSalary(salary: string | null | undefined): string | null {
     s = s.replace(/\s*[-\u2013\u2014]\s*/g, '\u2013')
     s = s.replace(/\s*\(Est\.\)/gi, '')
     s = s.replace(/\s+/g, ' ').trim()
-    if (!s || s === '\u2013' || s === '-') return null
+    if (!s || s === '\u2013' || s === '-') return undefined
     return s
 }
 
